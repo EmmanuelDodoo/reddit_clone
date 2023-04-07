@@ -1,0 +1,22 @@
+{
+  "id": 51,
+  "subreddit": "r/testing",
+  "username": "u/black_cat",
+  "subredditImageURL": "https://images.pexels.com/photos/1749900/pexels-photo-1749900.jpeg",
+  "timestamp":	1680738522,
+  "title": "Just Text",
+  "imagePresent": false,
+  "contents": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,\nmolestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum\nnumquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium\noptio, eaque rerum! Provident similique accusantium nemo autem. Veritatis\nobcaecati tenetur iure eius earum ut molestias architecto voluptate aliquam\nnihil, eveniet aliquid culpa officia aut! Impedit sit sunt quaerat, odit,\ntenetur error, harum nesciunt ipsum debitis quas aliquid. Reprehenderit,\nquia. Quo neque error repudiandae fuga? Ipsa laudantium molestias eos \nsapiente officiis modi at sunt excepturi expedita sint? Sed quibusdam\nrecusandae alias error harum maxime adipisci amet laborum.",
+  "votes": 500,
+  "comments": [
+    {
+      "id": 123,
+      "username": "u/One&Only",
+      "timestamp": 1680738622,
+      "userImage": "",
+      "contents": "",
+      "votes": 22,
+      "replies": []
+    }
+  ]
+}
