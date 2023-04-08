@@ -1,31 +1,49 @@
 {
   "id": 101,
-  "subreddit": "r/testing",
-  "username": "u/black_cat",
-  "subredditImageURL": "https://images.pexels.com/photos/1749900/pexels-photo-1749900.jpeg",
+  "subreddit": {
+    "id": 125,
+    "name": "testing",
+    "imageURL": "https://images.pexels.com/photos/1749900/pexels-photo-1749900.jpeg"
+  },
+  "user": {
+  "id": 25,
+  "name": "blackcat"
+  },
   "timestamp":	1680806922,
   "title": "Just Image",
   "imagePresent": true,
   "imageURL": "https://images.pexels.com/photos/450596/pexels-photo-450596.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
   "contents": "",
   "votes": 25000,
+  "voteCode": 1,
   "comments": [
     {
       "id": 123,
-      "username": "u/One&Only",
+      "postId" : 25,
+      "ancestorId": -1,
+      "user": {
+        "id": 24,
+        "name": "CommenterThere"
+      },
       "timestamp": 1680738622,
-      "userImage": "",
-      "contents": "",
+      "contents": "I'm losing it",
       "votes": 22,
+      "voteCode": -1,
       "replies": []
     },
     {
-      "id": 123,
-      "username": "u/One&Only",
+      "id": 1234,
+      "postId" : 25,
+      "ancestorId": -1,
+      "user": {
+        "id": 42,
+        "name": "CommenterHere"
+      },
       "timestamp": 1680738622,
       "userImage": "",
-      "contents": "",
+      "contents": "Just minding my own business",
       "votes": 22,
+      "voteCode": 1,
       "replies": []
     }
   ]

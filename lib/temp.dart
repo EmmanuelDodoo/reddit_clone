@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import "package:reddit_clone/models/post.dart";
-import 'package:reddit_clone/models/postStructure.dart';
+import "package:reddit_clone/models/post-card.dart";
+import 'package:reddit_clone/models/post.dart';
 
 class MyStatefulWidget extends StatefulWidget {
   const MyStatefulWidget({Key? key}) : super(key: key);
@@ -339,7 +339,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
   }
 
   PostCard makeCard(String json) {
-    PostStructure ps = PostStructure.withComments(json: json);
+    Post ps = Post.fromJSON(json: json);
     return PostCard(post: ps);
   }
 
@@ -351,7 +351,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
 
   @override
   Widget build(BuildContext context) {
-    String file = "textandimage.json";
+    String file = "none.json";
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,

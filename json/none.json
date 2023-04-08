@@ -1,12 +1,19 @@
 {
   "id": 11,
-  "subreddit": "r/testing",
-  "username": "u/black_cat",
-  "subredditImageURL": "https://images.pexels.com/photos/1749900/pexels-photo-1749900.jpeg",
+  "subreddit": {
+    "id": 125,
+    "name": "testing",
+    "imageURL": "https://images.pexels.com/photos/1749900/pexels-photo-1749900.jpeg"
+  },
+  "user": {
+    "id": 25,
+    "name": "blackcat"
+  },
   "timestamp":	1679787259,
   "title": "Lez Duit",
   "imagePresent": false,
   "contents": "",
   "votes": 2500,
+  "voteCode": 0,
   "comments": []
 }

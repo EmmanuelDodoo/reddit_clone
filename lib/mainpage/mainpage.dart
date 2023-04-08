@@ -10,16 +10,6 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  final List<Widget> _pages = [const Home(), const Popular()];
-
-  late Widget _activepage;
-
-  @override
-  void initState() {
-    _activepage = _pages[0];
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -27,7 +17,7 @@ class _MainPageState extends State<MainPage> {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          leading: Icon(Icons.delete),
+          leading: const Icon(Icons.delete),
           bottom: const TabBar(
             labelPadding: EdgeInsets.only(bottom: 10),
             indicatorWeight: 2.5,
