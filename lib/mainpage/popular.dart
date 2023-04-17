@@ -7,12 +7,13 @@ class Popular extends StatefulWidget {
   State<Popular> createState() => _PopularState();
 }
 
-class _PopularState extends State<Popular> {
+class _PopularState extends State<Popular> with AutomaticKeepAliveClientMixin {
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
       GlobalKey<RefreshIndicatorState>();
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       body: RefreshIndicator(
         key: _refreshIndicatorKey,
@@ -30,4 +31,7 @@ class _PopularState extends State<Popular> {
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

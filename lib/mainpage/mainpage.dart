@@ -2,33 +2,28 @@ import 'package:flutter/material.dart';
 import 'home.dart';
 import 'popular.dart';
 
-class MainPage extends StatefulWidget {
+class MainPage extends StatelessWidget {
   const MainPage({Key? key}) : super(key: key);
 
   @override
-  State<MainPage> createState() => _MainPageState();
-}
-
-class _MainPageState extends State<MainPage> {
-  @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      initialIndex: 1,
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          leading: const Icon(Icons.delete),
+          backgroundColor: AppBarTheme.of(context).backgroundColor,
+          toolbarHeight: 2,
           bottom: const TabBar(
             labelPadding: EdgeInsets.only(bottom: 10),
-            indicatorWeight: 2.5,
+            indicatorWeight: 2.0,
             tabs: [
               Text(
                 "Home",
-                style: TextStyle(fontSize: 25),
+                style: TextStyle(fontSize: 18),
               ),
               Text(
                 "Popular",
-                style: TextStyle(fontSize: 25),
+                style: TextStyle(fontSize: 18),
               ),
             ],
           ),

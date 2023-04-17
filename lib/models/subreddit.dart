@@ -14,7 +14,7 @@ class Subreddit {
     _subImageURL = source["imageURL"];
   }
 
-  String getSubName() => _name;
+  String getSubName() => "r/$_name";
 
   String getSubImageURL() => _subImageURL;
 }

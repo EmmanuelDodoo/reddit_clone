@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'mainpage/mainpage.dart';
 import 'temp.dart';
+import 'skeleton.dart';
 
 void main() {
   runApp(const MyApp());
@@ -26,8 +27,11 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      // home: const MainPage(),
-      home: const MyStatefulWidget(),
+      home: Skeleton(
+        currPage: const MainPage(),
+      ),
+      // home: const  MainPage(),
+      // home: const MyStatefulWidget(),
     );
   }
 }

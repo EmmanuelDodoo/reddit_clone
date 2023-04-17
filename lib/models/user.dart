@@ -29,6 +29,7 @@ class User {
     Map<String, dynamic> jsonMap = jsonDecode(json);
     _id = jsonMap["id"];
     _username = jsonMap["username"];
+    //Todo user image, karma, join date, subreddits,subreddit images, posts,
   }
 
   /// Create a simplified view of a user
@@ -37,12 +38,11 @@ class User {
   ///
   /// Requires: source is a valid json of a simplified user
   User.fromSimplified({required dynamic source}) {
-    // todo add the `r/` and `u/` over here
     _id = source["id"];
     _username = source["name"];
   }
 
-  String getUsername() => _username;
+  String getUsername() => "u/$_username";
 
   /// Modifies this users name and returns the new user name.
   String setUsername({required String newName}) {
