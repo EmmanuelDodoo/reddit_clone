@@ -75,6 +75,8 @@ class Post with VotesMixin {
     if (withComments) {
       List<Map<String, dynamic>> commentsMap = map["comments"];
       _comments = List.from(commentsMap.map((e) => Comment.fromMap(map: map)));
+    } else {
+      _comments = [];
     }
   }
 
@@ -89,6 +91,8 @@ class Post with VotesMixin {
     if (withComments) {
       List<Map<String, dynamic>> commentsMap = map["comments"];
       _comments = List.from(commentsMap.map((e) => Comment.fromMap(map: map)));
+    } else {
+      _comments = [];
     }
   }
 

@@ -1,4 +1,59 @@
 {
   "id": 1,
-  "username": "blue hippo"
+  "username": "blue hippo",
+  "userImageURL": "https://images.pexels.com/photos/38280/monkey-mandril-africa-baboon-38280.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+  "joindate": 1658048762,
+  "karma": 453,
+  "subreddits": [
+    {
+      "id": 333,
+      "name": "Sweet Caroline",
+      "imageURL": "https://images.pexels.com/photos/3207532/pexels-photo-3207532.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+    },
+    {
+      "id": 321,
+      "name": "Placeholder",
+      "imageURL": "https://images.pexels.com/photos/2781219/pexels-photo-2781219.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+    }
+
+  ],
+  "posts": [
+    {
+      "id": 21,
+      "subreddit":     {
+        "id": 333,
+        "name": "Sweet Caroline",
+        "imageURL": "https://images.pexels.com/photos/3207532/pexels-photo-3207532.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+      },
+      "timestamp": 1658050762,
+      "title": "A night to forget!",
+      "contents": "Lorem ipsum .... naaahhh I'm tired.",
+      "imagePresent": false,
+      "votes": 41,
+      "voteCode": 1,
+      "user": {
+        "id": 1,
+        "name": "blue hippo",
+        "userImageURL": "https://images.pexels.com/photos/38280/monkey-mandril-africa-baboon-38280.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+      },
+      "comments": []
+    }
+  ],
+  "comments": [
+    {
+      "id": 42,
+      "postId": 21,
+      "ancestorId": -1,
+      "user": {
+        "id": 1,
+        "name": "blue hippo",
+        "userImageURL": "https://images.pexels.com/photos/38280/monkey-mandril-africa-baboon-38280.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+      },
+      "timestamp": 1658051762,
+      "contents": "Let's just ignore this",
+      "votes": 0,
+      "voteCode" : 0,
+      "replies": []
+    }
+  ]
 }

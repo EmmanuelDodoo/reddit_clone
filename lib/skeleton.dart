@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:reddit_clone/models/subreddit.dart';
+import 'package:reddit_clone/models/user.dart';
 
 class Skeleton extends StatelessWidget {
-  Skeleton({Key? key, required this.currPage}) : super(key: key);
+  Skeleton({Key? key, required this.currPage, required User currUser})
+      : _currUser = currUser,
+        super(key: key);
   late final Widget currPage;
-  final List<String> comm = ["Perry,", "The List", "Builder?!"];
+  late final User _currUser;
+  late final List<Subreddit> _userSubreddits;
 
   void _visitUser() {
     print("Going to user profile");
@@ -50,10 +55,9 @@ class Skeleton extends StatelessWidget {
       margin: const EdgeInsets.only(right: 10),
       child: InkWell(
         onTap: () => Scaffold.of(context).openEndDrawer(),
-        child: const CircleAvatar(
+        child: CircleAvatar(
           radius: 20,
-          backgroundImage: NetworkImage(
-              "https://images.pexels.com/photos/5022847/pexels-photo-5022847.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"),
+          backgroundImage: NetworkImage(_currUser.getUserImageURL()),
         ),
       ),
     );
@@ -63,10 +67,9 @@ class Skeleton extends StatelessWidget {
     return DrawerHeader(
       padding: const EdgeInsets.all(0.0),
       margin: const EdgeInsets.fromLTRB(0, 0, 0, 25),
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         image: DecorationImage(
-          image: NetworkImage(
-              "https://images.pexels.com/photos/15828302/pexels-photo-15828302.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"),
+          image: NetworkImage(_currUser.getUserImageURL()),
           fit: BoxFit.cover,
         ),
       ),
@@ -74,9 +77,9 @@ class Skeleton extends StatelessWidget {
         alignment: Alignment.bottomCenter,
         child: InkWell(
             onTap: _signOutSnackBar,
-            child: const Text(
-              "Todo User name",
-              style: TextStyle(fontSize: 30, color: Colors.amberAccent),
+            child: Text(
+              _currUser.getUsername(),
+              style: const TextStyle(fontSize: 30, color: Colors.amberAccent),
             )),
       ),
     );
@@ -99,12 +102,13 @@ class Skeleton extends StatelessWidget {
               ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
+                children: [
                   Text(
-                    "578",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    "${_currUser.getKarma()}",
+                    style: const TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-                  Text(
+                  const Text(
                     "Karma",
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400),
                   ),
@@ -123,12 +127,13 @@ class Skeleton extends StatelessWidget {
               ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
+                children: [
                   Text(
-                    "2y 7m",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    _currUser.userAgeString,
+                    style: const TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-                  Text(
+                  const Text(
                     "Reddit age",
                   )
                 ],
@@ -141,79 +146,90 @@ class Skeleton extends StatelessWidget {
   }
 
   Widget _rightDrawerList() {
-    return Container(
+    return SizedBox(
       height: 225,
-      margin: const EdgeInsets.only(left: 15, top: 10),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           InkWell(
             onTap: _visitUser,
-            child: Row(
-              children: [
-                Container(
-                  margin: const EdgeInsets.only(right: 10),
-                  child: const Icon(Icons.account_circle_outlined),
-                ),
-                const Text(
-                  "My Profile",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-                ),
-              ],
+            child: Container(
+              margin: const EdgeInsets.symmetric(vertical: 15, horizontal: 25),
+              child: Row(
+                children: [
+                  Container(
+                    margin: const EdgeInsets.only(right: 10),
+                    child: const Icon(Icons.account_circle_outlined),
+                  ),
+                  const Text(
+                    "My Profile",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                  ),
+                ],
+              ),
             ),
           ),
           InkWell(
             onTap: _createSubreddit,
-            child: Row(
-              children: [
-                Container(
-                  margin: const EdgeInsets.only(right: 10),
-                  child: const Icon(Icons.create_outlined),
-                ),
-                const Text(
-                  "Create a community",
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w500,
+            child: Container(
+              margin: const EdgeInsets.symmetric(vertical: 15, horizontal: 25),
+              child: Row(
+                children: [
+                  Container(
+                    margin: const EdgeInsets.only(right: 10),
+                    child: const Icon(Icons.create_outlined),
                   ),
-                ),
-              ],
+                  const Text(
+                    "Create a community",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
           InkWell(
             onTap: _openSaved,
-            child: Row(
-              children: [
-                Container(
-                  margin: const EdgeInsets.only(right: 10),
-                  child: const Icon(Icons.bookmarks_outlined),
-                ),
-                const Text(
-                  "Saved",
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w500,
+            child: Container(
+              margin: const EdgeInsets.symmetric(vertical: 15, horizontal: 25),
+              child: Row(
+                children: [
+                  Container(
+                    margin: const EdgeInsets.only(right: 10),
+                    child: const Icon(Icons.bookmarks_outlined),
                   ),
-                ),
-              ],
+                  const Text(
+                    "Saved",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
           InkWell(
             onTap: _openSettings,
-            child: Row(
-              children: [
-                Container(
-                  margin: const EdgeInsets.only(right: 10),
-                  child: const Icon(Icons.settings_outlined),
-                ),
-                const Text(
-                  "Settings",
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w500,
+            child: Container(
+              margin: const EdgeInsets.symmetric(vertical: 15, horizontal: 25),
+              child: Row(
+                children: [
+                  Container(
+                    margin: const EdgeInsets.only(right: 10),
+                    child: const Icon(Icons.settings_outlined),
                   ),
-                ),
-              ],
+                  const Text(
+                    "Settings",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
             ),
           )
         ],
@@ -247,10 +263,10 @@ class Skeleton extends StatelessWidget {
       imageURL =
           "https://images.pexels.com/photos/4016597/pexels-photo-4016597.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1";
     }
-    return Container(
-      margin: const EdgeInsets.only(bottom: 25, left: 20),
-      child: InkWell(
-        onTap: () => _visitSubreddit(id: id),
+    return InkWell(
+      onTap: () => _visitSubreddit(id: id),
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
         child: Row(
           children: [
             CircleAvatar(
@@ -260,7 +276,7 @@ class Skeleton extends StatelessWidget {
             Container(
               margin: const EdgeInsets.only(left: 10),
               child: Text(
-                "r/$name",
+                name,
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
                     fontSize: 16,
@@ -291,7 +307,10 @@ class Skeleton extends StatelessWidget {
               ),
             ),
           ),
-          ...comm.map((e) => _leftDrawerListInator(name: e, id: 1))
+          ..._userSubreddits.map((sub) => _leftDrawerListInator(
+              name: sub.getSubName(),
+              id: sub.id,
+              imageURL: sub.getSubImageURL()))
         ],
       ),
     );
@@ -323,6 +342,7 @@ class Skeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    _userSubreddits = _currUser.getSubreddits();
     return Scaffold(
       drawer: _leftDrawer(),
       endDrawer: _rightDrawer(),

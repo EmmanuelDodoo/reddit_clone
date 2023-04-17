@@ -10,6 +10,7 @@ class Subreddit {
   late String _subImageURL;
 
   Subreddit.fromSimplified({required dynamic source}) {
+    id = source["id"];
     _name = source["name"];
     _subImageURL = source["imageURL"];
   }
