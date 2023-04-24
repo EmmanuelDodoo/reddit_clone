@@ -3,7 +3,7 @@ import 'package:reddit_clone/models/classhelpers.dart';
 import 'package:reddit_clone/models/user.dart';
 import 'package:reddit_clone/models/votes.dart';
 
-class Comment with VotesMixin {
+class Comment with VotingMixin {
   /// The id of this comment instance
   late final int id;
 
@@ -29,6 +29,9 @@ class Comment with VotesMixin {
   /// All replies made to this comment
   late List<Comment> _replies;
 
+  /// Does this comment have any replies
+  bool hasReplies = false;
+
   /// A generator for Comment constructors.
   ///
   /// Sets the instance fields of a Comment
@@ -45,6 +48,8 @@ class Comment with VotesMixin {
     // Recursively get the replies
     List<dynamic> replyList = source["replies"];
     _replies = List.of(replyList.map((e) => Comment.fromMap(map: e)));
+
+    hasReplies = _replies == [];
   }
 
   /// Construct a Comment from a valid json

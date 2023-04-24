@@ -1,5 +1,5 @@
 /// Mixin to handle voting on a vote-able object like a post or comment
-mixin VotesMixin {
+mixin VotingMixin {
   /// The net votes this object has. Should be positive if upvotes >
   /// downvotes and negative if the reverse is true.
   late int votes;

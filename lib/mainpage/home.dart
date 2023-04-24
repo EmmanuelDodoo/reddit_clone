@@ -32,6 +32,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
     );
   }
 
+  //Prevents the view from defaulting to the beginning
   @override
   bool get wantKeepAlive => true;
 }

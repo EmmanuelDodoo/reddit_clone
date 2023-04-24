@@ -7,7 +7,9 @@
   },
   "user": {
     "id": 25,
-    "name": "blackcat"
+    "name": "blackcat",
+    "userImageURL": "https://images.pexels.com/photos/1749900/pexels-photo-1749900.jpeg"
+
   },
   "timestamp":	1680738522,
   "title": "Just Text",
@@ -22,7 +24,8 @@
       "ancestorId": -1,
       "user": {
         "id": 24,
-        "name": "CommenterThere"
+        "name": "CommenterThere",
+        "userImageURL": "https://images.pexels.com/photos/5821029/pexels-photo-5821029.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
       },
       "timestamp": 1680738622,
       "contents": "I'm losing it",

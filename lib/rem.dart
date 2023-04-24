@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import "package:reddit_clone/models/post-card.dart";
+import "package:reddit_clone/models/default-post-card.dart";
 import 'package:reddit_clone/models/post.dart';
 
 class MyStatefulWidget extends StatefulWidget {
@@ -11,7 +11,6 @@ class MyStatefulWidget extends StatefulWidget {
 }
 
 class _MyStatefulWidgetState extends State<MyStatefulWidget> {
-  final bool _imagepost = true;
   final int _votes = 999;
   final int _comments = 70;
   final bool _upvoted = true;
@@ -338,12 +337,12 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
     return Future(() => bundle.loadString("json/$file"));
   }
 
-  PostCard makeCard(String json) {
+  DefaultPostCard makeCard(String json) {
     Post ps = Post.fromJSON(json: json);
-    return PostCard(post: ps);
+    return DefaultPostCard(post: ps);
   }
 
-  Future<PostCard> loadCard(
+  Future<DefaultPostCard> loadCard(
       {required BuildContext context, required String file}) {
     Future<String> jsonContents = readjson(context: context, file: file);
     return jsonContents.then((value) => makeCard(value));
@@ -351,7 +350,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
 
   @override
   Widget build(BuildContext context) {
-    String file = "none.json";
+    String file = "text.json";
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,

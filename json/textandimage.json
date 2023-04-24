@@ -7,7 +7,9 @@
   },
   "user": {
     "id": 25,
-    "name": "blackcat"
+    "name": "blackcat",
+    "userImageURL": "https://images.pexels.com/photos/1749900/pexels-photo-1749900.jpeg"
+
   },
   "timestamp":	1641544417,
   "title": "Both text and image",

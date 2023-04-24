@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:reddit_clone/models/comment-popup-menu.dart';
 import 'package:reddit_clone/models/comment.dart';
-import 'package:reddit_clone/models/post.dart';
 import 'package:reddit_clone/postpage/comment-vote-section.dart';
 
 class CommentCard extends StatefulWidget {
@@ -170,53 +169,6 @@ class _CommentCardState extends State<CommentCard> {
       curve: Curves.easeIn,
       child:
           _isCollapsed ? _collapsedVersion(context) : _expandedVersion(context),
-    );
-  }
-}
-
-class MyStatelessWidget extends StatelessWidget {
-  const MyStatelessWidget({Key? key}) : super(key: key);
-  final String file = "image.json";
-
-  Future<String> readjson(
-      {required BuildContext context, required String file}) async {
-    AssetBundle bundle = DefaultAssetBundle.of(context);
-    return Future(() => bundle.loadString("json/$file"));
-  }
-
-  List<CommentCard> makeComments(String json) {
-    Post ps = Post.fromJSON(json: json, withComments: true);
-    List<Comment> cms = ps.getComments();
-    return List.from(cms.map((comment) => CommentCard(comment: comment)));
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: const Text("Comment card"),
-      ),
-      body: Center(
-        child: FutureBuilder(
-          future: readjson(context: context, file: file),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.done &&
-                snapshot.data != null) {
-              List<CommentCard> lst = makeComments(snapshot.data ?? "");
-              return ListView.separated(
-                  padding: const EdgeInsets.only(top: 5),
-                  itemBuilder: (_, index) => lst[index],
-                  separatorBuilder: (_, index) => const Divider(
-                        height: 5,
-                      ),
-                  itemCount: lst.length);
-            } else {
-              return const CircularProgressIndicator();
-            }
-          },
-        ),
-      ),
     );
   }
 }

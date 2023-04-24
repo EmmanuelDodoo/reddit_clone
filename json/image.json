@@ -7,7 +7,9 @@
   },
   "user": {
   "id": 25,
-  "name": "blackcat"
+  "name": "blackcat",
+    "userImageURL": "https://images.pexels.com/photos/1749900/pexels-photo-1749900.jpeg"
+
   },
   "timestamp":	1680806922,
   "title": "Just Image",
@@ -23,13 +25,49 @@
       "ancestorId": -1,
       "user": {
         "id": 24,
-        "name": "CommenterThere"
+        "name": "CommenterThere",
+        "userImageURL": "https://images.pexels.com/photos/5821029/pexels-photo-5821029.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+
       },
       "timestamp": 1680738622,
       "contents": "I'm losing it",
       "votes": 22,
-      "voteCode": -1,
-      "replies": []
+      "voteCode": 1,
+      "replies": [
+        {
+          "id": 150,
+          "postId" : 25,
+          "ancestorId": 123,
+          "user": {
+            "id": 24,
+            "name": "CommenterThere",
+            "userImageURL": "https://images.pexels.com/photos/5821029/pexels-photo-5821029.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+
+          },
+          "timestamp": 1680738622,
+          "contents": "I'm losing it",
+          "votes": 22,
+          "voteCode": 0,
+          "replies": [
+            {
+              "id": 170,
+              "postId" : 25,
+              "ancestorId": 150,
+              "user": {
+                "id": 24,
+                "name": "CommenterThere",
+                "userImageURL": "https://images.pexels.com/photos/5821029/pexels-photo-5821029.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+
+              },
+              "timestamp": 1680738622,
+              "contents": "I'm losing it",
+              "votes": 22,
+              "voteCode": -1,
+              "replies": []
+            }
+          ]
+        }
+      ]
     },
     {
       "id": 1234,
@@ -37,7 +75,9 @@
       "ancestorId": -1,
       "user": {
         "id": 42,
-        "name": "CommenterHere"
+        "name": "CommenterHere",
+        "userImageURL": "https://images.pexels.com/photos/5821029/pexels-photo-5821029.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+
       },
       "timestamp": 1680738622,
       "userImage": "",

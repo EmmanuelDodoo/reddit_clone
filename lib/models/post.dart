@@ -6,7 +6,7 @@ import 'package:reddit_clone/models/comment.dart';
 import 'package:reddit_clone/models/votes.dart';
 
 /// Representation of a post
-class Post with VotesMixin {
+class Post with VotingMixin {
   /// The id of this post instance
   late final int id;
 
@@ -73,8 +73,8 @@ class Post with VotesMixin {
     _generator(source: map);
 
     if (withComments) {
-      List<Map<String, dynamic>> commentsMap = map["comments"];
-      _comments = List.from(commentsMap.map((e) => Comment.fromMap(map: map)));
+      List<dynamic> commentsMap = map["comments"];
+      _comments = List.from(commentsMap.map((e) => Comment.fromMap(map: e)));
     } else {
       _comments = [];
     }
