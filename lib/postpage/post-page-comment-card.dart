@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:reddit_clone/models/comment-popup-menu.dart';
 import 'package:reddit_clone/models/comment.dart';
+import 'package:reddit_clone/postpage/AddCommentPage.dart';
 import 'package:reddit_clone/postpage/comment-vote-section.dart';
 
 class CommentCard extends StatefulWidget {
@@ -31,6 +32,17 @@ class _CommentCardState extends State<CommentCard> {
     print("View use tapped");
   }
 
+  void _reply() {
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => AddCommentPage(replyable: _comment)));
+  }
+
+  void _collapse() {
+    setState(() {
+      _isCollapsed = true;
+    });
+  }
+
   Widget _userAvatar() {
     return Container(
         margin: const EdgeInsets.only(right: 10, left: 5, top: 5),
@@ -44,12 +56,6 @@ class _CommentCardState extends State<CommentCard> {
         ));
   }
 
-  void _collapse() {
-    setState(() {
-      _isCollapsed = true;
-    });
-  }
-
   Widget _footer() {
     return Container(
       child: Row(
@@ -59,8 +65,10 @@ class _CommentCardState extends State<CommentCard> {
             collapse: _collapse,
           ),
           Container(
-              margin: const EdgeInsets.only(left: 10, right: 10),
-              child: const Icon(Icons.turn_left)),
+            margin: const EdgeInsets.only(left: 10, right: 10),
+            child: IconButton(
+                onPressed: _reply, icon: const Icon(Icons.turn_left)),
+          ),
           Container(
             margin: const EdgeInsets.only(right: 10),
             child: CommentVoteSection(

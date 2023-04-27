@@ -3,16 +3,17 @@ import 'package:reddit_clone/models/default-popup-menu.dart';
 import 'package:reddit_clone/models/post.dart';
 import 'package:reddit_clone/models/rightdrawer.dart';
 import 'package:reddit_clone/models/user.dart';
+import 'package:reddit_clone/postpage/AddCommentPage.dart';
 import 'package:reddit_clone/postpage/post-page-comment-card.dart';
 import 'package:reddit_clone/postpage/post-page-footer.dart';
 import 'package:reddit_clone/postpage/post-page-post-card.dart';
+import 'package:reddit_clone/inherited-data.dart';
 
 import '../models/comment.dart';
 
 class PostPage extends StatelessWidget {
-  PostPage({Key? key, required User currUser, required Post post})
-      : _currUser = currUser,
-        _post = post,
+  PostPage({Key? key, required Post post})
+      : _post = post,
         _comments = post.getComments(),
         super(key: key);
 
@@ -30,8 +31,9 @@ class PostPage extends StatelessWidget {
     return Future<void>.delayed(const Duration(seconds: 3));
   }
 
-  void _commentOnPost() {
-    print("Comment on post tapped");
+  void _commentOnPost(BuildContext context) {
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => AddCommentPage(replyable: _post)));
   }
 
   Widget _emptyComments() {
@@ -76,7 +78,7 @@ class PostPage extends StatelessWidget {
 
   Widget _textField(BuildContext context) {
     return InkWell(
-      onTap: _commentOnPost,
+      onTap: () => _commentOnPost(context),
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 5),
         padding: const EdgeInsets.only(left: 15),
@@ -137,28 +139,31 @@ class PostPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      endDrawer: RightDrawer(
-        currUser: _currUser,
-      ),
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: _goBack,
+    _currUser = InheritedData.of<User>(context).data;
+    return SafeArea(
+      child: Scaffold(
+        endDrawer: RightDrawer(
+          currUser: _currUser,
         ),
-        actions: [
-          const DefaultPopUp(),
-          Builder(
-            builder: (BuildContext context) {
-              return _userAvatar(context);
-            },
+        appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () => Navigator.of(context).pop(),
           ),
-        ],
-      ),
-      body: _body(),
-      bottomNavigationBar: BottomAppBar(
-        height: 50.0,
-        child: _textField(context),
+          actions: [
+            const DefaultPopUp(),
+            Builder(
+              builder: (BuildContext context) {
+                return _userAvatar(context);
+              },
+            ),
+          ],
+        ),
+        body: _body(),
+        bottomNavigationBar: BottomAppBar(
+          height: 50.0,
+          child: _textField(context),
+        ),
       ),
     );
   }

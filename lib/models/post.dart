@@ -37,6 +37,9 @@ class Post with VotingMixin implements IReplyable {
   /// The text contents of this post if any. If none, then an empty string ""
   late String _contents;
 
+  /// The total number of comments on this post, including replies.
+  late final int commentNumber;
+
   @override
   late final String context;
 
@@ -45,9 +48,6 @@ class Post with VotingMixin implements IReplyable {
 
   /// All comments under this post
   late List<Comment> _comments;
-
-  /// The number of comments on this post. Only considers direct comments.
-  late int commentNumber;
 
   // A generator for Post constructors.
   ///
@@ -63,8 +63,8 @@ class Post with VotingMixin implements IReplyable {
     _imageInPost = source["imagePresent"];
     votes = source["votes"];
     voteCode = source["voteCode"];
+    commentNumber = source["commentNumber"];
     // No need to construct all those comments just to get the length of the list
-    commentNumber = source["comments"].length;
     if (_imageInPost) {
       _postImageURL = source["imageURL"];
     } else {

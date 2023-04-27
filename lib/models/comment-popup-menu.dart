@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:reddit_clone/models/base-popup-menu.dart';
 
+/// Pop up specifically for comments
 class CommentPopUp extends BasePopUp {
-  CommentPopUp({Key? key, required void Function() this.collapse})
+  const CommentPopUp({Key? key, required void Function() this.collapse})
       : super(key: key);
-  late final Function() collapse;
+
+  /// The function used to collapse this comments
+  final Function() collapse;
 
   @override
   Widget build(BuildContext context) {

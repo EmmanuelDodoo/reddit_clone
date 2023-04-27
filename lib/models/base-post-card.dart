@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:reddit_clone/models/post.dart';
+import 'package:reddit_clone/postpage/postpage.dart';
 import 'default-popup-menu.dart';
 
 abstract class BasePostCard extends StatelessWidget {
@@ -21,8 +22,9 @@ abstract class BasePostCard extends StatelessWidget {
     print('Go to user profile');
   }
 
-  void openPost() {
-    print('Open post');
+  void openPost(BuildContext context) {
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (context) => PostPage(post: post)));
   }
 
   void onDoubleTap() {
@@ -184,7 +186,7 @@ abstract class BasePostCard extends StatelessWidget {
       color: Colors.amberAccent,
       child: InkWell(
         splashColor: Colors.blueGrey.withAlpha(75),
-        onTap: openPost,
+        onTap: () => openPost(context),
         onDoubleTap: onDoubleTap,
         child: SizedBox(
           width: MediaQuery.of(context).size.width * 0.95,

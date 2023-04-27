@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:reddit_clone/models/rightdrawer.dart';
 import 'package:reddit_clone/models/subreddit.dart';
 import 'package:reddit_clone/models/user.dart';
+import 'package:reddit_clone/inherited-data.dart';
 
 class Skeleton extends StatelessWidget {
-  Skeleton({Key? key, required this.currPage, required User currUser})
-      : _currUser = currUser,
-        super(key: key);
+  Skeleton({Key? key, required this.currPage}) : super(key: key);
   late final Widget currPage;
   late final User _currUser;
   late final List<Subreddit> _userSubreddits;
@@ -129,6 +128,7 @@ class Skeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    _currUser = InheritedData.of<User>(context).data;
     _userSubreddits = _currUser.getSubreddits();
     return Scaffold(
       drawer: _leftDrawer(),

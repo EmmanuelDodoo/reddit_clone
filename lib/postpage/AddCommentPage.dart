@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:reddit_clone/models/replyable.dart';
+import 'package:reddit_clone/models/user.dart';
+
+import '../inherited-data.dart';
 
 class AddCommentPage extends StatelessWidget {
   AddCommentPage({Key? key, required IReplyable replyable})
       : _replyable = replyable,
         super(key: key);
   late final IReplyable _replyable;
+  late final User _user;
 
   final TextEditingController _controller = TextEditingController();
 
@@ -28,9 +32,9 @@ class AddCommentPage extends StatelessWidget {
     );
   }
 
-  Widget _cancelButton() {
+  Widget _cancelButton(BuildContext context) {
     return IconButton(
-      onPressed: _goBack,
+      onPressed: () => Navigator.of(context).pop(),
       icon: const Icon(
         Icons.close,
         size: 30,
@@ -38,13 +42,13 @@ class AddCommentPage extends StatelessWidget {
     );
   }
 
-  Widget _header() {
+  Widget _header(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(top: 20, bottom: 10),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _cancelButton(),
+          _cancelButton(context),
           const Text(
             "Add a comment",
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
@@ -98,19 +102,22 @@ class AddCommentPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: true,
-      floatingActionButton: _floater(),
-      body: Column(
-        mainAxisSize: MainAxisSize.min,
-        // crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _header(),
-          _context(),
-          Expanded(
-            child: _textField(context),
-          ),
-        ],
+    _user = InheritedData.of<User>(context).data;
+    return SafeArea(
+      child: Scaffold(
+        resizeToAvoidBottomInset: true,
+        floatingActionButton: _floater(),
+        body: Column(
+          mainAxisSize: MainAxisSize.min,
+          // crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _header(context),
+            _context(),
+            Expanded(
+              child: _textField(context),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -9,7 +9,7 @@ class PostPagePostCard extends BasePostCard {
   }) : super(key: key, post: post, withCard: false);
 
   @override
-  void openPost() {}
+  void openPost(BuildContext context) {}
 
   @override
   void onDoubleTap() {}
