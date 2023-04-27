@@ -33,34 +33,34 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: FutureBuilder(
-        future: readUserJSON(context: context, file: userfile),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done &&
-              snapshot.data != null) {
-            User user = makeDummyUser(snapshot.data ?? "");
-            // return Skeleton(
-            //     currPage: const MainPage(),
-            //     currUser: makeDummyUser(snapshot.data ?? ""));
-            // return PostPage(currUser: makeDummyUser(snapshot.data ?? ""),);
-            return FutureBuilder(
-              future: readPostJSON(context: context, file: postfile),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.done &&
-                    snapshot.data != null) {
-                  return PostPage(
-                      currUser: user, post: makeDummyPost(snapshot.data ?? ""));
-                } else {
-                  return const CircularProgressIndicator();
-                }
-              },
-            );
-          } else {
-            return const CircularProgressIndicator();
-          }
-        },
+      home: SafeArea(
+        child: FutureBuilder(
+          future: readUserJSON(context: context, file: userfile),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done &&
+                snapshot.data != null) {
+              User user = makeDummyUser(snapshot.data ?? "");
+              return Skeleton(
+                  currPage: const MainPage(),
+                  currUser: makeDummyUser(snapshot.data ?? ""));
+              // return FutureBuilder(
+              //   future: readPostJSON(context: context, file: postfile),
+              //   builder: (context, snapshot) {
+              //     if (snapshot.connectionState == ConnectionState.done &&
+              //         snapshot.data != null) {
+              //       return PostPage(
+              //           currUser: user, post: makeDummyPost(snapshot.data ?? ""));
+              //     } else {
+              //       return const CircularProgressIndicator();
+              //     }
+              //   },
+              // );
+            } else {
+              return const CircularProgressIndicator();
+            }
+          },
+        ),
       ),
-      // home: const MyStatelessWidget(),
     );
   }
 }

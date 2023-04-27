@@ -8,9 +8,9 @@ mixin VotingMixin {
   /// -1 if downvoted, 0 if not voted, 1 if upvoted
   late int voteCode;
 
-  /// Used for specifying which route any APIs should call.
+  /// Used for specifying which route any APIs should call to vote.
   /// For example: a post would have segment {"posts/} to call /api/posts/....
-  late final String pathSegment;
+  late final String voteRoute;
 
   int getVotes() => votes;
 

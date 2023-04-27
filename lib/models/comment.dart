@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'package:reddit_clone/models/classhelpers.dart';
+import 'package:reddit_clone/models/replyable.dart';
 import 'package:reddit_clone/models/user.dart';
 import 'package:reddit_clone/models/votes.dart';
 
-class Comment with VotingMixin {
+class Comment with VotingMixin implements IReplyable {
   /// The id of this comment instance
+  @override
   late final int id;
 
   /// The post this was made on
@@ -26,11 +28,17 @@ class Comment with VotingMixin {
   /// The contents of this comment
   late String _contents;
 
+  @override
+  late String context;
+
   /// All replies made to this comment
   late List<Comment> _replies;
 
   /// Does this comment have any replies
   bool hasReplies = false;
+
+  @override
+  late final String replyRoute;
 
   /// A generator for Comment constructors.
   ///
@@ -50,6 +58,9 @@ class Comment with VotingMixin {
     _replies = List.of(replyList.map((e) => Comment.fromMap(map: e)));
 
     hasReplies = _replies == [];
+    context = _contents;
+    voteRoute = "posts/$postId/comments/$id/vote";
+    replyRoute = "posts/$postId/comments/$id/vote";
   }
 
   /// Construct a Comment from a valid json
@@ -67,6 +78,9 @@ class Comment with VotingMixin {
   }
 
   String getContents() => _contents;
+
+  @override
+  void reply() {}
 
   ///Updates the contents of this comment both locally
   /// and on the backend with {newContent}.

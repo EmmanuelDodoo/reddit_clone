@@ -1,13 +1,15 @@
 import 'dart:convert';
 import 'package:reddit_clone/models/classhelpers.dart';
+import 'package:reddit_clone/models/replyable.dart';
 import 'package:reddit_clone/models/subreddit.dart';
 import 'package:reddit_clone/models/user.dart';
 import 'package:reddit_clone/models/comment.dart';
 import 'package:reddit_clone/models/votes.dart';
 
 /// Representation of a post
-class Post with VotingMixin {
+class Post with VotingMixin implements IReplyable {
   /// The id of this post instance
+  @override
   late final int id;
 
   /// The simplified Subreddit this post was made on
@@ -34,6 +36,12 @@ class Post with VotingMixin {
 
   /// The text contents of this post if any. If none, then an empty string ""
   late String _contents;
+
+  @override
+  late final String context;
+
+  @override
+  late final String replyRoute;
 
   /// All comments under this post
   late List<Comment> _comments;
@@ -62,8 +70,9 @@ class Post with VotingMixin {
     } else {
       _postImageURL = "";
     }
-
-    pathSegment = "posts/";
+    context = _contents == "" ? _title : _contents;
+    voteRoute = "posts/$id/vote";
+    replyRoute = "posts/$id/reply";
   }
 
   /// Create a Post object with the given valid json.
@@ -95,6 +104,9 @@ class Post with VotingMixin {
       _comments = [];
     }
   }
+
+  @override
+  void reply() {}
 
   String getUserName() => _user.getUsername();
 

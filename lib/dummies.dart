@@ -4,6 +4,8 @@ import 'package:reddit_clone/models/user.dart';
 import 'models/default-post-card.dart';
 import 'models/post.dart';
 
+List<String> posts = ["none", "text", "image", "textandimage"];
+
 Future<String> readUserJSON(
     {required BuildContext context, required String file}) async {
   AssetBundle bundle = DefaultAssetBundle.of(context);
@@ -28,4 +30,23 @@ Future<String> readPostJSON(
 
 Post makeDummyPost(String json) {
   return Post.fromJSON(json: json, withComments: true);
+}
+
+List<Widget> createAllPosts(BuildContext context) {
+  List<String> postswithextension = List.from(posts.map((p) => "$p.json"));
+  List<Widget> postcards =
+      List.from(postswithextension.map((e) => FutureBuilder(
+            future: readPostJSON(context: context, file: e),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.done &&
+                  snapshot.data != null) {
+                return DefaultPostCard(
+                    post: makeDummyPost(snapshot.data ?? ""));
+              } else {
+                return const CircularProgressIndicator();
+              }
+            },
+          )));
+
+  return postcards;
 }
