@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:reddit_clone/models/default-footer.dart';
+import 'package:reddit_clone/components/default-footer.dart';
 import '../models/post.dart';
 
 class PostPageFooter extends StatelessWidget {

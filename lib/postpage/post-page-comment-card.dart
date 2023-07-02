@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:reddit_clone/models/comment-popup-menu.dart';
+import 'package:reddit_clone/components/comment-popup-menu.dart';
 import 'package:reddit_clone/models/comment.dart';
 import 'package:reddit_clone/postpage/AddCommentPage.dart';
 import 'package:reddit_clone/postpage/comment-vote-section.dart';

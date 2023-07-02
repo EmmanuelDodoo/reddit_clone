@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:reddit_clone/models/base-post-card.dart';
-import 'package:reddit_clone/models/default-footer.dart';
+import 'package:reddit_clone/components/default-footer.dart';
 import 'package:reddit_clone/models/post.dart';
 
 class DefaultPostCard extends BasePostCard {

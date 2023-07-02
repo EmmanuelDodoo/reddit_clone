@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import "package:reddit_clone/models/default-post-card.dart";
+import 'package:reddit_clone/components/default-post-card.dart';
 import 'package:reddit_clone/models/post.dart';
 
 class MyStatefulWidget extends StatefulWidget {

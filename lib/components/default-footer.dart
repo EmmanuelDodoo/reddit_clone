@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:reddit_clone/models/post.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'classhelpers.dart';
+import '../models/classhelpers.dart';
 
 ///Stateful widget for the footer of a post since that's the
 /// only section which will change with user interaction

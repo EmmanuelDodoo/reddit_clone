@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:reddit_clone/models/default-popup-menu.dart';
+import 'package:reddit_clone/components/default-popup-menu.dart';
 import 'package:reddit_clone/models/post.dart';
-import 'package:reddit_clone/models/rightdrawer.dart';
+import 'package:reddit_clone/components/rightdrawer.dart';
 import 'package:reddit_clone/models/user.dart';
 import 'package:reddit_clone/postpage/AddCommentPage.dart';
 import 'package:reddit_clone/postpage/post-page-comment-card.dart';
 import 'package:reddit_clone/postpage/post-page-footer.dart';
 import 'package:reddit_clone/postpage/post-page-post-card.dart';
-import 'package:reddit_clone/inherited-data.dart';
+import 'package:reddit_clone/models/inherited-data.dart';
 
 import '../models/comment.dart';
 
@@ -20,12 +20,8 @@ class PostPage extends StatelessWidget {
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
       GlobalKey<RefreshIndicatorState>();
   late final Post _post;
-  late final User _currUser;
+  late User _currUser;
   late final List<Comment> _comments;
-
-  void _goBack() {
-    print("Go back pressed");
-  }
 
   Future<void> _refresh() async {
     return Future<void>.delayed(const Duration(seconds: 3));
@@ -43,9 +39,9 @@ class PostPage extends StatelessWidget {
         height: 300,
         // width: 300,
         // color: Colors.purple,
-        child: Column(
+        child: const Column(
           mainAxisSize: MainAxisSize.min,
-          children: const [
+          children: [
             Icon(
               Icons.mood_outlined,
               size: 50,

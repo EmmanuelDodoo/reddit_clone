@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:reddit_clone/models/rightdrawer.dart';
+import 'package:reddit_clone/components/rightdrawer.dart';
 import 'package:reddit_clone/models/subreddit.dart';
 import 'package:reddit_clone/models/user.dart';
-import 'package:reddit_clone/inherited-data.dart';
+import 'package:reddit_clone/models/inherited-data.dart';
 
 class Skeleton extends StatelessWidget {
   Skeleton({Key? key, required this.currPage}) : super(key: key);
   late final Widget currPage;
-  late final User _currUser;
-  late final List<Subreddit> _userSubreddits;
+  late User _currUser;
+  late List<Subreddit> _userSubreddits;
 
   void _visitSubreddit({required int id}) {
     print("Visiting subreddit with id $id");

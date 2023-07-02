@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:reddit_clone/models/post.dart';
 import 'package:reddit_clone/postpage/postpage.dart';
-import 'default-popup-menu.dart';
+import '../components/default-popup-menu.dart';
 
 abstract class BasePostCard extends StatelessWidget {
   late final Post post;

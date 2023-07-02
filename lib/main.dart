@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'mainpage/mainpage.dart';
 import 'models/user.dart';
-import 'inherited-data.dart';
+import 'models/inherited-data.dart';
 // import 'rem.dart';
 import 'skeleton.dart';
 import 'temp.dart';
@@ -50,10 +50,10 @@ class _MyAppState extends State<MyApp> {
         title: "Testing User propagation",
         theme: _theme,
         home: SafeArea(
-          // child: Skeleton(
-          //   currPage: MainPage(),
-          // ),
-          child: Test(),
+          child: Skeleton(
+            currPage: MainPage(),
+          ),
+          // child: Test(),
         ),
       ),
     );

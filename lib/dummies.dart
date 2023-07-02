@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:reddit_clone/models/user.dart';
 
-import 'models/default-post-card.dart';
+import 'components/default-post-card.dart';
 import 'models/post.dart';
 
 List<String> posts = ["none", "text", "image", "textandimage"];

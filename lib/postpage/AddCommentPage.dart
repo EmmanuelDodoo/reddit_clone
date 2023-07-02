@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:reddit_clone/models/replyable.dart';
 import 'package:reddit_clone/models/user.dart';
 
-import '../inherited-data.dart';
+import '../models/inherited-data.dart';
 
 class AddCommentPage extends StatelessWidget {
   AddCommentPage({Key? key, required IReplyable replyable})
       : _replyable = replyable,
         super(key: key);
   late final IReplyable _replyable;
-  late final User _user;
+  late User _user;
 
   final TextEditingController _controller = TextEditingController();
 
