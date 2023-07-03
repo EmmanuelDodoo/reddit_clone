@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:reddit_clone/models/user.dart';
 
+import '../userprofilepage/userprofile.dart';
+
 class RightDrawer extends StatelessWidget {
   RightDrawer({Key? key, required User currUser})
       : _currUser = currUser,
         super(key: key);
   late final User _currUser;
 
-  void _visitUser() {
+  void _visitUser(BuildContext context) {
+    Navigator.of(context).pop();
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (context) => UserProfile()));
+
     print("Going to user profile");
   }
 
@@ -109,14 +115,14 @@ class RightDrawer extends StatelessWidget {
     );
   }
 
-  Widget _rightDrawerList() {
+  Widget _rightDrawerList(BuildContext context) {
     return SizedBox(
       height: 225,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           InkWell(
-            onTap: _visitUser,
+            onTap: () => _visitUser(context),
             child: Container(
               margin: const EdgeInsets.symmetric(vertical: 15, horizontal: 25),
               child: Row(
@@ -216,7 +222,7 @@ class RightDrawer extends StatelessWidget {
             height: .6,
             color: Colors.blueGrey,
           ),
-          _rightDrawerList(),
+          _rightDrawerList(context),
         ],
       ),
     );
