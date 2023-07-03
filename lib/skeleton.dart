@@ -132,9 +132,7 @@ class Skeleton extends StatelessWidget {
     _userSubreddits = _currUser.getSubreddits();
     return Scaffold(
       drawer: _leftDrawer(),
-      endDrawer: RightDrawer(
-        currUser: _currUser,
-      ),
+      endDrawer: RightDrawer(),
       appBar: AppBar(
         backgroundColor: AppBarTheme.of(context).backgroundColor,
         elevation: 0,

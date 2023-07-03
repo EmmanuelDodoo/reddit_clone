@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:reddit_clone/models/user.dart';
+import 'package:reddit_clone/usersettingspage/usersettings.dart';
 
 import '../models/inherited-data.dart';
 import './posts.dart';
@@ -9,11 +10,12 @@ class UserProfile extends StatelessWidget {
   UserProfile({Key? key}) : super(key: key);
   late User _currUser;
 
-  void handleEditProfile() {
-    print("Edit button clicked");
+  void handleEditProfile(BuildContext context) {
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (context) => UserSettings()));
   }
 
-  Widget _usernameSection() {
+  Widget _usernameSection(BuildContext context) {
     return Container(
         margin: const EdgeInsets.only(bottom: 60),
         padding: const EdgeInsets.all(0),
@@ -30,7 +32,7 @@ class UserProfile extends StatelessWidget {
                   ),
                 ),
                 IconButton(
-                  onPressed: handleEditProfile,
+                  onPressed: () => handleEditProfile(context),
                   icon: const Icon(
                     Icons.edit_rounded,
                     color: Colors.white,
@@ -76,7 +78,7 @@ class UserProfile extends StatelessWidget {
           Column(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              _usernameSection(),
+              _usernameSection(context),
             ],
           ),
         ],

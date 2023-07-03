@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:reddit_clone/models/user.dart';
+import 'package:reddit_clone/usersettingspage/usersettings.dart';
 
+import '../models/inherited-data.dart';
 import '../userprofilepage/userprofile.dart';
 
 class RightDrawer extends StatelessWidget {
-  RightDrawer({Key? key, required User currUser})
-      : _currUser = currUser,
-        super(key: key);
-  late final User _currUser;
+  RightDrawer({Key? key}) : super(key: key);
+  late User _currUser;
 
   void _visitUser(BuildContext context) {
     Navigator.of(context).pop();
@@ -29,8 +29,10 @@ class RightDrawer extends StatelessWidget {
     print("Open saved tapped");
   }
 
-  void _openSettings() {
-    print("Open settings");
+  void _openSettings(BuildContext context) {
+    Navigator.of(context).pop();
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (context) => UserSettings()));
   }
 
   Widget _rightDrawerHeader() {
@@ -182,7 +184,7 @@ class RightDrawer extends StatelessWidget {
             ),
           ),
           InkWell(
-            onTap: _openSettings,
+            onTap: () => _openSettings(context),
             child: Container(
               margin: const EdgeInsets.symmetric(vertical: 15, horizontal: 25),
               child: Row(
@@ -209,6 +211,7 @@ class RightDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    _currUser = InheritedData.of<User>(context).data;
     return Drawer(
       child: ListView(
         children: [

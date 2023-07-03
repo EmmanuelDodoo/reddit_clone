@@ -138,9 +138,7 @@ class PostPage extends StatelessWidget {
     _currUser = InheritedData.of<User>(context).data;
     return SafeArea(
       child: Scaffold(
-        endDrawer: RightDrawer(
-          currUser: _currUser,
-        ),
+        endDrawer: RightDrawer(),
         appBar: AppBar(
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
