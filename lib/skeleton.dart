@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:reddit_clone/components/rightdrawer.dart';
+import 'package:reddit_clone/createpage/createpage.dart';
+import 'package:reddit_clone/mainpage/mainpage.dart';
 import 'package:reddit_clone/models/subreddit.dart';
 import 'package:reddit_clone/models/user.dart';
 import 'package:reddit_clone/models/inherited-data.dart';
@@ -14,19 +16,21 @@ class Skeleton extends StatelessWidget {
     print("Visiting subreddit with id $id");
   }
 
-  void _goToHome() {
-    print("Go home tapped");
+  void _goToHome(BuildContext context) {
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (context) => const MainPage()));
   }
 
-  void _goToCreate() {
-    print("go create tapped");
+  void _goToCreate(BuildContext context) {
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (context) => CreatePage()));
   }
 
-  void _goToChat() {
+  void _goToChat(BuildContext context) {
     print("Go to chat tapped");
   }
 
-  void _goToNotifications() {
+  void _goToNotifications(BuildContext context) {
     print("Go to notifications tapped");
   }
 
@@ -152,19 +156,19 @@ class Skeleton extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[
             IconButton(
-              onPressed: _goToHome,
+              onPressed: () => _goToHome(context),
               icon: bottomIcons(identifier: "MainPage"),
             ),
             IconButton(
-              onPressed: _goToCreate,
+              onPressed: () => _goToCreate(context),
               icon: bottomIcons(identifier: "CreatePage"),
             ),
             IconButton(
-              onPressed: _goToChat,
+              onPressed: () => _goToChat(context),
               icon: bottomIcons(identifier: "ChatsPage"),
             ),
             IconButton(
-              onPressed: _goToNotifications,
+              onPressed: () => _goToNotifications(context),
               icon: bottomIcons(identifier: "NotificationsPage"),
             )
           ],

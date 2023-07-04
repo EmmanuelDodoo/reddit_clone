@@ -17,17 +17,13 @@ class AddCommentPage extends StatelessWidget {
     print(_controller.text);
   }
 
-  void _post() {
+  void _handlePosting() {
     print("Posting");
-  }
-
-  void _goBack() {
-    print("Go back tapped");
   }
 
   Widget _floater() {
     return FloatingActionButton(
-      onPressed: _post,
+      onPressed: _handlePosting,
       child: const Icon(Icons.send),
     );
   }
@@ -109,7 +105,6 @@ class AddCommentPage extends StatelessWidget {
         floatingActionButton: _floater(),
         body: Column(
           mainAxisSize: MainAxisSize.min,
-          // crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _header(context),
             _context(),
