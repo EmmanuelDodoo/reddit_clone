@@ -32,22 +32,18 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
-  Widget _app() {
-    if (_user == null) {
-      return MaterialApp(
-        title: "Testing user propagation",
-        theme: _theme,
-        home: const Scaffold(
-          //Todo A logo could be displayed instead of the progress bar
-          body: Center(child: CircularProgressIndicator()),
-        ),
-      );
-    }
+  @override
+  void initState() {
+    loadUser();
+    super.initState();
+  }
 
-    return InheritedData<User>(
-      data: _user!,
+  @override
+  Widget build(BuildContext context) {
+    return InheritedData<User?>(
+      data: _user,
       child: MaterialApp(
-        title: "Testing User propagation",
+        title: "Reddit Clone",
         theme: _theme,
         home: SafeArea(
           child: Skeleton(
@@ -57,16 +53,5 @@ class _MyAppState extends State<MyApp> {
         ),
       ),
     );
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    loadUser();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return _app();
   }
 }

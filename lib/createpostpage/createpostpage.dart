@@ -6,19 +6,19 @@ import 'package:reddit_clone/models/user.dart';
 import 'package:collection/collection.dart';
 import '../models/inherited-data.dart';
 
-class CreatePage extends StatefulWidget {
-  CreatePage({Key? key}) : super(key: key);
+class CreatePostPage extends StatefulWidget {
+  CreatePostPage({Key? key}) : super(key: key);
 
   @override
-  State<CreatePage> createState() => _CreatePageState();
+  State<CreatePostPage> createState() => _CreatePostPageState();
 }
 
-class _CreatePageState extends State<CreatePage> {
+class _CreatePostPageState extends State<CreatePostPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _contentController = TextEditingController();
 
-  late User _currUser;
+  User? _currUser;
   File? _selectedImage;
   Subreddit? _selectedSubreddit;
 
@@ -63,7 +63,7 @@ class _CreatePageState extends State<CreatePage> {
   }
 
   Widget _subredditDropdown(BuildContext context) {
-    List<Subreddit> options = _currUser.getSubreddits();
+    List<Subreddit> options = _currUser!.getSubreddits();
     return DropdownButton<Subreddit>(
       hint: const Text(
         "Select Subreddit",
@@ -150,7 +150,7 @@ class _CreatePageState extends State<CreatePage> {
 
   Widget _subreddit(BuildContext context) {
     return Container(
-      child: _currUser.getSubreddits().isEmpty
+      child: _currUser!.getSubreddits().isEmpty
           ? const Text("You need to subscribe to a subreddit first")
           : Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -242,7 +242,7 @@ class _CreatePageState extends State<CreatePage> {
 
   @override
   Widget build(BuildContext context) {
-    _currUser = InheritedData.of<User>(context).data;
+    _currUser = InheritedData.of<User?>(context).data;
     return SafeArea(
       child: Scaffold(
         floatingActionButton: _floatingButton(context),

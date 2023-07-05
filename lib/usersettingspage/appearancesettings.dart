@@ -6,7 +6,7 @@ import '../models/inherited-data.dart';
 class AppearanceSettings extends StatelessWidget {
   AppearanceSettings({Key? key}) : super(key: key);
 
-  late User _currUser;
+  User? _currUser;
 
   Widget optionBuilder(String name, BuildContext context) {
     return Padding(
@@ -57,7 +57,7 @@ class AppearanceSettings extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    _currUser = InheritedData.of<User>(context).data;
+    _currUser = InheritedData.of<User?>(context).data;
 
     List<String> notificationOptions = [
       "Auto Dark mode",

@@ -9,8 +9,6 @@ import '../models/user.dart';
 class UserSettings extends StatelessWidget {
   UserSettings({Key? key}) : super(key: key);
 
-  late User _currUser;
-
   @override
   Widget build(BuildContext context) {
     return SafeArea(

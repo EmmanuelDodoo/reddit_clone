@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:reddit_clone/components/rightdrawer.dart';
-import 'package:reddit_clone/createpage/createpage.dart';
+import 'package:reddit_clone/createpostpage/createpostpage.dart';
+import 'package:reddit_clone/login/login.dart';
 import 'package:reddit_clone/mainpage/mainpage.dart';
 import 'package:reddit_clone/models/subreddit.dart';
 import 'package:reddit_clone/models/user.dart';
@@ -9,7 +10,7 @@ import 'package:reddit_clone/models/inherited-data.dart';
 class Skeleton extends StatelessWidget {
   Skeleton({Key? key, required this.currPage}) : super(key: key);
   late final Widget currPage;
-  late User _currUser;
+  User? _currUser;
   late List<Subreddit> _userSubreddits;
 
   void _visitSubreddit({required int id}) {
@@ -22,8 +23,13 @@ class Skeleton extends StatelessWidget {
   }
 
   void _goToCreate(BuildContext context) {
+    if (_currUser == null) {
+      showDialog(context: context, builder: (BuildContext) => LoginModal());
+      return;
+    }
+
     Navigator.of(context)
-        .push(MaterialPageRoute(builder: (context) => CreatePage()));
+        .push(MaterialPageRoute(builder: (context) => CreatePostPage()));
   }
 
   void _goToChat(BuildContext context) {
@@ -38,11 +44,30 @@ class Skeleton extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(right: 10),
       child: InkWell(
-        onTap: () => Scaffold.of(context).openEndDrawer(),
-        child: CircleAvatar(
-          radius: 20,
-          backgroundImage: NetworkImage(_currUser.getUserImageURL()),
-        ),
+        onTap: () {
+          if (_currUser != null) {
+            Scaffold.of(context).openEndDrawer();
+          } else {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) => LoginModal(),
+            );
+          }
+        },
+        child: _currUser == null
+            ? const Center(
+                child: Text(
+                  "Login",
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              )
+            : CircleAvatar(
+                radius: 20,
+                backgroundImage: NetworkImage(_currUser!.getUserImageURL()),
+              ),
       ),
     );
   }
@@ -132,8 +157,8 @@ class Skeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    _currUser = InheritedData.of<User>(context).data;
-    _userSubreddits = _currUser.getSubreddits();
+    _currUser = InheritedData.of<User?>(context).data;
+    _userSubreddits = _currUser == null ? [] : _currUser!.getSubreddits();
     return Scaffold(
       drawer: _leftDrawer(),
       endDrawer: RightDrawer(),

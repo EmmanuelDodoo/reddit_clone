@@ -102,9 +102,11 @@ class _ImageDialogState extends State<ImageDialog> {
 class BasicSettings extends StatelessWidget {
   BasicSettings({Key? key}) : super(key: key);
 
-  late User _currUser;
+  User? _currUser;
 
-  void handleUpdateUsername(String newName) {}
+  void handleUpdateUsername(String newName) {
+    _currUser!.setUsername(newName: newName);
+  }
 
   void handleUpdateProfileImage(File image) {}
 
@@ -203,7 +205,7 @@ class BasicSettings extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    _currUser = InheritedData.of<User>(context).data;
+    _currUser = InheritedData.of<User?>(context).data;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5.0),

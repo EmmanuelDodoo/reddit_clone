@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:reddit_clone/models/user.dart';
 import 'package:reddit_clone/usersettingspage/usersettings.dart';
 
@@ -6,13 +7,35 @@ import '../models/inherited-data.dart';
 import './posts.dart';
 import './comments.dart';
 
-class UserProfile extends StatelessWidget {
-  UserProfile({Key? key}) : super(key: key);
-  late User _currUser;
+class UserProfile extends StatefulWidget {
+  UserProfile({Key? key, required int userId}) : super(key: key);
+
+  @override
+  State<UserProfile> createState() => _UserProfileState();
+}
+
+class _UserProfileState extends State<UserProfile> {
+  late User _viewedUser;
+
+  User? _currUser;
 
   void handleEditProfile(BuildContext context) {
-    Navigator.of(context)
-        .push(MaterialPageRoute(builder: (context) => UserSettings()));
+    if (_currUser != null && _currUser!.id == _viewedUser.id) {
+      Navigator.of(context)
+          .push(MaterialPageRoute(builder: (context) => UserSettings()));
+      return;
+    }
+  }
+
+  void getViewedUser() async {
+    //TODO temp solution
+    String file = "json/user.json";
+    User usr = await rootBundle
+        .loadString(file)
+        .then((value) => User.fromJSON(json: value));
+    setState(() {
+      _viewedUser = usr;
+    });
   }
 
   Widget _usernameSection(BuildContext context) {
@@ -24,32 +47,34 @@ class UserProfile extends StatelessWidget {
             Row(
               children: [
                 Text(
-                  _currUser.getUsername(),
+                  _viewedUser.getUsername(),
                   style: const TextStyle(
                     fontSize: 30,
                     color: Colors.white,
                   ),
                 ),
-                IconButton(
-                  onPressed: () => handleEditProfile(context),
-                  icon: const Icon(
-                    Icons.edit_rounded,
-                    color: Colors.white,
-                  ),
-                )
+                (_currUser != null && _currUser!.id == _viewedUser.id
+                    ? IconButton(
+                        onPressed: () => handleEditProfile(context),
+                        icon: const Icon(
+                          Icons.edit_rounded,
+                          color: Colors.white,
+                        ),
+                      )
+                    : Container())
               ],
             ),
             Row(
               children: [
                 Text(
-                  "${_currUser.getKarma()} • ",
+                  "${_viewedUser.getKarma()} • ",
                   style: const TextStyle(
                     fontSize: 17,
                     color: Colors.white,
                   ),
                 ),
                 Text(
-                  _currUser.getUserAgeString(),
+                  _viewedUser.getUserAgeString(),
                   style: const TextStyle(
                     fontSize: 17,
                     color: Colors.white,
@@ -67,7 +92,7 @@ class UserProfile extends StatelessWidget {
       margin: const EdgeInsets.all(0),
       decoration: BoxDecoration(
         image: DecorationImage(
-          image: NetworkImage(_currUser.getUserImageURL()),
+          image: NetworkImage(_viewedUser.getUserImageURL()),
           fit: BoxFit.cover,
         ),
       ),
@@ -87,7 +112,7 @@ class UserProfile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    _currUser = InheritedData.of<User>(context).data;
+    _currUser = InheritedData.of<User?>(context).data;
 
     return SafeArea(
       child: DefaultTabController(
@@ -103,7 +128,7 @@ class UserProfile extends StatelessWidget {
                       NestedScrollView.sliverOverlapAbsorberHandleFor(context),
                   sliver: SliverAppBar(
                     title: Text(
-                      _currUser.getUsername(),
+                      _viewedUser.getUsername(),
                       style: const TextStyle(fontSize: 18),
                     ), // This is the title in the app bar.
                     pinned: true,
@@ -144,5 +169,11 @@ class UserProfile extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  @override
+  void initState() {
+    getViewedUser();
+    super.initState();
   }
 }

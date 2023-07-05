@@ -9,6 +9,7 @@ import 'package:reddit_clone/postpage/post-page-footer.dart';
 import 'package:reddit_clone/postpage/post-page-post-card.dart';
 import 'package:reddit_clone/models/inherited-data.dart';
 
+import '../login/login.dart';
 import '../models/comment.dart';
 
 class PostPage extends StatelessWidget {
@@ -20,7 +21,7 @@ class PostPage extends StatelessWidget {
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
       GlobalKey<RefreshIndicatorState>();
   late final Post _post;
-  late User _currUser;
+  User? _currUser;
   late final List<Comment> _comments;
 
   Future<void> _refresh() async {
@@ -28,6 +29,11 @@ class PostPage extends StatelessWidget {
   }
 
   void _commentOnPost(BuildContext context) {
+    if (_currUser == null) {
+      showDialog(
+          context: context, builder: (BuildContext context) => LoginModal());
+      return;
+    }
     Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => AddCommentPage(replyable: _post)));
   }
@@ -100,11 +106,30 @@ class PostPage extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(left: 10, right: 10),
       child: InkWell(
-        onTap: () => Scaffold.of(context).openEndDrawer(),
-        child: CircleAvatar(
-          radius: 20,
-          backgroundImage: NetworkImage(_currUser.getUserImageURL()),
-        ),
+        onTap: () {
+          if (_currUser != null) {
+            Scaffold.of(context).openEndDrawer();
+          } else {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) => LoginModal(),
+            );
+          }
+        },
+        child: _currUser == null
+            ? const Center(
+                child: Text(
+                  "Login",
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              )
+            : CircleAvatar(
+                radius: 20,
+                backgroundImage: NetworkImage(_currUser!.getUserImageURL()),
+              ),
       ),
     );
   }
@@ -135,7 +160,7 @@ class PostPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    _currUser = InheritedData.of<User>(context).data;
+    _currUser = InheritedData.of<User?>(context).data;
     return SafeArea(
       child: Scaffold(
         endDrawer: RightDrawer(),

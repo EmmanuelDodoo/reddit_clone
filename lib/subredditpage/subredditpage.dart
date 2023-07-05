@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:reddit_clone/login/login.dart';
 import 'package:reddit_clone/mainpage/home.dart';
 import 'package:reddit_clone/models/user.dart';
 import 'package:reddit_clone/models/subreddit.dart';
@@ -16,7 +17,7 @@ class SubredditPage extends StatefulWidget {
 }
 
 class _SubredditPageState extends State<SubredditPage> {
-  late User _currUser;
+  User? _currUser;
 
   late Subreddit _subreddit;
 
@@ -30,12 +31,18 @@ class _SubredditPageState extends State<SubredditPage> {
     });
   }
 
-  void handleSubscribe() {}
+  void handleSubscribe() {
+    if (_currUser == null) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) => LoginModal(),
+      );
+    }
+  }
 
   Widget _subscribeButton() {
-    bool hasSubscribed = _currUser
-        .getSubreddits()
-        .any((sub) => sub.getSubName() == _subreddit.getSubName());
+    bool hasSubscribed = _currUser != null &&
+        _currUser!.getSubreddits().any((sub) => sub.id == _subreddit.id);
     return IconButton(
       onPressed: handleSubscribe,
       icon: Icon(
@@ -137,8 +144,7 @@ class _SubredditPageState extends State<SubredditPage> {
 
   @override
   Widget build(BuildContext context) {
-    _currUser = InheritedData.of<User>(context).data;
-
+    _currUser = InheritedData.of<User?>(context).data;
     return InheritedData<Subreddit>(
       data: _subreddit,
       child: SafeArea(

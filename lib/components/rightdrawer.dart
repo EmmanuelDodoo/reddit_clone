@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:reddit_clone/createsubredditpage/page.dart';
 import 'package:reddit_clone/models/user.dart';
 import 'package:reddit_clone/usersettingspage/usersettings.dart';
 
@@ -7,12 +8,14 @@ import '../userprofilepage/userprofile.dart';
 
 class RightDrawer extends StatelessWidget {
   RightDrawer({Key? key}) : super(key: key);
-  late User _currUser;
+  User? _currUser;
 
   void _visitUser(BuildContext context) {
     Navigator.of(context).pop();
-    Navigator.of(context)
-        .push(MaterialPageRoute(builder: (context) => UserProfile()));
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => UserProfile(
+              userId: _currUser!.id,
+            )));
 
     print("Going to user profile");
   }
@@ -21,8 +24,12 @@ class RightDrawer extends StatelessWidget {
     print("Where is my sign out snack bar");
   }
 
-  void _createSubreddit() {
-    print("Create subreddit tapped");
+  void _handleSignIn(BuildContext context) {}
+
+  void _createSubreddit(BuildContext context) {
+    Navigator.of(context).pop();
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (context) => CreateSubredditPage()));
   }
 
   void _openSaved() {
@@ -41,7 +48,7 @@ class RightDrawer extends StatelessWidget {
       margin: const EdgeInsets.fromLTRB(0, 0, 0, 25),
       decoration: BoxDecoration(
         image: DecorationImage(
-          image: NetworkImage(_currUser.getUserImageURL()),
+          image: NetworkImage(_currUser!.getUserImageURL()),
           fit: BoxFit.cover,
         ),
       ),
@@ -50,7 +57,7 @@ class RightDrawer extends StatelessWidget {
         child: InkWell(
             onTap: _signOutSnackBar,
             child: Text(
-              _currUser.getUsername(),
+              _currUser!.getUsername(),
               style: const TextStyle(fontSize: 30, color: Colors.amberAccent),
             )),
       ),
@@ -76,7 +83,7 @@ class RightDrawer extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "${_currUser.getKarma()}",
+                    "${_currUser!.getKarma()}",
                     style: const TextStyle(
                         fontSize: 18, fontWeight: FontWeight.bold),
                   ),
@@ -101,7 +108,7 @@ class RightDrawer extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    _currUser.getUserAgeString(),
+                    _currUser!.getUserAgeString(),
                     style: const TextStyle(
                         fontSize: 18, fontWeight: FontWeight.bold),
                   ),
@@ -142,7 +149,7 @@ class RightDrawer extends StatelessWidget {
             ),
           ),
           InkWell(
-            onTap: _createSubreddit,
+            onTap: () => _createSubreddit(context),
             child: Container(
               margin: const EdgeInsets.symmetric(vertical: 15, horizontal: 25),
               child: Row(
@@ -209,9 +216,7 @@ class RightDrawer extends StatelessWidget {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    _currUser = InheritedData.of<User>(context).data;
+  Widget _signedInDrawer(BuildContext context) {
     return Drawer(
       child: ListView(
         children: [
@@ -229,5 +234,31 @@ class RightDrawer extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    _currUser = InheritedData.of<User?>(context).data;
+    if (_currUser == null) {
+      return Drawer(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              onPressed: () => _handleSignIn(context),
+              child: const Text(
+                "Sign in",
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            )
+          ],
+        ),
+      );
+    }
+
+    return _signedInDrawer(context);
   }
 }
