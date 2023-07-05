@@ -101,7 +101,7 @@ class RightDrawer extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    _currUser.userAgeString,
+                    _currUser.getUserAgeString(),
                     style: const TextStyle(
                         fontSize: 18, fontWeight: FontWeight.bold),
                   ),

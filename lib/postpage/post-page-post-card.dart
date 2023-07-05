@@ -77,7 +77,7 @@ class PostPagePostCard extends BasePostCard {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          header(),
+          header(context),
           title(),
           content(context),
         ],

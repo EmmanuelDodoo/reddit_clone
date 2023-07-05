@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:reddit_clone/models/post.dart';
 import 'package:reddit_clone/postpage/postpage.dart';
 import '../components/default-popup-menu.dart';
+import '../subredditpage/subredditpage.dart';
 
 abstract class BasePostCard extends StatelessWidget {
   late final Post post;
@@ -14,8 +15,9 @@ abstract class BasePostCard extends StatelessWidget {
     print("View Image");
   }
 
-  void goToSubreddit() {
-    print("Go to subreddit");
+  void goToSubreddit(BuildContext context) {
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (context) => SubredditPage()));
   }
 
   void goToUserProfile() {
@@ -35,11 +37,11 @@ abstract class BasePostCard extends StatelessWidget {
     throw Exception("Unimplemented method");
   }
 
-  Widget subredditAvatar() {
+  Widget subredditAvatar(BuildContext context) {
     return Container(
         margin: const EdgeInsets.only(right: 10),
         child: InkWell(
-          onTap: goToSubreddit,
+          onTap: () => goToSubreddit(context),
           child: CircleAvatar(
             radius: 20,
             backgroundColor: Colors.transparent,
@@ -48,14 +50,14 @@ abstract class BasePostCard extends StatelessWidget {
         ));
   }
 
-  Widget subredditAndUserId() {
+  Widget subredditAndUserId(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
           margin: const EdgeInsets.only(bottom: 2),
           child: GestureDetector(
-            onTap: goToSubreddit,
+            onTap: () => goToSubreddit(context),
             child: Text(
               post.getSubName(),
               style: const TextStyle(
@@ -90,7 +92,7 @@ abstract class BasePostCard extends StatelessWidget {
     );
   }
 
-  Widget header() {
+  Widget header(BuildContext context) {
     return Container(
         margin: const EdgeInsets.only(bottom: 5),
         child: Row(
@@ -98,8 +100,8 @@ abstract class BasePostCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                subredditAvatar(),
-                subredditAndUserId(),
+                subredditAvatar(context),
+                subredditAndUserId(context),
               ],
             ),
             const DefaultPopUp()

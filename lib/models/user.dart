@@ -11,28 +11,28 @@ class User {
   late final int id;
 
   /// The name of this user
-  late final String _username;
+  late String _username;
 
   /// All subreddits this user has joined
-  late List<Subreddit> _subreddits;
+  List<Subreddit> _subreddits = [];
 
   /// The url pointing to the user's profile image
   late String _userImageURL;
 
   /// All the post made by this user
-  late List<Post> _posts;
+  List<Post> _posts = [];
 
   /// All the comments left by this user
-  late List<Comment> _comments;
+  List<Comment> _comments = [];
 
   /// The unix time for when this user account was created
-  late final int joindate;
+  int _joindate = 0;
 
   /// The string representing how long ago this user joined
-  late final String userAgeString;
+  String _userAgeString = "";
 
   /// The amount of karma this user has
-  late int _karma;
+  int _karma = 0;
 
   /// Construct a user from a valid json
   User.fromJSON({required String json}) {
@@ -40,8 +40,8 @@ class User {
     id = jsonMap["id"];
     _username = jsonMap["username"];
     _userImageURL = jsonMap["userImageURL"];
-    joindate = jsonMap["joindate"];
-    userAgeString = ClassHelper.getTimeDifference(unixTime: joindate);
+    _joindate = jsonMap["joindate"];
+    _userAgeString = ClassHelper.getTimeDifference(unixTime: _joindate);
     _karma = jsonMap["karma"];
     List<dynamic> subredditsMap = jsonMap["subreddits"];
     _subreddits = List.from(
@@ -93,4 +93,8 @@ class User {
   List<Post> getPosts() => List.of(_posts);
 
   List<Comment> getComments() => List.of(_comments);
+
+  String getUserAgeString() => _userAgeString.substring(0);
+
+  int getUserJoinDate() => _joindate;
 }

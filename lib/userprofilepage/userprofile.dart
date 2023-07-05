@@ -20,7 +20,6 @@ class UserProfile extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 60),
         padding: const EdgeInsets.all(0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
@@ -50,7 +49,7 @@ class UserProfile extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  _currUser.userAgeString,
+                  _currUser.getUserAgeString(),
                   style: const TextStyle(
                     fontSize: 17,
                     color: Colors.white,

@@ -103,7 +103,7 @@ class DefaultPostCard extends BasePostCard {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          header(),
+          header(context),
           title(),
           content(context),
           Container(margin: const EdgeInsets.only(top: 15), child: _footer),
