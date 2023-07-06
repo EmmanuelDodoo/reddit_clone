@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:reddit_clone/components/rightdrawer.dart';
 import 'package:reddit_clone/createpostpage/createpostpage.dart';
-import 'package:reddit_clone/login/login.dart';
+import 'package:reddit_clone/components/authentication/login.dart';
 import 'package:reddit_clone/mainpage/mainpage.dart';
 import 'package:reddit_clone/models/subreddit.dart';
 import 'package:reddit_clone/models/user.dart';

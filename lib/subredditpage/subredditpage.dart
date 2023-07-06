@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:reddit_clone/login/login.dart';
+import 'package:reddit_clone/components/authentication/login.dart';
 import 'package:reddit_clone/mainpage/home.dart';
 import 'package:reddit_clone/models/user.dart';
 import 'package:reddit_clone/models/subreddit.dart';

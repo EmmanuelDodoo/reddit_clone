@@ -9,7 +9,7 @@ import 'package:reddit_clone/postpage/post-page-footer.dart';
 import 'package:reddit_clone/postpage/post-page-post-card.dart';
 import 'package:reddit_clone/models/inherited-data.dart';
 
-import '../login/login.dart';
+import '../components/authentication/login.dart';
 import '../models/comment.dart';
 
 class PostPage extends StatelessWidget {
