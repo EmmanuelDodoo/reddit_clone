@@ -1,9 +1,12 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../models/inherited-data.dart';
 import '../models/user.dart';
 import 'package:image_picker/image_picker.dart';
+
+import '../models/userprovider.dart';
 
 class ImageDialog extends StatefulWidget {
   void Function(File) callback;
@@ -205,8 +208,8 @@ class BasicSettings extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    _currUser = InheritedData.of<User?>(context).data;
-
+    UserProvider provider = Provider.of<UserProvider>(context, listen: false);
+    _currUser = provider.currentUser;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5.0),
       child: Card(

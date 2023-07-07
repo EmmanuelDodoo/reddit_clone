@@ -1,9 +1,9 @@
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
-
-import '../models/inherited-data.dart';
+import 'package:provider/provider.dart';
 import '../models/user.dart';
+import '../models/userprovider.dart';
 
 class CreateSubredditPage extends StatefulWidget {
   const CreateSubredditPage({Key? key}) : super(key: key);
@@ -56,7 +56,8 @@ class _CreateSubredditPageState extends State<CreateSubredditPage> {
 
   @override
   Widget build(BuildContext context) {
-    _currUser = InheritedData.of<User?>(context).data;
+    UserProvider provider = Provider.of<UserProvider>(context, listen: false);
+    _currUser = provider.currentUser;
 
     return SafeArea(
       child: Scaffold(

@@ -5,7 +5,9 @@ import 'package:reddit_clone/components/authentication/login.dart';
 import 'package:reddit_clone/mainpage/mainpage.dart';
 import 'package:reddit_clone/models/subreddit.dart';
 import 'package:reddit_clone/models/user.dart';
+import 'package:provider/provider.dart';
 import 'package:reddit_clone/models/inherited-data.dart';
+import 'package:reddit_clone/models/userprovider.dart';
 
 class Skeleton extends StatelessWidget {
   Skeleton({Key? key, required this.currPage}) : super(key: key);
@@ -155,9 +157,38 @@ class Skeleton extends StatelessWidget {
     return const Icon(Icons.add);
   }
 
+  Widget _bottomNavBar(BuildContext context) {
+    return BottomAppBar(
+      color: BottomAppBarTheme.of(context).color,
+      height: MediaQuery.of(context).size.height * 0.06,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: <Widget>[
+          IconButton(
+            onPressed: () => _goToHome(context),
+            icon: bottomIcons(identifier: "MainPage"),
+          ),
+          IconButton(
+            onPressed: () => _goToCreate(context),
+            icon: bottomIcons(identifier: "CreatePage"),
+          ),
+          IconButton(
+            onPressed: () => _goToChat(context),
+            icon: bottomIcons(identifier: "ChatsPage"),
+          ),
+          IconButton(
+            onPressed: () => _goToNotifications(context),
+            icon: bottomIcons(identifier: "NotificationsPage"),
+          )
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    _currUser = InheritedData.of<User?>(context).data;
+    UserProvider provider = Provider.of<UserProvider>(context, listen: false);
+    _currUser = provider.currentUser;
     _userSubreddits = _currUser == null ? [] : _currUser!.getSubreddits();
     return Scaffold(
       drawer: _leftDrawer(),
@@ -174,31 +205,7 @@ class Skeleton extends StatelessWidget {
         ],
       ),
       body: currPage,
-      bottomNavigationBar: BottomAppBar(
-        color: BottomAppBarTheme.of(context).color,
-        height: MediaQuery.of(context).size.height * 0.06,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: <Widget>[
-            IconButton(
-              onPressed: () => _goToHome(context),
-              icon: bottomIcons(identifier: "MainPage"),
-            ),
-            IconButton(
-              onPressed: () => _goToCreate(context),
-              icon: bottomIcons(identifier: "CreatePage"),
-            ),
-            IconButton(
-              onPressed: () => _goToChat(context),
-              icon: bottomIcons(identifier: "ChatsPage"),
-            ),
-            IconButton(
-              onPressed: () => _goToNotifications(context),
-              icon: bottomIcons(identifier: "NotificationsPage"),
-            )
-          ],
-        ),
-      ),
+      bottomNavigationBar: _bottomNavBar(context),
     );
   }
 }

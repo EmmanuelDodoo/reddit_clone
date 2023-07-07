@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:reddit_clone/components/authentication/signup.dart';
+import 'package:provider/provider.dart';
+import 'package:reddit_clone/models/userprovider.dart';
+
+import '../../models/user.dart';
 
 class LoginModal extends StatefulWidget {
   const LoginModal({Key? key}) : super(key: key);
@@ -12,8 +17,19 @@ class _LoginModalState extends State<LoginModal> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  User? _user;
 
   bool _obscurePassword = true;
+
+  void loadUser() async {
+    String file = "json/user.json";
+    User usr = await rootBundle
+        .loadString(file)
+        .then((value) => User.fromJSON(json: value));
+    setState(() {
+      _user = usr;
+    });
+  }
 
   void _handlePasswordVisibility() {
     setState(() {
@@ -24,6 +40,10 @@ class _LoginModalState extends State<LoginModal> {
   void _handleSubmit(BuildContext context) {
     if (_formKey.currentState!.validate()) {
       // TODO form submission
+      UserProvider userProvider =
+          Provider.of<UserProvider>(context, listen: false);
+      userProvider.setCurrentUser(user: _user!);
+      Navigator.of(context).pop();
     }
   }
 
@@ -94,14 +114,14 @@ class _LoginModalState extends State<LoginModal> {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           TextButton(
-            onPressed: () => _handleSubmit(context),
-            child: const Text('Login'),
-          ),
-          TextButton(
             onPressed: () {
               Navigator.pop(context);
             },
             child: const Text('Close'),
+          ),
+          TextButton(
+            onPressed: () => _handleSubmit(context),
+            child: const Text('Login'),
           ),
         ],
       ),
@@ -133,6 +153,12 @@ class _LoginModalState extends State<LoginModal> {
             ),
           ],
         ));
+  }
+
+  @override
+  void initState() {
+    loadUser();
+    super.initState();
   }
 
   @override

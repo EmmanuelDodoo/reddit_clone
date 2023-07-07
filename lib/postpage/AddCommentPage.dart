@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:reddit_clone/models/replyable.dart';
 import 'package:reddit_clone/models/user.dart';
 
 import '../models/inherited-data.dart';
+import '../models/userprovider.dart';
 
 class AddCommentPage extends StatelessWidget {
   AddCommentPage({Key? key, required IReplyable replyable})
       : _replyable = replyable,
         super(key: key);
   late final IReplyable _replyable;
-  late User _user;
+  User? _currUser;
 
   final TextEditingController _controller = TextEditingController();
 
@@ -98,7 +100,8 @@ class AddCommentPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    _user = InheritedData.of<User>(context).data;
+    UserProvider provider = Provider.of<UserProvider>(context, listen: false);
+    _currUser = provider.currentUser;
     return SafeArea(
       child: Scaffold(
         resizeToAvoidBottomInset: true,

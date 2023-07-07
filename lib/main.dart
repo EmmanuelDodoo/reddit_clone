@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+import 'package:reddit_clone/models/userprovider.dart';
 import 'mainpage/mainpage.dart';
 import 'models/user.dart';
 import 'models/inherited-data.dart';
@@ -8,7 +10,12 @@ import 'skeleton.dart';
 import 'temp.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => UserProvider(),
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatefulWidget {
@@ -40,16 +47,18 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return InheritedData<User?>(
-      data: _user,
-      child: MaterialApp(
-        title: "Reddit Clone",
-        theme: _theme,
-        home: SafeArea(
-          child: Skeleton(
-            currPage: MainPage(),
-          ),
-          // child: Test(),
+    return MaterialApp(
+      title: "Reddit Clone",
+      theme: _theme,
+      home: SafeArea(
+        child: Consumer<UserProvider>(
+          child: MainPage(),
+          builder: (context, provider, child) {
+            if (child != null) {
+              return Skeleton(currPage: child);
+            }
+            return Container();
+          },
         ),
       ),
     );

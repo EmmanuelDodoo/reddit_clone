@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:reddit_clone/components/default-popup-menu.dart';
 import 'package:reddit_clone/models/post.dart';
 import 'package:reddit_clone/components/rightdrawer.dart';
@@ -11,6 +12,7 @@ import 'package:reddit_clone/models/inherited-data.dart';
 
 import '../components/authentication/login.dart';
 import '../models/comment.dart';
+import '../models/userprovider.dart';
 
 class PostPage extends StatelessWidget {
   PostPage({Key? key, required Post post})
@@ -160,7 +162,8 @@ class PostPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    _currUser = InheritedData.of<User?>(context).data;
+    UserProvider provider = Provider.of<UserProvider>(context, listen: false);
+    _currUser = provider.currentUser;
     return SafeArea(
       child: Scaffold(
         endDrawer: RightDrawer(),

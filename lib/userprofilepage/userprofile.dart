@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:reddit_clone/models/user.dart';
 import 'package:reddit_clone/usersettingspage/usersettings.dart';
 
 import '../models/inherited-data.dart';
+import '../models/userprovider.dart';
 import './posts.dart';
 import './comments.dart';
 
@@ -112,8 +114,8 @@ class _UserProfileState extends State<UserProfile> {
 
   @override
   Widget build(BuildContext context) {
-    _currUser = InheritedData.of<User?>(context).data;
-
+    UserProvider provider = Provider.of<UserProvider>(context, listen: false);
+    _currUser = provider.currentUser;
     return SafeArea(
       child: DefaultTabController(
         length: 2,

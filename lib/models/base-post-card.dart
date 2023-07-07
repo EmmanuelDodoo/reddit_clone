@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:reddit_clone/models/post.dart';
+import 'package:reddit_clone/models/userprovider.dart';
 import 'package:reddit_clone/postpage/postpage.dart';
 import '../components/default-popup-menu.dart';
 import '../subredditpage/subredditpage.dart';
@@ -25,8 +27,13 @@ abstract class BasePostCard extends StatelessWidget {
   }
 
   void openPost(BuildContext context) {
-    Navigator.of(context)
-        .push(MaterialPageRoute(builder: (context) => PostPage(post: post)));
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) => Consumer<UserProvider>(
+        builder: (context, provider, _) {
+          return PostPage(post: post);
+        },
+      ),
+    ));
   }
 
   void onDoubleTap() {

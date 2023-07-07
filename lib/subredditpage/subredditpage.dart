@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:reddit_clone/components/authentication/login.dart';
 import 'package:reddit_clone/mainpage/home.dart';
 import 'package:reddit_clone/models/user.dart';
@@ -8,6 +9,7 @@ import 'package:reddit_clone/subredditpage/about.dart';
 
 import '../components/default-popup-menu.dart';
 import '../models/inherited-data.dart';
+import '../models/userprovider.dart';
 
 class SubredditPage extends StatefulWidget {
   SubredditPage({Key? key}) : super(key: key);
@@ -58,15 +60,16 @@ class _SubredditPageState extends State<SubredditPage> {
       margin: const EdgeInsets.only(bottom: 60),
       padding: const EdgeInsets.only(bottom: 10, left: 10, right: 10, top: 0),
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          gradient: const LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Colors.transparent,
-              Colors.black45,
-            ],
-          )),
+        borderRadius: BorderRadius.circular(10),
+        gradient: const LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Colors.transparent,
+            Colors.black45,
+          ],
+        ),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -144,7 +147,8 @@ class _SubredditPageState extends State<SubredditPage> {
 
   @override
   Widget build(BuildContext context) {
-    _currUser = InheritedData.of<User?>(context).data;
+    UserProvider provider = Provider.of<UserProvider>(context, listen: false);
+    _currUser = provider.currentUser;
     return InheritedData<Subreddit>(
       data: _subreddit,
       child: SafeArea(

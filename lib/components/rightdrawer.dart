@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:reddit_clone/components/authentication/login.dart';
 import 'package:reddit_clone/createsubredditpage/page.dart';
 import 'package:reddit_clone/models/user.dart';
 import 'package:reddit_clone/usersettingspage/usersettings.dart';
 
 import '../models/inherited-data.dart';
+import '../models/userprovider.dart';
 import '../userprofilepage/userprofile.dart';
 
 class RightDrawer extends StatelessWidget {
   RightDrawer({Key? key}) : super(key: key);
   User? _currUser;
 
-  void _visitUser(BuildContext context) {
+  void _handleVisitProfile(BuildContext context) {
     Navigator.of(context).pop();
     Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => UserProfile(
@@ -20,11 +23,20 @@ class RightDrawer extends StatelessWidget {
     print("Going to user profile");
   }
 
-  void _signOutSnackBar() {
-    print("Where is my sign out snack bar");
+  void _handleSignOut(BuildContext context) {
+    UserProvider userProvider =
+        Provider.of<UserProvider>(context, listen: false);
+    _currUser = null;
+    userProvider.setCurrentUser(user: null);
+    Navigator.of(context).pop();
   }
 
-  void _handleSignIn(BuildContext context) {}
+  void _handleSignIn(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => LoginModal(),
+    );
+  }
 
   void _createSubreddit(BuildContext context) {
     Navigator.of(context).pop();
@@ -54,12 +66,28 @@ class RightDrawer extends StatelessWidget {
       ),
       child: Align(
         alignment: Alignment.bottomCenter,
-        child: InkWell(
-            onTap: _signOutSnackBar,
-            child: Text(
-              _currUser!.getUsername(),
-              style: const TextStyle(fontSize: 30, color: Colors.amberAccent),
-            )),
+        child: Container(
+          padding:
+              const EdgeInsets.only(bottom: 10, left: 10, right: 10, top: 0),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            gradient: const LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Colors.transparent,
+                Colors.black87,
+              ],
+            ),
+          ),
+          child: Text(
+            _currUser!.getUsername(),
+            style: const TextStyle(
+              fontSize: 30,
+              color: Colors.white,
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -126,12 +154,12 @@ class RightDrawer extends StatelessWidget {
 
   Widget _rightDrawerList(BuildContext context) {
     return SizedBox(
-      height: 225,
+      height: 325,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           InkWell(
-            onTap: () => _visitUser(context),
+            onTap: () => _handleVisitProfile(context),
             child: Container(
               margin: const EdgeInsets.symmetric(vertical: 15, horizontal: 25),
               child: Row(
@@ -210,6 +238,27 @@ class RightDrawer extends StatelessWidget {
                 ],
               ),
             ),
+          ),
+          InkWell(
+            onTap: () => _handleSignOut(context),
+            child: Container(
+              margin: const EdgeInsets.symmetric(vertical: 15, horizontal: 25),
+              child: Row(
+                children: [
+                  Container(
+                    margin: const EdgeInsets.only(right: 10),
+                    child: const Icon(Icons.logout_rounded),
+                  ),
+                  const Text(
+                    "Sign out",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           )
         ],
       ),
@@ -238,7 +287,8 @@ class RightDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    _currUser = InheritedData.of<User?>(context).data;
+    UserProvider provider = Provider.of<UserProvider>(context, listen: false);
+    _currUser = provider.currentUser;
     if (_currUser == null) {
       return Drawer(
         child: Column(

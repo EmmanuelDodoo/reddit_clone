@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:reddit_clone/dummies.dart';
-import 'package:reddit_clone/models/base_provider.dart';
 import 'package:reddit_clone/models/inherited-data.dart';
-
 import '../components/default-post-card.dart';
 import '../models/post.dart';
 
@@ -21,7 +19,6 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
 
   @override
   Widget build(BuildContext context) {
-    // super.build(context);
     _postcards = createAllPosts(context);
     return InheritedData<List<Widget>>(
       data: _postcards,

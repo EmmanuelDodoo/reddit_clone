@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:reddit_clone/models/user.dart';
 
 import '../models/inherited-data.dart';
+import '../models/userprovider.dart';
 
 class NotificationSettings extends StatelessWidget {
   NotificationSettings({Key? key}) : super(key: key);
@@ -57,8 +59,8 @@ class NotificationSettings extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    _currUser = InheritedData.of<User?>(context).data;
-
+    UserProvider provider = Provider.of<UserProvider>(context, listen: false);
+    _currUser = provider.currentUser;
     List<String> notificationOptions = [
       "Mentions",
       "Chat messages",
