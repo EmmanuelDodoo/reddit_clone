@@ -25,9 +25,6 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
       child: Scaffold(
         body: RefreshIndicator(
           key: _refreshIndicatorKey,
-          color: Colors.white,
-          backgroundColor: Colors.blue,
-          strokeWidth: 1.5,
           onRefresh: () async {
             //Todo Make refresh actually mean something
             return Future<void>.delayed(const Duration(seconds: 3));

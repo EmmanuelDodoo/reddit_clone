@@ -8,10 +8,8 @@ class SubredditAboutSection extends StatelessWidget {
 
   late Subreddit _subreddit;
 
-  Widget _descriptionSection() {
+  Widget _descriptionSection(BuildContext context) {
     return Card(
-      elevation: 8,
-      color: Colors.tealAccent,
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
         child: Column(
@@ -19,17 +17,14 @@ class SubredditAboutSection extends StatelessWidget {
           children: [
             Container(
               margin: const EdgeInsets.only(bottom: 10),
-              child: const Text(
+              child: Text(
                 "Description",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                style: Theme.of(context).textTheme.titleMedium,
               ),
             ),
             Text(
               _subreddit.getSubDescription(),
-              style: const TextStyle(
-                fontSize: 15,
-                letterSpacing: 1.0,
-              ),
+              style: Theme.of(context).textTheme.bodyMedium,
             ),
           ],
         ),
@@ -37,10 +32,8 @@ class SubredditAboutSection extends StatelessWidget {
     );
   }
 
-  Widget _rulesSection() {
+  Widget _rulesSection(BuildContext context) {
     return Card(
-      elevation: 8,
-      color: Colors.tealAccent,
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
         child: Column(
@@ -48,9 +41,9 @@ class SubredditAboutSection extends StatelessWidget {
           children: [
             Container(
               margin: const EdgeInsets.only(bottom: 10),
-              child: const Text(
+              child: Text(
                 "Rules",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                style: Theme.of(context).textTheme.titleMedium,
               ),
             ),
             ..._subreddit.getSubRules().mapIndexed((index, rule) {
@@ -58,10 +51,7 @@ class SubredditAboutSection extends StatelessWidget {
                 margin: const EdgeInsets.symmetric(vertical: 5.0),
                 child: Text(
                   "${index + 1}. $rule",
-                  style: const TextStyle(
-                    fontSize: 15,
-                    letterSpacing: 1.0,
-                  ),
+                  style: Theme.of(context).textTheme.bodyMedium,
                 ),
               );
             }).toList()
@@ -79,8 +69,8 @@ class SubredditAboutSection extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
       child: ListView(
         children: [
-          _descriptionSection(),
-          _rulesSection(),
+          _descriptionSection(context),
+          _rulesSection(context),
         ],
       ),
     );

@@ -6,7 +6,7 @@ import 'package:reddit_clone/models/post.dart';
 class DefaultPostCard extends BasePostCard {
   final GlobalKey<DefaultFooterState> _footerKey =
       GlobalKey<DefaultFooterState>();
-  late final DefaultFooter _footer;
+  DefaultFooter? _footer;
 
   ///The footer is the only stateful section of a post's card which is why
   ///I factored it out
@@ -26,17 +26,14 @@ class DefaultPostCard extends BasePostCard {
   }
 
   @override
-  Widget justTextContent() {
+  Widget justTextContent(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(top: 5),
       child: Text(
         post.getContents(),
         maxLines: 4,
         overflow: TextOverflow.ellipsis,
-        style: const TextStyle(
-          fontSize: 16,
-          letterSpacing: 0.6,
-        ),
+        style: Theme.of(context).textTheme.bodyMedium,
       ),
     );
   }
@@ -71,21 +68,18 @@ class DefaultPostCard extends BasePostCard {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
-              //The margins throughout the card means the with must be less than 50%
-              width: MediaQuery.of(context).size.width * 0.43,
-              child: Container(
-                margin: const EdgeInsets.only(top: 10),
-                child: Text(
-                  post.getContents(),
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 6,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    height: 1.2,
-                    letterSpacing: 0.6,
-                  ),
-                ),
-              )),
+            //The margins throughout the card means the with must be less than 50%
+            width: MediaQuery.of(context).size.width * 0.43,
+            child: Container(
+              margin: const EdgeInsets.only(top: 10),
+              child: Text(
+                post.getContents(),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 6,
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            ),
+          ),
           SizedBox(
             width: MediaQuery.of(context).size.width * 0.41,
             child: image(context),
@@ -104,7 +98,7 @@ class DefaultPostCard extends BasePostCard {
         mainAxisSize: MainAxisSize.min,
         children: [
           header(context),
-          title(),
+          title(context),
           content(context),
           Container(margin: const EdgeInsets.only(top: 15), child: _footer),
         ],

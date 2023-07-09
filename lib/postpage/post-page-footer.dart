@@ -4,16 +4,16 @@ import '../models/post.dart';
 
 class PostPageFooter extends StatelessWidget {
   late final Post post;
-  late final Color color;
 
-  PostPageFooter(
-      {Key? key, required this.post, this.color = Colors.amberAccent})
-      : super(key: key);
+  PostPageFooter({
+    Key? key,
+    required this.post,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return SliverPersistentHeader(
-      delegate: _PostPageFooterHeaderDelegate(post: post, color: color),
+      delegate: _PostPageFooterHeaderDelegate(post: post),
       pinned: true,
     );
   }
@@ -21,15 +21,13 @@ class PostPageFooter extends StatelessWidget {
 
 class _PostPageFooterHeaderDelegate extends SliverPersistentHeaderDelegate {
   late final Post post;
-  late final Color color;
-  _PostPageFooterHeaderDelegate({required this.post, required this.color});
+  _PostPageFooterHeaderDelegate({required this.post});
 
   @override
   Widget build(
       BuildContext context, double shrinkOffset, bool overlapsContent) {
     return Container(
       height: 50,
-      color: color,
       child: DefaultFooter(
         post: post,
       ),

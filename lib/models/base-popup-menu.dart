@@ -15,10 +15,6 @@ abstract class BasePopUp extends StatelessWidget {
     print("Subscribe tapped");
   }
 
-  // void _award() {
-  //   print("award tapped");
-  // }
-
   @override
   Widget build(BuildContext context) {
     return const Placeholder();

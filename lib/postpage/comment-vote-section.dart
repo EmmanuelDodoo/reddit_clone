@@ -33,22 +33,22 @@ class _CommentVoteSectionState extends State<CommentVoteSection> {
   }
 
   /// Returns a Color according to the current voteCode
-  Color voteColor() {
+  Color voteColor(BuildContext context) {
     if (_comment.voteCode == -1) {
-      return Colors.indigo;
+      return const Color(0xFFDB2D54);
     } else if (_comment.voteCode == 1) {
-      return Colors.deepOrange;
+      return Theme.of(context).colorScheme.primary;
     }
     return Colors.black;
   }
 
   /// Returns the appropriate upvote icon based on voteCode
-  Widget upvoteIcon() {
+  Widget upvoteIcon(BuildContext context) {
     if (_comment.voteCode == 1) {
       return SvgPicture.asset(
         "icons/upvote-solid.svg",
         semanticsLabel: "Up voted",
-        color: voteColor(),
+        color: voteColor(context),
         width: 20,
       );
     }
@@ -60,12 +60,12 @@ class _CommentVoteSectionState extends State<CommentVoteSection> {
   }
 
   /// Returns the appropriate upvote icon based on voteCode
-  Widget downvoteIcon() {
+  Widget downvoteIcon(BuildContext context) {
     if (_comment.voteCode == -1) {
       return SvgPicture.asset(
         "icons/downvote-solid.svg",
         semanticsLabel: "Down voted",
-        color: voteColor(),
+        color: voteColor(context),
         width: 20,
       );
     }
@@ -79,24 +79,25 @@ class _CommentVoteSectionState extends State<CommentVoteSection> {
   /// Returns the appropriate color for the text in vote section.
   ///A post which has neither been upvoted nor downvoted is lighter
   ///
-  Color voteTextColor() {
+  Color? voteTextColor(BuildContext context) {
     if (_comment.voteCode == 0) {
-      return voteColor().withAlpha(120);
+      return Theme.of(context).textTheme.bodyMedium?.color?.withAlpha(120);
+      ;
     }
-    return voteColor();
+    return voteColor(context);
   }
 
-  Widget voteSection() {
+  Widget voteSection(BuildContext context) {
     return Row(
       children: [
         Container(
           margin: const EdgeInsets.only(right: 8),
           child: InkWell(
-            splashColor: voteColor().withAlpha(75),
+            splashColor: voteColor(context).withAlpha(75),
             onTap: () {
               updateVote(update: 1);
             },
-            child: upvoteIcon(),
+            child: upvoteIcon(context),
           ),
         ),
         Text(
@@ -104,17 +105,17 @@ class _CommentVoteSectionState extends State<CommentVoteSection> {
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w500,
-            color: voteTextColor(),
+            color: voteTextColor(context),
           ),
         ),
         Container(
           margin: const EdgeInsets.only(left: 8),
           child: InkWell(
-            splashColor: voteColor().withAlpha(75),
+            splashColor: voteColor(context).withAlpha(75),
             onTap: () {
               updateVote(update: -1);
             },
-            child: downvoteIcon(),
+            child: downvoteIcon(context),
           ),
         )
       ],
@@ -123,6 +124,6 @@ class _CommentVoteSectionState extends State<CommentVoteSection> {
 
   @override
   Widget build(BuildContext context) {
-    return voteSection();
+    return voteSection(context);
   }
 }

@@ -8,10 +8,13 @@ import 'package:reddit_clone/models/user.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit_clone/models/inherited-data.dart';
 import 'package:reddit_clone/models/userprovider.dart';
+import 'package:reddit_clone/components/skeletonBottomAppNav.dart';
 
 class Skeleton extends StatelessWidget {
-  Skeleton({Key? key, required this.currPage}) : super(key: key);
+  Skeleton({Key? key, required this.currPage, required this.selectedIndex})
+      : super(key: key);
   late final Widget currPage;
+  int selectedIndex;
   User? _currUser;
   late List<Subreddit> _userSubreddits;
 
@@ -26,7 +29,8 @@ class Skeleton extends StatelessWidget {
 
   void _goToCreate(BuildContext context) {
     if (_currUser == null) {
-      showDialog(context: context, builder: (BuildContext) => LoginModal());
+      showDialog(
+          context: context, builder: (BuildContext context) => LoginModal());
       return;
     }
 
@@ -57,13 +61,13 @@ class Skeleton extends StatelessWidget {
           }
         },
         child: _currUser == null
-            ? const Center(
+            ? Center(
                 child: Text(
                   "Login",
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleSmall
+                      ?.copyWith(color: Theme.of(context).colorScheme.primary),
                 ),
               )
             : CircleAvatar(
@@ -133,58 +137,6 @@ class Skeleton extends StatelessWidget {
     );
   }
 
-  /// Return the appropriate icon for the identifier, taking
-  /// note of the current page
-  Icon bottomIcons({required String identifier}) {
-    String currPageString = currPage.toString();
-
-    if (identifier == "MainPage") {
-      if (currPageString == identifier) {
-        return const Icon(Icons.home);
-      }
-      return const Icon(Icons.home_outlined);
-    } else if (identifier == "ChatsPage") {
-      if (currPageString == identifier) {
-        return const Icon(Icons.chat);
-      }
-      return const Icon(Icons.chat_outlined);
-    } else if (identifier == "NotificationsPage") {
-      if (identifier == currPageString) {
-        return const Icon(Icons.notifications);
-      }
-      return const Icon(Icons.notifications_outlined);
-    }
-    return const Icon(Icons.add);
-  }
-
-  Widget _bottomNavBar(BuildContext context) {
-    return BottomAppBar(
-      color: BottomAppBarTheme.of(context).color,
-      height: MediaQuery.of(context).size.height * 0.06,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: <Widget>[
-          IconButton(
-            onPressed: () => _goToHome(context),
-            icon: bottomIcons(identifier: "MainPage"),
-          ),
-          IconButton(
-            onPressed: () => _goToCreate(context),
-            icon: bottomIcons(identifier: "CreatePage"),
-          ),
-          IconButton(
-            onPressed: () => _goToChat(context),
-            icon: bottomIcons(identifier: "ChatsPage"),
-          ),
-          IconButton(
-            onPressed: () => _goToNotifications(context),
-            icon: bottomIcons(identifier: "NotificationsPage"),
-          )
-        ],
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     UserProvider provider = Provider.of<UserProvider>(context, listen: false);
@@ -205,7 +157,8 @@ class Skeleton extends StatelessWidget {
         ],
       ),
       body: currPage,
-      bottomNavigationBar: _bottomNavBar(context),
+      // bottomNavigationBar: _bottomNavBar(context),
+      bottomNavigationBar: SkeletonBottomNav(selectedIndex: selectedIndex),
     );
   }
 }

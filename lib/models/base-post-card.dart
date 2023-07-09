@@ -48,6 +48,7 @@ abstract class BasePostCard extends StatelessWidget {
     return Container(
         margin: const EdgeInsets.only(right: 10),
         child: InkWell(
+          borderRadius: BorderRadius.circular(150),
           onTap: () => goToSubreddit(context),
           child: CircleAvatar(
             radius: 20,
@@ -67,10 +68,7 @@ abstract class BasePostCard extends StatelessWidget {
             onTap: () => goToSubreddit(context),
             child: Text(
               post.getSubName(),
-              style: const TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-              ),
+              style: Theme.of(context).textTheme.bodySmall,
             ),
           ),
         ),
@@ -80,18 +78,12 @@ abstract class BasePostCard extends StatelessWidget {
               onTap: goToUserProfile,
               child: Text(
                 post.getUserName(),
-                style: const TextStyle(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w500,
-                ),
+                style: Theme.of(context).textTheme.bodySmall,
               ),
             ),
             Text(
               "  •${post.timeDifference}",
-              style: const TextStyle(
-                fontSize: 11,
-                fontWeight: FontWeight.w500,
-              ),
+              style: Theme.of(context).textTheme.bodySmall,
             )
           ],
         )
@@ -116,22 +108,23 @@ abstract class BasePostCard extends StatelessWidget {
         ));
   }
 
-  Widget title() {
+  Widget title(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(bottom: 10, top: 5),
       child: Text(
         post.getTitle(),
         maxLines: 3,
         overflow: TextOverflow.ellipsis,
-        style: const TextStyle(
-          fontSize: 20,
-          fontWeight: FontWeight.bold,
-        ),
+        // style: const TextStyle(
+        //   fontSize: 20,
+        //   fontWeight: FontWeight.bold,
+        // ),
+        style: Theme.of(context).textTheme.titleMedium,
       ),
     );
   }
 
-  Widget justTextContent() {
+  Widget justTextContent(BuildContext context) {
     throw Exception("Unimplemented method");
   }
 
@@ -172,7 +165,7 @@ abstract class BasePostCard extends StatelessWidget {
   Widget content(BuildContext context) {
     //if just text contents
     if (post.getContents() != "" && !post.isImageInPost()) {
-      return justTextContent();
+      return justTextContent(context);
     }
     //if just image contents
     else if (post.isImageInPost() && post.getContents() == "") {
@@ -191,16 +184,13 @@ abstract class BasePostCard extends StatelessWidget {
   }
 
   Widget _prebuild(BuildContext context) {
-    return Container(
-      color: Colors.amberAccent,
-      child: InkWell(
-        splashColor: Colors.blueGrey.withAlpha(75),
-        onTap: () => openPost(context),
-        onDoubleTap: onDoubleTap,
-        child: SizedBox(
-          width: MediaQuery.of(context).size.width * 0.95,
-          child: cardContent(context),
-        ),
+    return InkWell(
+      splashColor: Colors.blueGrey.withAlpha(75),
+      onTap: () => openPost(context),
+      onDoubleTap: onDoubleTap,
+      child: SizedBox(
+        width: MediaQuery.of(context).size.width * 0.95,
+        child: cardContent(context),
       ),
     );
   }
@@ -210,13 +200,10 @@ abstract class BasePostCard extends StatelessWidget {
     setFooter();
     if (withCard) {
       return Card(
-        elevation: 8,
-        color: Colors.amberAccent,
-        clipBehavior: Clip.hardEdge,
         child: _prebuild(context),
       );
     } else {
-      return _prebuild(context);
+      return Card(child: _prebuild(context));
     }
   }
 }

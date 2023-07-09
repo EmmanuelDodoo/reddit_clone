@@ -4,8 +4,6 @@ import 'package:reddit_clone/components/authentication/login.dart';
 import 'package:reddit_clone/createsubredditpage/page.dart';
 import 'package:reddit_clone/models/user.dart';
 import 'package:reddit_clone/usersettingspage/usersettings.dart';
-
-import '../models/inherited-data.dart';
 import '../models/userprovider.dart';
 import '../userprofilepage/userprofile.dart';
 
@@ -54,10 +52,10 @@ class RightDrawer extends StatelessWidget {
         .push(MaterialPageRoute(builder: (context) => UserSettings()));
   }
 
-  Widget _rightDrawerHeader() {
+  Widget _rightDrawerHeader(BuildContext context) {
     return DrawerHeader(
       padding: const EdgeInsets.all(0.0),
-      margin: const EdgeInsets.fromLTRB(0, 0, 0, 25),
+      margin: const EdgeInsets.fromLTRB(0, 0, 0, 10),
       decoration: BoxDecoration(
         image: DecorationImage(
           image: NetworkImage(_currUser!.getUserImageURL()),
@@ -71,30 +69,22 @@ class RightDrawer extends StatelessWidget {
               const EdgeInsets.only(bottom: 10, left: 10, right: 10, top: 0),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
-            gradient: const LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                Colors.transparent,
-                Colors.black87,
-              ],
-            ),
           ),
           child: Text(
             _currUser!.getUsername(),
-            style: const TextStyle(
-              fontSize: 30,
-              color: Colors.white,
-            ),
+            style: Theme.of(context)
+                .textTheme
+                .titleLarge
+                ?.copyWith(color: Theme.of(context).colorScheme.inversePrimary),
           ),
         ),
       ),
     );
   }
 
-  Widget _karmaSection() {
+  Widget _karmaSection(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 10),
+      // margin: const EdgeInsets.only(bottom: 10),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
@@ -102,9 +92,10 @@ class RightDrawer extends StatelessWidget {
             children: [
               Container(
                 margin: const EdgeInsets.only(right: 5),
-                child: const Icon(
+                child: Icon(
                   Icons.filter_vintage_outlined,
-                  color: Colors.blue,
+                  color: Theme.of(context).colorScheme.primary,
+                  size: 20,
                 ),
               ),
               Column(
@@ -112,12 +103,11 @@ class RightDrawer extends StatelessWidget {
                 children: [
                   Text(
                     "${_currUser!.getKarma()}",
-                    style: const TextStyle(
-                        fontSize: 18, fontWeight: FontWeight.bold),
+                    style: Theme.of(context).textTheme.bodyMedium,
                   ),
-                  const Text(
+                  Text(
                     "Karma",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400),
+                    style: Theme.of(context).textTheme.bodyMedium,
                   ),
                 ],
               )
@@ -127,9 +117,10 @@ class RightDrawer extends StatelessWidget {
             children: [
               Container(
                 margin: const EdgeInsets.only(right: 5),
-                child: const Icon(
+                child: Icon(
                   Icons.cake_rounded,
-                  color: Colors.blue,
+                  size: 20,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
               ),
               Column(
@@ -137,11 +128,11 @@ class RightDrawer extends StatelessWidget {
                 children: [
                   Text(
                     _currUser!.getUserAgeString(),
-                    style: const TextStyle(
-                        fontSize: 18, fontWeight: FontWeight.bold),
+                    style: Theme.of(context).textTheme.bodyMedium,
                   ),
-                  const Text(
+                  Text(
                     "Reddit age",
+                    style: Theme.of(context).textTheme.bodyMedium,
                   )
                 ],
               )
@@ -154,23 +145,29 @@ class RightDrawer extends StatelessWidget {
 
   Widget _rightDrawerList(BuildContext context) {
     return SizedBox(
-      height: 325,
+      height: 300,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           InkWell(
             onTap: () => _handleVisitProfile(context),
             child: Container(
-              margin: const EdgeInsets.symmetric(vertical: 15, horizontal: 25),
+              margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 25),
               child: Row(
                 children: [
                   Container(
                     margin: const EdgeInsets.only(right: 10),
-                    child: const Icon(Icons.account_circle_outlined),
+                    child: const Icon(
+                      Icons.account_circle_outlined,
+                      size: 20,
+                    ),
                   ),
-                  const Text(
+                  Text(
                     "My Profile",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          letterSpacing: 0.8,
+                          fontWeight: FontWeight.w500,
+                        ),
                   ),
                 ],
               ),
@@ -179,19 +176,22 @@ class RightDrawer extends StatelessWidget {
           InkWell(
             onTap: () => _createSubreddit(context),
             child: Container(
-              margin: const EdgeInsets.symmetric(vertical: 15, horizontal: 25),
+              margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 25),
               child: Row(
                 children: [
                   Container(
                     margin: const EdgeInsets.only(right: 10),
-                    child: const Icon(Icons.create_outlined),
-                  ),
-                  const Text(
-                    "Create a community",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500,
+                    child: const Icon(
+                      Icons.create_outlined,
+                      size: 20,
                     ),
+                  ),
+                  Text(
+                    "Create a community",
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          letterSpacing: 0.8,
+                          fontWeight: FontWeight.w500,
+                        ),
                   ),
                 ],
               ),
@@ -200,19 +200,22 @@ class RightDrawer extends StatelessWidget {
           InkWell(
             onTap: _openSaved,
             child: Container(
-              margin: const EdgeInsets.symmetric(vertical: 15, horizontal: 25),
+              margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 25),
               child: Row(
                 children: [
                   Container(
                     margin: const EdgeInsets.only(right: 10),
-                    child: const Icon(Icons.bookmarks_outlined),
-                  ),
-                  const Text(
-                    "Saved",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500,
+                    child: const Icon(
+                      Icons.bookmarks_outlined,
+                      size: 20,
                     ),
+                  ),
+                  Text(
+                    "Saved",
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          letterSpacing: 0.8,
+                          fontWeight: FontWeight.w500,
+                        ),
                   ),
                 ],
               ),
@@ -221,19 +224,22 @@ class RightDrawer extends StatelessWidget {
           InkWell(
             onTap: () => _openSettings(context),
             child: Container(
-              margin: const EdgeInsets.symmetric(vertical: 15, horizontal: 25),
+              margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 25),
               child: Row(
                 children: [
                   Container(
                     margin: const EdgeInsets.only(right: 10),
-                    child: const Icon(Icons.settings_outlined),
-                  ),
-                  const Text(
-                    "Settings",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500,
+                    child: const Icon(
+                      Icons.settings_outlined,
+                      size: 20,
                     ),
+                  ),
+                  Text(
+                    "Settings",
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          letterSpacing: 0.8,
+                          fontWeight: FontWeight.w500,
+                        ),
                   ),
                 ],
               ),
@@ -242,19 +248,22 @@ class RightDrawer extends StatelessWidget {
           InkWell(
             onTap: () => _handleSignOut(context),
             child: Container(
-              margin: const EdgeInsets.symmetric(vertical: 15, horizontal: 25),
+              margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 25),
               child: Row(
                 children: [
                   Container(
                     margin: const EdgeInsets.only(right: 10),
-                    child: const Icon(Icons.logout_rounded),
-                  ),
-                  const Text(
-                    "Sign out",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500,
+                    child: const Icon(
+                      Icons.logout_rounded,
+                      size: 20,
                     ),
+                  ),
+                  Text(
+                    "Sign out",
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          letterSpacing: 0.8,
+                          fontWeight: FontWeight.w500,
+                        ),
                   ),
                 ],
               ),
@@ -270,15 +279,11 @@ class RightDrawer extends StatelessWidget {
       child: ListView(
         children: [
           SizedBox(
-            height: 350,
-            child: _rightDrawerHeader(),
+            height: 275,
+            child: _rightDrawerHeader(context),
           ),
-          _karmaSection(),
-          Container(
-            margin: const EdgeInsets.only(top: 15),
-            height: .6,
-            color: Colors.blueGrey,
-          ),
+          _karmaSection(context),
+          const Divider(),
           _rightDrawerList(context),
         ],
       ),

@@ -28,18 +28,16 @@ class _CreateSubredditPageState extends State<CreateSubredditPage> {
 
   Widget _subNameSection(BuildContext context) {
     return Container(
-      // color: Colors.amberAccent,
       child: Form(
         key: _formKey,
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          const Text(
+          Text(
             "Subreddit name",
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-            ),
+            style: Theme.of(context).textTheme.bodySmall,
           ),
           TextFormField(
             controller: _formController,
+            style: Theme.of(context).textTheme.bodyMedium,
             validator: (String? value) {
               if (value == null || value.isEmpty) {
                 return 'Please enter a name';

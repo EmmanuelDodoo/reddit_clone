@@ -18,15 +18,15 @@ class PostPagePostCard extends BasePostCard {
   void setFooter() {}
 
   @override
-  Widget justTextContent() {
+  Widget justTextContent(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(top: 5),
       child: Text(
         post.getContents(),
-        style: const TextStyle(
-          fontSize: 16,
-          letterSpacing: 0.6,
-        ),
+        style: Theme.of(context)
+            .textTheme
+            .bodyMedium
+            ?.copyWith(letterSpacing: 0.7),
       ),
     );
   }
@@ -63,7 +63,7 @@ class PostPagePostCard extends BasePostCard {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        justTextContent(),
+        justTextContent(context),
         justImageContent(context),
       ],
     );
@@ -78,7 +78,7 @@ class PostPagePostCard extends BasePostCard {
         mainAxisSize: MainAxisSize.min,
         children: [
           header(context),
-          title(),
+          title(context),
           content(context),
         ],
       ),

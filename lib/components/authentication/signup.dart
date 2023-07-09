@@ -4,7 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 class SignUpModal extends StatefulWidget {
-  const SignUpModal({Key? key}) : super(key: key);
+  ///Optional function to call after a successfull signup
+  final void Function()? onCloseSuccessfully;
+
+  const SignUpModal({Key? key, this.onCloseSuccessfully}) : super(key: key);
 
   @override
   State<SignUpModal> createState() => _SignUpModalState();
@@ -37,18 +40,23 @@ class _SignUpModalState extends State<SignUpModal> {
   void _handleSubmit(BuildContext context) {
     if (_formKey.currentState!.validate()) {
       // TODO form submission
+
+      Navigator.of(context).pop();
+
+      /// Call the on close successfully function from widget
+      /// if any
+      if (widget.onCloseSuccessfully != null) {
+        widget.onCloseSuccessfully!();
+      }
     }
   }
 
   Widget _header(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(top: 5, bottom: 15),
-      child: const Text(
+      child: Text(
         "Sign up",
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: 18,
-        ),
+        style: Theme.of(context).textTheme.titleMedium,
       ),
     );
   }
@@ -60,6 +68,7 @@ class _SignUpModalState extends State<SignUpModal> {
         // crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           TextFormField(
+            style: Theme.of(context).textTheme.bodyMedium,
             controller: _emailController,
             decoration: const InputDecoration(
               prefixText: "    ",
@@ -73,6 +82,7 @@ class _SignUpModalState extends State<SignUpModal> {
             },
           ),
           TextFormField(
+            style: Theme.of(context).textTheme.bodyMedium,
             controller: _usernameController,
             decoration: const InputDecoration(
               prefixText: "u/",
@@ -86,15 +96,21 @@ class _SignUpModalState extends State<SignUpModal> {
             },
           ),
           TextFormField(
+            style: Theme.of(context).textTheme.bodyMedium,
             controller: _passwordController,
             obscureText: _obscurePassword,
             decoration: InputDecoration(
               prefixText: "    ",
               suffixIcon: IconButton(
                 onPressed: _handlePasswordVisibility,
+                iconSize: 18,
                 icon: _obscurePassword
-                    ? const Icon(Icons.visibility_rounded)
-                    : const Icon(Icons.visibility_off_rounded),
+                    ? const Icon(
+                        Icons.visibility_rounded,
+                      )
+                    : const Icon(
+                        Icons.visibility_off_rounded,
+                      ),
               ),
               hintText: 'Password',
             ),
@@ -159,14 +175,14 @@ class _SignUpModalState extends State<SignUpModal> {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           TextButton(
-            onPressed: () => _handleSubmit(context),
-            child: const Text('Sign up'),
-          ),
-          TextButton(
             onPressed: () {
               Navigator.pop(context);
             },
-            child: const Text('Close'),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => _handleSubmit(context),
+            child: const Text('Sign up'),
           ),
         ],
       ),

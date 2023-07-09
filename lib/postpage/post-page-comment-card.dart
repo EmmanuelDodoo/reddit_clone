@@ -46,13 +46,10 @@ class _CommentCardState extends State<CommentCard> {
   Widget _userAvatar() {
     return Container(
         margin: const EdgeInsets.only(right: 10, left: 5, top: 5),
-        child: InkWell(
-          onTap: _viewUser,
-          child: CircleAvatar(
-            radius: 15,
-            backgroundColor: Colors.transparent,
-            backgroundImage: NetworkImage(_comment.getUserImageURL()),
-          ),
+        child: CircleAvatar(
+          radius: 15,
+          backgroundColor: Colors.transparent,
+          backgroundImage: NetworkImage(_comment.getUserImageURL()),
         ));
   }
 
@@ -67,7 +64,11 @@ class _CommentCardState extends State<CommentCard> {
           Container(
             margin: const EdgeInsets.only(left: 10, right: 10),
             child: IconButton(
-                onPressed: _reply, icon: const Icon(Icons.turn_left)),
+              onPressed: _reply,
+              icon: const Icon(Icons.turn_left),
+              color:
+                  Theme.of(context).textTheme.bodyMedium?.color?.withAlpha(180),
+            ),
           ),
           Container(
             margin: const EdgeInsets.only(right: 10),
@@ -87,15 +88,29 @@ class _CommentCardState extends State<CommentCard> {
           _isCollapsed = false;
         });
       },
-      child: Container(
+      child: SizedBox(
         height: 30,
-        color: Colors.blue[200],
         width: double.maxFinite,
         child: Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            _userAvatar(),
-            Text(_comment.getUserName()),
-            Text(" • ${_comment.timeDifference}  "),
+            InkWell(
+              borderRadius: BorderRadius.circular(50),
+              onTap: _viewUser,
+              child: Row(
+                children: [
+                  _userAvatar(),
+                  Text(
+                    _comment.getUserName(),
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                  Text(
+                    " • ${_comment.timeDifference}  ",
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ],
+              ),
+            ),
             Expanded(
               child: Text(
                 _comment.getContents(),
@@ -134,7 +149,6 @@ class _CommentCardState extends State<CommentCard> {
       onDoubleTap: _doubleTap,
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.blue[200],
           border: widget.isChild
               ? const Border(
                   left: BorderSide(color: Colors.purple),
@@ -148,12 +162,23 @@ class _CommentCardState extends State<CommentCard> {
           children: [
             Container(
               margin: const EdgeInsets.only(bottom: 5),
-              child: Row(
-                children: [
-                  _userAvatar(),
-                  Text(_comment.getUserName()),
-                  Text(" • ${_comment.timeDifference}  "),
-                ],
+              child: InkWell(
+                borderRadius: BorderRadius.circular(50),
+                onTap: _viewUser,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _userAvatar(),
+                    Text(
+                      _comment.getUserName(),
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                    Text(
+                      " • ${_comment.timeDifference}  ",
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  ],
+                ),
               ),
             ),
             Container(
@@ -172,11 +197,24 @@ class _CommentCardState extends State<CommentCard> {
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedContainer(
-      duration: const Duration(seconds: 3),
-      curve: Curves.easeIn,
-      child:
-          _isCollapsed ? _collapsedVersion(context) : _expandedVersion(context),
+    if (widget.isChild) {
+      return AnimatedContainer(
+        duration: const Duration(seconds: 3),
+        curve: Curves.easeIn,
+        child: _isCollapsed
+            ? _collapsedVersion(context)
+            : _expandedVersion(context),
+      );
+    }
+
+    return Card(
+      child: AnimatedContainer(
+        duration: const Duration(seconds: 3),
+        curve: Curves.easeIn,
+        child: _isCollapsed
+            ? _collapsedVersion(context)
+            : _expandedVersion(context),
+      ),
     );
   }
 }

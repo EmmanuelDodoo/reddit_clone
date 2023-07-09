@@ -17,9 +17,6 @@ class _PopularState extends State<Popular> with AutomaticKeepAliveClientMixin {
     return Scaffold(
       body: RefreshIndicator(
         key: _refreshIndicatorKey,
-        color: Colors.white,
-        backgroundColor: Colors.blue,
-        strokeWidth: 1.5,
         onRefresh: () async {
           return Future<void>.delayed(const Duration(seconds: 3));
         },

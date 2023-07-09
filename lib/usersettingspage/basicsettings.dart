@@ -38,19 +38,22 @@ class _ImageDialogState extends State<ImageDialog> {
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text('Pick image'),
+            Text(
+              'Pick image',
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 10.0),
               child: SizedBox(
                 child: _selectedImage == null
                     ? InkWell(
                         onTap: () => getImageFromGallery(),
-                        child: const Padding(
-                          padding: EdgeInsets.symmetric(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
                               vertical: 10.0, horizontal: 20.0),
                           child: Row(
                             children: [
-                              Padding(
+                              const Padding(
                                 padding: EdgeInsets.only(right: 8.0),
                                 child: Icon(
                                   Icons.image,
@@ -58,9 +61,10 @@ class _ImageDialogState extends State<ImageDialog> {
                               ),
                               Text(
                                 "Choose image",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                ),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium
+                                    ?.copyWith(fontWeight: FontWeight.w500),
                               )
                             ],
                           ),
@@ -91,7 +95,7 @@ class _ImageDialogState extends State<ImageDialog> {
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  child: const Text('Close'),
+                  child: const Text('Cancel'),
                 ),
               ],
             )
@@ -106,15 +110,19 @@ class BasicSettings extends StatelessWidget {
   BasicSettings({Key? key}) : super(key: key);
 
   User? _currUser;
+  TextEditingController _usernameController = TextEditingController();
+  final GlobalKey<FormState> _usernameFormKey = GlobalKey<FormState>();
 
-  void handleUpdateUsername(String newName) {
-    _currUser!.setUsername(newName: newName);
+  void _handleUpdateUsername(BuildContext context) {
+    if (_usernameFormKey.currentState!.validate()) {
+      // _currUser!.setUsername(newName: _usernameController.text);
+      Navigator.of(context).pop();
+    }
   }
 
   void handleUpdateProfileImage(File image) {}
 
   Widget changeUsername(BuildContext context) {
-    TextEditingController _controller = TextEditingController();
     return InkWell(
       splashColor: Colors.blueGrey,
       onTap: () => showDialog(
@@ -126,19 +134,22 @@ class BasicSettings extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                const Text('Update Username'),
-                SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.75,
-                  child: TextField(
-                    controller: _controller,
-                    onSubmitted: (String value) {
-                      Navigator.of(context).pop();
-                      handleUpdateUsername(value);
-                    },
+                Text(
+                  'Update Username',
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+                Form(
+                  key: _usernameFormKey,
+                  child: TextFormField(
+                    controller: _usernameController,
                     decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
                       labelText: 'New username',
                     ),
+                    validator: (String? value) {
+                      if (value == null || value.isEmpty) {
+                        return "Please enter some text";
+                      }
+                    },
                   ),
                 ),
                 const SizedBox(height: 15),
@@ -146,17 +157,14 @@ class BasicSettings extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                        handleUpdateUsername(_controller.text);
-                      },
+                      onPressed: () => _handleUpdateUsername(context),
                       child: const Text("Update"),
                     ),
                     TextButton(
                       onPressed: () {
                         Navigator.pop(context);
                       },
-                      child: const Text('Close'),
+                      child: const Text('Cancel'),
                     ),
                   ],
                 )
@@ -165,17 +173,20 @@ class BasicSettings extends StatelessWidget {
           ),
         ),
       ),
-      child: const Row(
+      child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
             "Update username",
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w500,
-            ),
+            style: Theme.of(context)
+                .textTheme
+                .bodyMedium
+                ?.copyWith(fontWeight: FontWeight.w500),
           ),
-          Icon(Icons.arrow_forward_rounded)
+          const Icon(
+            Icons.arrow_forward_rounded,
+            size: 20,
+          )
         ],
       ),
     );
@@ -190,17 +201,20 @@ class BasicSettings extends StatelessWidget {
           callback: handleUpdateProfileImage,
         ),
       ),
-      child: const Row(
+      child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
             "Update profile image",
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w500,
-            ),
+            style: Theme.of(context)
+                .textTheme
+                .bodyMedium
+                ?.copyWith(fontWeight: FontWeight.w500),
           ),
-          Icon(Icons.arrow_forward_rounded)
+          const Icon(
+            Icons.arrow_forward_rounded,
+            size: 20,
+          ),
         ],
       ),
     );
@@ -222,13 +236,13 @@ class BasicSettings extends StatelessWidget {
               children: [
                 Container(
                   margin: const EdgeInsets.only(bottom: 10),
-                  child: const Center(
+                  child: Center(
                     child: Text(
                       "BASIC SETTINGS",
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyMedium
+                          ?.copyWith(fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),

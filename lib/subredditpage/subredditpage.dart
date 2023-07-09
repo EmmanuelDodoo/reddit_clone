@@ -61,12 +61,12 @@ class _SubredditPageState extends State<SubredditPage> {
       padding: const EdgeInsets.only(bottom: 10, left: 10, right: 10, top: 0),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
-        gradient: const LinearGradient(
+        gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
             Colors.transparent,
-            Colors.black45,
+            Theme.of(context).colorScheme.inversePrimary.withAlpha(100),
           ],
         ),
       ),
@@ -83,13 +83,11 @@ class _SubredditPageState extends State<SubredditPage> {
               ),
               Container(
                 // margin: const EdgeInsets.only(left: 10),
-                child: Text(
-                  _subreddit.getSubName(),
-                  style: const TextStyle(
-                    fontSize: 30,
-                    color: Colors.white,
-                  ),
-                ),
+                child: Text(_subreddit.getSubName(),
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleLarge
+                        ?.copyWith(color: Colors.white)),
               ),
               _subscribeButton(),
             ],
@@ -104,10 +102,10 @@ class _SubredditPageState extends State<SubredditPage> {
               softWrap: true,
               maxLines: 3,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 15,
-              ),
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyMedium
+                  ?.copyWith(color: Colors.white),
             ),
           ),
         ],
@@ -147,6 +145,10 @@ class _SubredditPageState extends State<SubredditPage> {
 
   @override
   Widget build(BuildContext context) {
+    bool isDark = Theme.of(context).colorScheme.brightness == Brightness.dark;
+    Color appBarTextColor = isDark
+        ? Theme.of(context).colorScheme.primary
+        : Theme.of(context).colorScheme.primaryContainer;
     UserProvider provider = Provider.of<UserProvider>(context, listen: false);
     _currUser = provider.currentUser;
     return InheritedData<Subreddit>(
@@ -166,7 +168,10 @@ class _SubredditPageState extends State<SubredditPage> {
                     sliver: SliverAppBar(
                       title: Text(
                         _subreddit.getSubName(),
-                        style: const TextStyle(fontSize: 18),
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleSmall
+                            ?.copyWith(color: appBarTextColor),
                       ), // This is the title in the app bar.
                       pinned: true,
                       expandedHeight: 350.0,
@@ -179,16 +184,12 @@ class _SubredditPageState extends State<SubredditPage> {
                       ],
 
                       bottom: const TabBar(
-                        indicatorWeight: 3,
-                        labelPadding: EdgeInsets.symmetric(vertical: 10),
                         tabs: [
                           Text(
                             "Posts",
-                            style: TextStyle(fontSize: 18),
                           ),
                           Text(
                             "About",
-                            style: TextStyle(fontSize: 18),
                           ),
                         ],
                       ),

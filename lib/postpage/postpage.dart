@@ -40,23 +40,27 @@ class PostPage extends StatelessWidget {
         builder: (context) => AddCommentPage(replyable: _post)));
   }
 
-  Widget _emptyComments() {
+  Widget _emptyComments(BuildContext context) {
     return Center(
       child: Container(
         margin: const EdgeInsets.only(top: 100),
         height: 300,
         // width: 300,
         // color: Colors.purple,
-        child: const Column(
+        child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
               Icons.mood_outlined,
-              size: 50,
+              size: 35,
+              color: Theme.of(context).colorScheme.secondary,
             ),
             Text(
               "Be the first to comment!",
-              style: TextStyle(fontSize: 25),
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyLarge
+                  ?.copyWith(color: Theme.of(context).colorScheme.primary),
             ),
           ],
         ),
@@ -64,9 +68,9 @@ class PostPage extends StatelessWidget {
     );
   }
 
-  SliverChildDelegate _commentSection() {
+  SliverChildDelegate _commentSection(BuildContext context) {
     if (_comments.isEmpty) {
-      return SliverChildBuilderDelegate((_, index) => _emptyComments(),
+      return SliverChildBuilderDelegate((_, index) => _emptyComments(context),
           childCount: 1);
     } else {
       return SliverChildBuilderDelegate((BuildContext context, int index) {
@@ -82,23 +86,22 @@ class PostPage extends StatelessWidget {
 
   Widget _textField(BuildContext context) {
     return InkWell(
+      borderRadius: const BorderRadius.all(
+        Radius.circular(10),
+      ),
       onTap: () => _commentOnPost(context),
       child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 5),
         padding: const EdgeInsets.only(left: 15),
-        alignment: Alignment.centerLeft,
-        width: MediaQuery.of(context).size.width * 0.9,
+        // alignment: Alignment.centerLeft,
         decoration: BoxDecoration(
-          color: Colors.grey[350],
+          color: Theme.of(context).colorScheme.background,
           borderRadius: const BorderRadius.all(
             Radius.circular(10),
           ),
         ),
-        child: const Text(
+        child: Text(
           "Add a comment",
-          style: TextStyle(
-            fontSize: 18,
-          ),
+          style: Theme.of(context).textTheme.bodyLarge,
         ),
       ),
     );
@@ -119,13 +122,13 @@ class PostPage extends StatelessWidget {
           }
         },
         child: _currUser == null
-            ? const Center(
+            ? Center(
                 child: Text(
                   "Login",
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleMedium
+                      ?.copyWith(color: Theme.of(context).colorScheme.primary),
                 ),
               )
             : CircleAvatar(
@@ -136,7 +139,7 @@ class PostPage extends StatelessWidget {
     );
   }
 
-  Widget _body() {
+  Widget _body(BuildContext context) {
     return RefreshIndicator(
       key: _refreshIndicatorKey,
       color: Colors.white,
@@ -152,8 +155,9 @@ class PostPage extends StatelessWidget {
           PostPageFooter(
             post: _post,
           ),
+          SliverToBoxAdapter(child: Divider()),
           SliverList(
-            delegate: _commentSection(),
+            delegate: _commentSection(context),
           )
         ],
       ),
@@ -181,9 +185,9 @@ class PostPage extends StatelessWidget {
             ),
           ],
         ),
-        body: _body(),
+        body: _body(context),
         bottomNavigationBar: BottomAppBar(
-          height: 50.0,
+          height: MediaQuery.of(context).size.height * 0.06,
           child: _textField(context),
         ),
       ),

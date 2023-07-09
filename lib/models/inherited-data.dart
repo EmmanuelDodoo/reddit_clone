@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'user.dart';
 
 ///Propagate data throughout out this widget's subtree
 class InheritedData<T> extends InheritedWidget {

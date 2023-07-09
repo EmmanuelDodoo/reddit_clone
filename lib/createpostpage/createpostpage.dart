@@ -52,11 +52,12 @@ class _CreatePostPageState extends State<CreatePostPage> {
         ),
         TextButton(
           onPressed: _handlePosting,
-          child: const Text(
+          child: Text(
             "POST",
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-            ),
+            style: Theme.of(context)
+                .textTheme
+                .bodyLarge
+                ?.copyWith(color: Theme.of(context).colorScheme.primary),
           ),
         )
       ],
@@ -66,17 +67,21 @@ class _CreatePostPageState extends State<CreatePostPage> {
   Widget _subredditDropdown(BuildContext context) {
     List<Subreddit> options = _currUser!.getSubreddits();
     return DropdownButton<Subreddit>(
-      hint: const Text(
+      hint: Text(
         "Select Subreddit",
-        style: TextStyle(fontWeight: FontWeight.w700),
+        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
       ),
       value: _selectedSubreddit,
-      icon: const Icon(Icons.arrow_downward),
+      icon: const Icon(
+        Icons.arrow_downward,
+        size: 20,
+      ),
       elevation: 16,
-      style: const TextStyle(color: Colors.deepPurple),
       underline: Container(
         height: 2,
-        color: Colors.deepPurpleAccent,
+        color: Theme.of(context).colorScheme.primary,
       ),
       onChanged: (Subreddit? value) {
         // This is called when the user selects an item.
@@ -89,7 +94,9 @@ class _CreatePostPageState extends State<CreatePostPage> {
           value: value,
           child: Text(
             value.getSubName(),
-            style: const TextStyle(fontWeight: FontWeight.w600),
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
           ),
         );
       }).toList(),
@@ -110,21 +117,28 @@ class _CreatePostPageState extends State<CreatePostPage> {
               Container(
                 margin: const EdgeInsets.only(bottom: 10),
                 padding: const EdgeInsets.symmetric(vertical: 5.0),
-                child: const Text(
+                child: Text(
                   "SUBREDDIT RULES:",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: Theme.of(context).textTheme.bodyLarge,
                 ),
               ),
-              ListView(
-                shrinkWrap: true,
-                children: rules.mapIndexed((index, rule) {
-                  return Container(
-                    margin: const EdgeInsets.symmetric(vertical: 2.0),
-                    child: Text("${index + 1}. $rule"),
-                  );
-                }).toList(),
+              Flexible(
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: rules.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Container(
+                      margin: const EdgeInsets.symmetric(vertical: 6.0),
+                      child: Text(
+                        "${index + 1}. ${rules[index]}",
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyMedium
+                            ?.copyWith(letterSpacing: 0.5),
+                      ),
+                    );
+                  },
+                ),
               ),
               TextButton(
                 onPressed: () {
@@ -145,7 +159,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
         if (_selectedSubreddit == null) return;
         _rulesDialog(context);
       },
-      child: const Text("RULES"),
+      child: const Text("Rules"),
     );
   }
 
@@ -166,12 +180,13 @@ class _CreatePostPageState extends State<CreatePostPage> {
   Widget _imageSection(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10.0),
-      child: SizedBox(
-          child: Stack(
+      child: Stack(
         children: [
           Image.file(
             _selectedImage!,
             fit: BoxFit.cover,
+            width: double.infinity,
+            height: MediaQuery.of(context).size.height * 0.25,
           ),
           Align(
             alignment: AlignmentDirectional.topEnd,
@@ -187,7 +202,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
             ),
           ),
         ],
-      )),
+      ),
     );
   }
 
@@ -213,6 +228,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
             Expanded(
               child: TextFormField(
                 controller: _contentController,
+                style: Theme.of(context).textTheme.bodyMedium,
                 expands: true,
                 maxLines: null,
                 showCursor: true,
@@ -249,28 +265,47 @@ class _CreatePostPageState extends State<CreatePostPage> {
       child: Scaffold(
         floatingActionButton: _floatingButton(context),
         resizeToAvoidBottomInset: true,
-        body: Container(
-          margin: const EdgeInsets.symmetric(horizontal: 10),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const SizedBox(
-                height: 10,
-              ),
-              _header(context),
-              const SizedBox(
-                height: 10,
-              ),
-              _subreddit(context),
-              const SizedBox(
-                height: 10,
-              ),
-              (_selectedImage == null ? Container() : _imageSection(context)),
-              const SizedBox(
-                height: 10,
-              ),
-              _textField(context),
-            ],
+        body: NestedScrollView(
+          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+            return [
+              SliverOverlapAbsorber(
+                handle:
+                    NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+                sliver: SliverList(
+                  delegate: SliverChildListDelegate([
+                    Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 10),
+                      child: Column(
+                        children: [
+                          _header(context),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          _subreddit(context),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          (_selectedImage == null
+                              ? Container()
+                              : _imageSection(context)),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                        ],
+                      ),
+                    )
+                  ]),
+                ),
+              )
+            ];
+          },
+          body: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 10),
+            child: Column(
+              children: [
+                _textField(context),
+              ],
+            ),
           ),
         ),
         bottomNavigationBar: BottomAppBar(

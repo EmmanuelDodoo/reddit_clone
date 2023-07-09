@@ -11,16 +11,15 @@ class AddCommentPage extends StatelessWidget {
       : _replyable = replyable,
         super(key: key);
   late final IReplyable _replyable;
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   User? _currUser;
 
   final TextEditingController _controller = TextEditingController();
 
-  void _getText() {
-    print(_controller.text);
-  }
-
   void _handlePosting() {
-    print("Posting");
+    if (_formKey.currentState!.validate()) {
+      print("Successful validation");
+    }
   }
 
   Widget _floater() {
@@ -44,20 +43,21 @@ class AddCommentPage extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(top: 20, bottom: 10),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           _cancelButton(context),
-          const Text(
+          Text(
             "Add a comment",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+            style: Theme.of(context).textTheme.titleMedium,
           ),
           TextButton(
-            onPressed: _getText,
-            child: const Text(
+            onPressed: _handlePosting,
+            child: Text(
               "Post",
-              style: TextStyle(
-                fontSize: 20,
-              ),
+              style: Theme.of(context)
+                  .textTheme
+                  .titleMedium
+                  ?.copyWith(color: Theme.of(context).colorScheme.primary),
             ),
           )
         ],
@@ -65,18 +65,21 @@ class AddCommentPage extends StatelessWidget {
     );
   }
 
-  Widget _context() {
+  Widget _context(BuildContext context) {
     return Container(
       width: double.maxFinite,
       margin: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
       padding: const EdgeInsets.only(bottom: 5),
-      decoration: const BoxDecoration(
-          border: Border(bottom: BorderSide(color: Colors.purple))),
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(
+            color: Theme.of(context).colorScheme.primary,
+          ),
+        ),
+      ),
       child: Text(
         _replyable.context,
-        style: const TextStyle(
-          fontSize: 15,
-        ),
+        style: Theme.of(context).textTheme.titleSmall,
       ),
     );
   }
@@ -85,14 +88,23 @@ class AddCommentPage extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 10),
       height: MediaQuery.of(context).size.height * 0.7,
-      child: TextField(
-        expands: true,
-        maxLines: null,
-        showCursor: true,
-        controller: _controller,
-        onSubmitted: (String text) => _getText(),
-        decoration: const InputDecoration(
-          hintText: "Leave a comment",
+      child: Form(
+        key: _formKey,
+        child: TextFormField(
+          style: Theme.of(context).textTheme.bodyMedium,
+          expands: true,
+          maxLines: null,
+          showCursor: true,
+          controller: _controller,
+          validator: (String? value) {
+            if (value == null || value.isEmpty) {
+              return "Please enter some text";
+            }
+            return null;
+          },
+          decoration: const InputDecoration(
+            hintText: "Leave a comment",
+          ),
         ),
       ),
     );
@@ -106,15 +118,28 @@ class AddCommentPage extends StatelessWidget {
       child: Scaffold(
         resizeToAvoidBottomInset: true,
         floatingActionButton: _floater(),
-        body: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _header(context),
-            _context(),
-            Expanded(
-              child: _textField(context),
-            ),
-          ],
+        body: NestedScrollView(
+          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+            return [
+              SliverOverlapAbsorber(
+                handle:
+                    NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+                sliver: SliverList(
+                  delegate: SliverChildListDelegate([
+                    _header(context),
+                  ]),
+                ),
+              )
+            ];
+          },
+          body: Column(
+            children: [
+              _context(context),
+              Expanded(
+                child: _textField(context),
+              ),
+            ],
+          ),
         ),
       ),
     );

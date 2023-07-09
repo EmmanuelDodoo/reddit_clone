@@ -46,41 +46,46 @@ class _UserProfileState extends State<UserProfile> {
         padding: const EdgeInsets.all(0),
         child: Column(
           children: [
-            Row(
-              children: [
-                Text(
-                  _viewedUser.getUsername(),
-                  style: const TextStyle(
-                    fontSize: 30,
-                    color: Colors.white,
+            Container(
+              margin: const EdgeInsets.only(left: 50),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    _viewedUser.getUsername(),
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleLarge
+                        ?.copyWith(color: Colors.white),
                   ),
-                ),
-                (_currUser != null && _currUser!.id == _viewedUser.id
-                    ? IconButton(
-                        onPressed: () => handleEditProfile(context),
-                        icon: const Icon(
-                          Icons.edit_rounded,
-                          color: Colors.white,
-                        ),
-                      )
-                    : Container())
-              ],
+                  (_currUser != null && _currUser!.id == _viewedUser.id
+                      ? IconButton(
+                          onPressed: () => handleEditProfile(context),
+                          iconSize: 20,
+                          icon: const Icon(
+                            Icons.edit_rounded,
+                            color: Colors.white,
+                          ),
+                        )
+                      : Container())
+                ],
+              ),
             ),
             Row(
               children: [
                 Text(
                   "${_viewedUser.getKarma()} • ",
-                  style: const TextStyle(
-                    fontSize: 17,
-                    color: Colors.white,
-                  ),
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodySmall
+                      ?.copyWith(color: Colors.white),
                 ),
                 Text(
                   _viewedUser.getUserAgeString(),
-                  style: const TextStyle(
-                    fontSize: 17,
-                    color: Colors.white,
-                  ),
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodySmall
+                      ?.copyWith(color: Colors.white),
                 )
               ],
             )
@@ -114,8 +119,13 @@ class _UserProfileState extends State<UserProfile> {
 
   @override
   Widget build(BuildContext context) {
+    bool isDark = Theme.of(context).colorScheme.brightness == Brightness.dark;
+    Color appBarTextColor = isDark
+        ? Theme.of(context).colorScheme.primary
+        : Theme.of(context).colorScheme.primaryContainer;
     UserProvider provider = Provider.of<UserProvider>(context, listen: false);
     _currUser = provider.currentUser;
+
     return SafeArea(
       child: DefaultTabController(
         length: 2,
@@ -131,7 +141,10 @@ class _UserProfileState extends State<UserProfile> {
                   sliver: SliverAppBar(
                     title: Text(
                       _viewedUser.getUsername(),
-                      style: const TextStyle(fontSize: 18),
+                      style: Theme.of(context)
+                          .textTheme
+                          .titleSmall
+                          ?.copyWith(color: appBarTextColor),
                     ), // This is the title in the app bar.
                     pinned: true,
                     expandedHeight: 350.0,
@@ -141,16 +154,12 @@ class _UserProfileState extends State<UserProfile> {
                     forceElevated: innerBoxIsScrolled,
 
                     bottom: const TabBar(
-                      indicatorWeight: 3,
-                      labelPadding: EdgeInsets.symmetric(vertical: 10),
                       tabs: [
                         Text(
                           "Posts",
-                          style: TextStyle(fontSize: 18),
                         ),
                         Text(
                           "Comments",
-                          style: TextStyle(fontSize: 18),
                         ),
                       ],
                     ),

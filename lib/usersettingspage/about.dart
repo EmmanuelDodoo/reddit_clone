@@ -25,9 +25,10 @@ class About extends StatelessWidget {
                 children: [
                   Text(
                     "$name has not been implemented yet!",
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium
+                        ?.copyWith(fontWeight: FontWeight.bold),
                   ),
                   TextButton(
                     onPressed: () {
@@ -45,12 +46,15 @@ class About extends StatelessWidget {
           children: [
             Text(
               name,
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w500,
-              ),
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyMedium
+                  ?.copyWith(fontWeight: FontWeight.w500),
             ),
-            const Icon(Icons.arrow_forward_rounded)
+            const Icon(
+              Icons.arrow_forward_rounded,
+              size: 20,
+            )
           ],
         ),
       ),
@@ -79,10 +83,13 @@ class About extends StatelessWidget {
             children: [
               Container(
                 margin: const EdgeInsets.only(bottom: 10),
-                child: const Center(
+                child: Center(
                   child: Text(
                     "SUPPORT & ABOUT SETTINGS",
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium
+                        ?.copyWith(fontWeight: FontWeight.bold),
                   ),
                 ),
               ),

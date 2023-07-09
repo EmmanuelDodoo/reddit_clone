@@ -60,7 +60,6 @@ class CommentPopUp extends BasePopUp {
               children: [
                 const Icon(
                   Icons.notifications_outlined,
-                  color: Colors.black,
                 ),
                 Container(
                   margin: const EdgeInsets.only(left: 8),

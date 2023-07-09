@@ -49,45 +49,47 @@ class DefaultFooterState extends State<DefaultFooter> {
   }
 
   /// Returns a Color according to the current voteCode
-  Color voteColor() {
+  Color voteColor(BuildContext context) {
     if (_voteCode == -1) {
-      return Colors.indigo;
+      return const Color(0xFFDB2D54);
     } else if (_voteCode == 1) {
-      return Colors.deepOrange;
+      return Theme.of(context).colorScheme.primary;
     }
     return Colors.black;
   }
 
   /// Returns the appropriate upvote icon based on voteCode
-  Widget upvoteIcon() {
+  Widget upvoteIcon(BuildContext context) {
     if (_voteCode == 1) {
       return SvgPicture.asset(
         "icons/upvote-solid.svg",
         semanticsLabel: "Up voted",
-        color: voteColor(),
+        color: voteColor(context),
         width: 20,
       );
     }
     return SvgPicture.asset(
       "icons/upvote-light.svg",
       semanticsLabel: "Up vote",
+      color: voteColor(context),
       width: 20,
     );
   }
 
   /// Returns the appropriate upvote icon based on voteCode
-  Widget downvoteIcon() {
+  Widget downvoteIcon(BuildContext context) {
     if (_voteCode == -1) {
       return SvgPicture.asset(
         "icons/downvote-solid.svg",
         semanticsLabel: "Down voted",
-        color: voteColor(),
+        color: voteColor(context),
         width: 20,
       );
     }
     return SvgPicture.asset(
       "icons/downvote-light.svg",
       semanticsLabel: "Down vote",
+      color: voteColor(context),
       width: 20,
     );
   }
@@ -95,24 +97,27 @@ class DefaultFooterState extends State<DefaultFooter> {
   /// Returns the appropriate color for the text in vote section.
   ///A post which has neither been upvoted nor downvoted is lighter
   ///
-  Color voteTextColor() {
+  Color? voteTextColor(BuildContext context) {
     if (_voteCode == 0) {
-      return voteColor().withAlpha(120);
+      return Theme.of(context).textTheme.bodyMedium?.color?.withAlpha(120);
     }
-    return voteColor();
+    return voteColor(context);
   }
 
-  Widget voteSection() {
+  Widget voteSection(BuildContext context) {
     return Row(
       children: [
         Container(
           margin: const EdgeInsets.only(right: 8),
           child: InkWell(
-            splashColor: voteColor().withAlpha(75),
+            borderRadius: BorderRadius.circular(60),
             onTap: () {
               updateVote(update: 1);
             },
-            child: upvoteIcon(),
+            child: Padding(
+              padding: const EdgeInsets.all(5.0),
+              child: upvoteIcon(context),
+            ),
           ),
         ),
         Text(
@@ -120,31 +125,36 @@ class DefaultFooterState extends State<DefaultFooter> {
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w500,
-            color: voteTextColor(),
+            color: voteTextColor(context),
           ),
         ),
         Container(
           margin: const EdgeInsets.only(left: 8),
           child: InkWell(
-            splashColor: voteColor().withAlpha(75),
+            borderRadius: BorderRadius.circular(60),
             onTap: () {
               updateVote(update: -1);
             },
-            child: downvoteIcon(),
+            child: Padding(
+              padding: const EdgeInsets.all(5.0),
+              child: downvoteIcon(context),
+            ),
           ),
         )
       ],
     );
   }
 
-  Widget commentSection() {
+  Widget commentSection(BuildContext context) {
     return Row(
       children: [
         Container(
           margin: const EdgeInsets.only(right: 10),
-          child: const Icon(
+          child: Icon(
             Icons.chat_bubble_outline_rounded,
             size: 20,
+            color:
+                Theme.of(context).textTheme.bodyMedium?.color?.withAlpha(180),
           ),
         ),
         Text(
@@ -152,14 +162,15 @@ class DefaultFooterState extends State<DefaultFooter> {
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w500,
-            color: Colors.black.withAlpha(150),
+            color:
+                Theme.of(context).textTheme.bodyMedium?.color?.withAlpha(180),
           ),
         )
       ],
     );
   }
 
-  Widget shareSection() {
+  Widget shareSection(BuildContext context) {
     return InkWell(
       onTap: () => shareButton(),
       splashColor: Colors.black.withAlpha(100),
@@ -167,17 +178,19 @@ class DefaultFooterState extends State<DefaultFooter> {
         children: [
           Container(
             margin: const EdgeInsets.only(right: 10),
-            child: const Icon(
+            child: Icon(
               Icons.share_rounded,
               size: 20,
+              color:
+                  Theme.of(context).textTheme.bodyMedium?.color?.withAlpha(180),
             ),
           ),
           Text(
             "Share",
             style: TextStyle(
-              fontSize: 15,
               fontWeight: FontWeight.w500,
-              color: Colors.black.withAlpha(150),
+              color:
+                  Theme.of(context).textTheme.bodyMedium?.color?.withAlpha(180),
             ),
           )
         ],
@@ -191,9 +204,9 @@ class DefaultFooterState extends State<DefaultFooter> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          voteSection(),
-          commentSection(),
-          shareSection(),
+          voteSection(context),
+          commentSection(context),
+          shareSection(context),
         ],
       ),
     );

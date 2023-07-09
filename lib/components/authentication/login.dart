@@ -7,7 +7,10 @@ import 'package:reddit_clone/models/userprovider.dart';
 import '../../models/user.dart';
 
 class LoginModal extends StatefulWidget {
-  const LoginModal({Key? key}) : super(key: key);
+  /// Function to call after a successful login
+  final void Function()? onCloseSuccessfully;
+
+  const LoginModal({Key? key, this.onCloseSuccessfully}) : super(key: key);
 
   @override
   State<LoginModal> createState() => _LoginModalState();
@@ -44,24 +47,29 @@ class _LoginModalState extends State<LoginModal> {
           Provider.of<UserProvider>(context, listen: false);
       userProvider.setCurrentUser(user: _user!);
       Navigator.of(context).pop();
+
+      /// Call the on close successfully function from widget
+      /// if any
+      if (widget.onCloseSuccessfully != null) {
+        widget.onCloseSuccessfully!();
+      }
     }
   }
 
   void _handleSignUp(BuildContext context) {
     Navigator.of(context).pop();
-    showDialog(context: context, builder: (context) => SignUpModal());
+    showDialog(
+        context: context,
+        builder: (context) => SignUpModal(
+              onCloseSuccessfully: widget.onCloseSuccessfully,
+            ));
   }
 
   Widget _header(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(top: 5, bottom: 15),
-      child: const Text(
-        "Login to your account",
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: 18,
-        ),
-      ),
+      child: Text("Login to your account",
+          style: Theme.of(context).textTheme.titleMedium),
     );
   }
 
@@ -73,6 +81,7 @@ class _LoginModalState extends State<LoginModal> {
         children: [
           TextFormField(
             controller: _emailController,
+            style: Theme.of(context).textTheme.bodyMedium,
             decoration: const InputDecoration(
               hintText: 'Email or username',
             ),
@@ -86,12 +95,19 @@ class _LoginModalState extends State<LoginModal> {
           TextFormField(
             controller: _passwordController,
             obscureText: _obscurePassword,
+            style: Theme.of(context).textTheme.bodyMedium,
             decoration: InputDecoration(
+              // isCollapsed: true,
               suffixIcon: IconButton(
                 onPressed: _handlePasswordVisibility,
+                iconSize: 18,
                 icon: _obscurePassword
-                    ? const Icon(Icons.visibility_rounded)
-                    : const Icon(Icons.visibility_off_rounded),
+                    ? const Icon(
+                        Icons.visibility_rounded,
+                      )
+                    : const Icon(
+                        Icons.visibility_off_rounded,
+                      ),
               ),
               hintText: 'Password',
             ),
@@ -117,11 +133,13 @@ class _LoginModalState extends State<LoginModal> {
             onPressed: () {
               Navigator.pop(context);
             },
-            child: const Text('Close'),
+            child: const Text('Cancel'),
           ),
           TextButton(
             onPressed: () => _handleSubmit(context),
-            child: const Text('Login'),
+            child: const Text(
+              'Login',
+            ),
           ),
         ],
       ),
@@ -135,20 +153,20 @@ class _LoginModalState extends State<LoginModal> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text(
+            Text(
               "Don't have an account?",
-              style: TextStyle(
-                fontWeight: FontWeight.w600,
-                fontStyle: FontStyle.italic,
-              ),
+              style: Theme.of(context)
+                  .textTheme
+                  .bodySmall
+                  ?.copyWith(fontStyle: FontStyle.italic),
             ),
             TextButton(
               onPressed: () => _handleSignUp(context),
-              child: const Text(
+              child: Text(
                 "Sign up",
-                style: TextStyle(
-                  fontStyle: FontStyle.italic,
-                ),
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    fontStyle: FontStyle.italic,
+                    color: Theme.of(context).colorScheme.primary),
               ),
             ),
           ],

@@ -11,19 +11,16 @@ class MainPage extends StatelessWidget {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: AppBarTheme.of(context).backgroundColor,
-          toolbarHeight: 2,
+          toolbarHeight: 0,
           bottom: const TabBar(
-            labelPadding: EdgeInsets.only(bottom: 10),
-            indicatorWeight: 2.0,
             tabs: [
               Text(
                 "Home",
-                style: TextStyle(fontSize: 18),
+                style: TextStyle(fontSize: 19),
               ),
               Text(
                 "Popular",
-                style: TextStyle(fontSize: 18),
+                style: TextStyle(fontSize: 19),
               ),
             ],
           ),

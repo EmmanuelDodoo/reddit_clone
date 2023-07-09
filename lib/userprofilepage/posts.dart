@@ -22,21 +22,10 @@ class _UserPagePostsState extends State<UserPagePosts>
     return Scaffold(
       body: RefreshIndicator(
         key: _refreshIndicatorKey,
-        color: Colors.white,
-        backgroundColor: Colors.blue,
-        strokeWidth: 1.5,
         onRefresh: () async {
           //Todo Make refresh actually mean something
           return Future<void>.delayed(const Duration(seconds: 3));
         },
-        // child: ListView.builder(
-        //   itemCount: 40,
-        //   itemBuilder: (context, index) {
-        //     return ListTile(
-        //       title: Text("Post $index"),
-        //     );
-        //   },
-        // ),
         child: ListView(
           children: _postcards,
         ),

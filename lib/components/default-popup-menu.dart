@@ -15,7 +15,6 @@ class DefaultPopUp extends BasePopUp {
               children: [
                 const Icon(
                   Icons.share,
-                  color: Colors.black,
                 ),
                 Container(
                   margin: const EdgeInsets.only(left: 8),
@@ -38,7 +37,6 @@ class DefaultPopUp extends BasePopUp {
             children: [
               const Icon(
                 Icons.bookmarks_rounded,
-                color: Colors.black,
               ),
               Container(
                 margin: const EdgeInsets.only(left: 8),
@@ -54,50 +52,27 @@ class DefaultPopUp extends BasePopUp {
           ),
         )),
         PopupMenuItem(
-            child: InkWell(
-          onTap: subscribe,
-          child: Row(
-            children: [
-              const Icon(
-                Icons.notifications,
-                color: Colors.black,
-              ),
-              Container(
-                margin: const EdgeInsets.only(left: 8),
-                child: const Text(
-                  "Subscribe",
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w500,
-                  ),
+          child: InkWell(
+            onTap: subscribe,
+            child: Row(
+              children: [
+                const Icon(
+                  Icons.notifications,
                 ),
-              )
-            ],
+                Container(
+                  margin: const EdgeInsets.only(left: 8),
+                  child: const Text(
+                    "Subscribe",
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                )
+              ],
+            ),
           ),
-        )),
-        // PopupMenuItem(
-        //   child: InkWell(
-        //     onTap: _award,
-        //     child: Row(
-        //       children: [
-        //         const Icon(
-        //           Icons.military_tech,
-        //           color: Colors.black,
-        //         ),
-        //         Container(
-        //           margin: const EdgeInsets.only(left: 8),
-        //           child: const Text(
-        //             "Award",
-        //             style: TextStyle(
-        //               fontSize: 15,
-        //               fontWeight: FontWeight.w500,
-        //             ),
-        //           ),
-        //         )
-        //       ],
-        //     ),
-        //   ),
-        // ),
+        ),
       ],
     );
   }
