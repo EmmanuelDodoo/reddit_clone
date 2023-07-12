@@ -74,10 +74,6 @@ class _CreatePostPageState extends State<CreatePostPage> {
             ),
       ),
       value: _selectedSubreddit,
-      icon: const Icon(
-        Icons.arrow_downward,
-        size: 20,
-      ),
       elevation: 16,
       underline: Container(
         height: 2,

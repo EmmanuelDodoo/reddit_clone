@@ -142,8 +142,6 @@ class PostPage extends StatelessWidget {
   Widget _body(BuildContext context) {
     return RefreshIndicator(
       key: _refreshIndicatorKey,
-      color: Colors.white,
-      backgroundColor: Colors.red,
       onRefresh: _refresh,
       child: CustomScrollView(
         slivers: [

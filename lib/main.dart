@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit_clone/models/userprovider.dart';
+import 'package:reddit_clone/theme/themeprovider.dart';
 import 'mainpage/mainpage.dart';
 import 'models/user.dart';
 import 'models/inherited-data.dart';
@@ -10,9 +11,22 @@ import 'skeleton.dart';
 import 'temp.dart';
 
 void main() {
+  // runApp(
+  //   ChangeNotifierProvider(
+  //     create: (context) => UserProvider(),
+  //     child: MyApp(),
+  //   ),
+  // );
   runApp(
-    ChangeNotifierProvider(
-      create: (context) => UserProvider(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (context) => UserProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => ThemeProvider(),
+        ),
+      ],
       child: MyApp(),
     ),
   );
@@ -38,10 +52,14 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
-  ThemeData _temp(BuildContext context) {
-    bool isDark = Theme.of(context).colorScheme.brightness == Brightness.dark;
+  ThemeData _theme(BuildContext context) {
+    ThemeProvider _themeprovider =
+        Provider.of<ThemeProvider>(context, listen: false);
+
+    bool isDark = _themeprovider.brightness == Brightness.dark;
+
     return ThemeData(
-      useMaterial3: true,
+      useMaterial3: _themeprovider.useMaterial3,
       appBarTheme: AppBarTheme(
         backgroundColor: isDark ? Colors.black87 : null,
         elevation: 0,
@@ -62,8 +80,9 @@ class _MyAppState extends State<MyApp> {
         margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
       ),
       colorScheme: ColorScheme.fromSeed(
-        brightness: Brightness.dark,
-        seedColor: const Color(0xFF33554F),
+        // brightness: Brightness.dark,
+        brightness: _themeprovider.brightness,
+        seedColor: _themeprovider.getAppColor(),
       ),
       dialogTheme: const DialogTheme(
         shape: RoundedRectangleBorder(),
@@ -114,23 +133,27 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: "Reddit Clone",
-      theme: _temp(context),
-      home: SafeArea(
-        child: Consumer<UserProvider>(
-          child: MainPage(),
-          builder: (context, provider, child) {
-            if (child != null) {
-              return Skeleton(
-                currPage: child,
-                selectedIndex: 0,
-              );
-            }
-            return Container();
-          },
-        ),
-      ),
+    return Consumer<ThemeProvider>(
+      builder: (context, provider, child) {
+        return MaterialApp(
+          title: "Reddit Clone",
+          theme: _theme(context),
+          home: SafeArea(
+            child: Consumer<UserProvider>(
+              child: MainPage(),
+              builder: (context, provider, child) {
+                if (child != null) {
+                  return Skeleton(
+                    currPage: child,
+                    selectedIndex: 0,
+                  );
+                }
+                return Container();
+              },
+            ),
+          ),
+        );
+      },
     );
   }
 }
