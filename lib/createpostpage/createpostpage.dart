@@ -23,9 +23,28 @@ class _CreatePostPageState extends State<CreatePostPage> {
   File? _selectedImage;
   Subreddit? _selectedSubreddit;
 
-  void _handlePosting() {
+  ScaffoldFeatureController<SnackBar, SnackBarClosedReason> _showSnackBar(
+      BuildContext context, String message) {
+    return ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          message,
+          style: Theme.of(context)
+              .textTheme
+              .titleSmall
+              ?.copyWith(color: Colors.red),
+        ),
+      ),
+    );
+  }
+
+  void _handlePosting(BuildContext context) {
     if (_formKey.currentState!.validate()) {
-      print("Successful validation");
+      if (_selectedSubreddit != null) {
+        print("Successful validation");
+      } else {
+        _showSnackBar(context, "Please choose a subreddit");
+      }
     }
   }
 
@@ -51,7 +70,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
           ),
         ),
         TextButton(
-          onPressed: _handlePosting,
+          onPressed: () => _handlePosting(context),
           child: Text(
             "POST",
             style: Theme.of(context)
@@ -248,7 +267,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
 
   Widget _floatingButton(BuildContext context) {
     return FloatingActionButton(
-      onPressed: _handlePosting,
+      onPressed: () => _handlePosting(context),
       child: const Text('Post'),
     );
   }
