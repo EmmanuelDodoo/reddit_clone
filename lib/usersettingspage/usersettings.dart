@@ -12,7 +12,7 @@ class UserSettings extends StatelessWidget {
     bool isDark = Theme.of(context).colorScheme.brightness == Brightness.dark;
     Color appBarTextColor = isDark
         ? Theme.of(context).colorScheme.primary
-        : Theme.of(context).colorScheme.primaryContainer;
+        : Theme.of(context).colorScheme.primary;
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
