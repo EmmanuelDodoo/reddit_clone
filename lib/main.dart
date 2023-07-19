@@ -6,17 +6,10 @@ import 'package:reddit_clone/theme/themeprovider.dart';
 import 'mainpage/mainpage.dart';
 import 'models/user.dart';
 import 'models/inherited-data.dart';
-// import 'rem.dart';
 import 'skeleton.dart';
 import 'temp.dart';
 
 void main() {
-  // runApp(
-  //   ChangeNotifierProvider(
-  //     create: (context) => UserProvider(),
-  //     child: MyApp(),
-  //   ),
-  // );
   runApp(
     MultiProvider(
       providers: [
@@ -53,13 +46,14 @@ class _MyAppState extends State<MyApp> {
   }
 
   ThemeData _theme(BuildContext context) {
-    ThemeProvider _themeprovider =
+    ThemeProvider themeProvider =
         Provider.of<ThemeProvider>(context, listen: false);
 
-    bool isDark = _themeprovider.brightness == Brightness.dark;
+    bool isDark = themeProvider.getBrightness() == Brightness.dark;
 
     return ThemeData(
-      useMaterial3: _themeprovider.useMaterial3,
+      useMaterial3: themeProvider.useMaterial3,
+      // useMaterial3: false,
       appBarTheme: AppBarTheme(
         backgroundColor: isDark ? Colors.black87 : null,
         elevation: 0,
@@ -81,8 +75,8 @@ class _MyAppState extends State<MyApp> {
       ),
       colorScheme: ColorScheme.fromSeed(
         // brightness: Brightness.dark,
-        brightness: _themeprovider.brightness,
-        seedColor: _themeprovider.getAppColor(),
+        brightness: themeProvider.getBrightness(),
+        seedColor: themeProvider.getAppColor(),
       ),
       dialogTheme: const DialogTheme(
         shape: RoundedRectangleBorder(),
