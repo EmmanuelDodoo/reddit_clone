@@ -5,9 +5,9 @@ import "package:http_parser/http_parser.dart" as http_parser;
 
 import 'api_errors.dart';
 
-/// Class for making requests to the api. All
+/// Class for handling requests to the api. All
 /// methods may throw an APIError.
-class API {
+class RequestHandler {
   static const String baseURL = "emmanueld.pythonanywhere.com";
   // Uri.http does will throw an error if there is a `/` in the base url
   // (authority). So I had to separate them

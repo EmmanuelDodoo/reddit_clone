@@ -50,7 +50,8 @@ class _TempState extends State<Temp> {
                     };
                     var token =
                         "dce4bf21ff940b50f2d801a337c1fb3a2f9faa218605b4e3ca52dbfd880b9dc6";
-                    API.getSubredditPosts(1).then((value) => print(value));
+                    RequestHandler.getSubredditPosts(1)
+                        .then((value) => print(value));
 
                     setState(() {
                       _text = "Clicked!";
