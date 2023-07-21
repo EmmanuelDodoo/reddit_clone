@@ -49,7 +49,8 @@ class User {
     List<dynamic> postsMap = jsonMap["posts"];
     _posts = List.from(postsMap.map((e) => Post.fromMap(map: e)));
     List<dynamic> commentsMap = jsonMap["comments"];
-    _comments = List.from(commentsMap.map((e) => Comment.fromMap(map: e)));
+    _comments =
+        List.from(commentsMap.map((e) => Comment.simplified(jsonMap: e)));
     //Todo user image, karma, join date, subreddits,subreddit images, posts,
   }
 
@@ -62,6 +63,19 @@ class User {
     id = source["id"];
     _username = source["name"];
     _userImageURL = source["userImageURL"];
+  }
+
+  /// Create a simplified view of a user
+  ///
+  /// Simplified users have no posts, comments, or subreddits
+  ///
+  /// Requires: source is a valid json of a simplified user
+  User.simplified({required dynamic source}) {
+    id = source["id"];
+    _username = source["username"];
+    _userImageURL = source["imageURL"];
+    _karma = source["karma"];
+    _joindate = source["joined"];
   }
 
   String getUsername() => "u/$_username";

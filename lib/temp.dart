@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:reddit_clone/models/api/http_model.dart';
+import 'package:reddit_clone/models/comment.dart';
 
 class Temp extends StatefulWidget {
   const Temp({super.key});
@@ -26,6 +27,29 @@ class _TempState extends State<Temp> {
     });
   }
 
+  void _tempFunction() {
+    var requestBody = {
+      "contents": "some test comment",
+      "userId": 1,
+      "ancestorId": -1
+    };
+    var token =
+        "7b0438908599f45a0e56ba1ee93b0efb0cb741095a3a1ce0fea02664d71dbf21";
+
+    // RequestHandler.getComment(pid: 1, cid: 1).then((value) async {
+    //   Comment comment = Comment.simplified(jsonMap: value);
+    //   print(comment.getReplies());
+    //   await comment.reply(
+    //       uid: 3, contents: "Some testing on frontend", token: token);
+    //   print(comment.getReplies());
+    // });
+
+    RequestHandler.getAllPostComments(1).then((value) {
+      var comments = List.of(value.map((e) => Comment.full(jsonMap: e)));
+      print(comments);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -43,25 +67,20 @@ class _TempState extends State<Temp> {
               children: [
                 ElevatedButton(
                   onPressed: () {
-                    var requestBody = {
-                      "contents": "some test comment",
-                      "userId": 1,
-                      "ancestorId": -1
-                    };
-                    var token =
-                        "dce4bf21ff940b50f2d801a337c1fb3a2f9faa218605b4e3ca52dbfd880b9dc6";
-                    RequestHandler.getSubredditPosts(1)
-                        .then((value) => print(value));
+                    _tempFunction();
 
                     setState(() {
                       _text = "Clicked!";
                     });
 
-                    Timer(const Duration(seconds: 3), () {
-                      setState(() {
-                        _text = "Button";
-                      });
-                    });
+                    Timer(
+                      const Duration(seconds: 3),
+                      () {
+                        setState(() {
+                          _text = "Button";
+                        });
+                      },
+                    );
                   },
                   child: Text(_text),
                 )

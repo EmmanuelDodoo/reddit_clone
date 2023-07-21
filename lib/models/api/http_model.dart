@@ -83,7 +83,7 @@ class RequestHandler {
     }
   }
 
-  static Future<Map<String, dynamic>> signIn(
+  static Future<Map<String, dynamic>> signUp(
       {required Map<String, String> requestBody}) async {
     Uri url = Uri.http(baseURL, "$firstPath/signup/");
     var response = await http.post(url, body: jsonEncode(requestBody));

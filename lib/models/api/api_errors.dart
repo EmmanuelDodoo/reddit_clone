@@ -1,6 +1,11 @@
 abstract class APIError implements Exception {
   final String message;
   APIError(this.message);
+
+  @override
+  String toString() {
+    return "${runtimeType.toString()} error with message: $message";
+  }
 }
 
 class ServerError extends APIError {

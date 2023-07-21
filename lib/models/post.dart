@@ -43,9 +43,6 @@ class Post with VotingMixin implements IReplyable {
   @override
   late final String context;
 
-  @override
-  late final String replyRoute;
-
   /// All comments under this post
   late List<Comment> _comments;
 
@@ -72,7 +69,6 @@ class Post with VotingMixin implements IReplyable {
     }
     context = _contents == "" ? _title : _contents;
     voteRoute = "posts/$id/vote";
-    replyRoute = "posts/$id/reply";
   }
 
   /// Create a Post object with the given valid json.
@@ -83,7 +79,7 @@ class Post with VotingMixin implements IReplyable {
 
     if (withComments) {
       List<dynamic> commentsMap = map["comments"];
-      _comments = List.from(commentsMap.map((e) => Comment.fromMap(map: e)));
+      // _comments = List.from(commentsMap.map((e) => Comment.fromMap(map: e)));
     } else {
       _comments = [];
     }
@@ -99,14 +95,18 @@ class Post with VotingMixin implements IReplyable {
 
     if (withComments) {
       List<Map<String, dynamic>> commentsMap = map["comments"];
-      _comments = List.from(commentsMap.map((e) => Comment.fromMap(map: map)));
+      _comments =
+          List.from(commentsMap.map((e) => Comment.simplified(jsonMap: map)));
     } else {
       _comments = [];
     }
   }
 
   @override
-  void reply() {}
+  Future<void> reply(
+      {required int uid,
+      required String contents,
+      required String token}) async {}
 
   String getUserName() => _user.getUsername();
 

@@ -125,29 +125,34 @@ class _MyAppState extends State<MyApp> {
     super.initState();
   }
 
+  // @override
+  // Widget build(BuildContext context) {
+  //   return Consumer<ThemeProvider>(
+  //     builder: (context, provider, child) {
+  //       return MaterialApp(
+  //         title: "Reddit Clone",
+  //         theme: _theme(context),
+  //         home: SafeArea(
+  //           child: Consumer<UserProvider>(
+  //             child: MainPage(),
+  //             builder: (context, provider, child) {
+  //               if (child != null) {
+  //                 return Skeleton(
+  //                   currPage: child,
+  //                   selectedIndex: 0,
+  //                 );
+  //               }
+  //               return Container();
+  //             },
+  //           ),
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
+
   @override
   Widget build(BuildContext context) {
-    return Consumer<ThemeProvider>(
-      builder: (context, provider, child) {
-        return MaterialApp(
-          title: "Reddit Clone",
-          theme: _theme(context),
-          home: SafeArea(
-            child: Consumer<UserProvider>(
-              child: MainPage(),
-              builder: (context, provider, child) {
-                if (child != null) {
-                  return Skeleton(
-                    currPage: child,
-                    selectedIndex: 0,
-                  );
-                }
-                return Container();
-              },
-            ),
-          ),
-        );
-      },
-    );
+    return Temp();
   }
 }
