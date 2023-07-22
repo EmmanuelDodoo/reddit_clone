@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:reddit_clone/dummies.dart';
 import 'package:reddit_clone/models/api/http_model.dart';
-import 'package:reddit_clone/models/inherited-data.dart';
 import '../components/default-post-card.dart';
 import '../models/post.dart';
 
@@ -15,37 +13,44 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
       GlobalKey<RefreshIndicatorState>();
-  late List<Widget> _postcards;
-  // late final DataProvider<Widget> _dataProvider;
+  List<Post> _posts = [];
 
-  Future<void> _loadHomePosts() async {
-    var tempPosts = await RequestHandler.getHomePosts()
-        .then((value) => value.map((map) => Post(jsonMap: map)));
-
-    var cards = tempPosts.map((post) => DefaultPostCard(post: post)).toList();
-
-    setState(() {
-      _postcards = cards;
-    });
+  Future<List<Post>> _fetchPostsData() async {
+    return await RequestHandler.getHomePosts()
+        .then((value) => value.map((e) => Post(jsonMap: e)).toList());
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _loadHomePosts();
+  List<Widget> _buildPostCards(List<Post> posts) {
+    return posts.map((e) => DefaultPostCard(post: e)).toList();
   }
 
   @override
   Widget build(BuildContext context) {
-    return InheritedData<List<Widget>>(
-      data: _postcards,
-      child: Scaffold(
-        body: RefreshIndicator(
-          key: _refreshIndicatorKey,
-          onRefresh: _loadHomePosts,
-          child: ListView(
-            children: _postcards,
-          ),
+    return Scaffold(
+      body: RefreshIndicator(
+        key: _refreshIndicatorKey,
+        onRefresh: () async {
+          var temp = await _fetchPostsData();
+          setState(() {
+            _posts = temp;
+          });
+        },
+        child: FutureBuilder(
+          future: _fetchPostsData(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done &&
+                snapshot.hasData) {
+              return ListView(
+                children: _posts.isEmpty
+                    ? _buildPostCards(snapshot.data!)
+                    : _buildPostCards(_posts),
+              );
+            } else {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+          },
         ),
       ),
     );

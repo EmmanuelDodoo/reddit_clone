@@ -14,34 +14,44 @@ class Popular extends StatefulWidget {
 class _PopularState extends State<Popular> with AutomaticKeepAliveClientMixin {
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
       GlobalKey<RefreshIndicatorState>();
-  late List<Widget> _postcards;
+  List<Post> _posts = [];
 
-  Future<void> _loadPopularPosts() async {
-    var tempPosts = await RequestHandler.getPopularPosts()
-        .then((value) => value.map((map) => Post(jsonMap: map)));
-
-    var cards = tempPosts.map((post) => DefaultPostCard(post: post)).toList();
-
-    setState(() {
-      _postcards = cards;
-    });
+  Future<List<Post>> _fetchPostsData() async {
+    return await RequestHandler.getHomePosts()
+        .then((value) => value.map((e) => Post(jsonMap: e)).toList());
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _loadPopularPosts();
+  List<Widget> _buildPostCards(List<Post> posts) {
+    return posts.map((e) => DefaultPostCard(post: e)).toList();
   }
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
     return Scaffold(
       body: RefreshIndicator(
         key: _refreshIndicatorKey,
-        onRefresh: _loadPopularPosts,
-        child: ListView(
-          children: _postcards,
+        onRefresh: () async {
+          var temp = await _fetchPostsData();
+          setState(() {
+            _posts = temp;
+          });
+        },
+        child: FutureBuilder(
+          future: _fetchPostsData(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done &&
+                snapshot.hasData) {
+              return ListView(
+                children: _posts.isEmpty
+                    ? _buildPostCards(snapshot.data!)
+                    : _buildPostCards(_posts),
+              );
+            } else {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+          },
         ),
       ),
     );
