@@ -93,7 +93,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
   }
 
   Widget _subredditDropdown(BuildContext context) {
-    List<Subreddit> options = _currUserSubreddits;
+    List<Subreddit> options = _currUser!.getSubreddits();
     return DropdownButton<Subreddit>(
       hint: Text(
         "Select Subreddit",
@@ -189,7 +189,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
 
   Widget _subreddit(BuildContext context) {
     return Container(
-      child: _currUserSubreddits.isEmpty
+      child: _currUser!.getSubreddits().isEmpty
           ? const Text("You need to subscribe to a subreddit first")
           : Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,

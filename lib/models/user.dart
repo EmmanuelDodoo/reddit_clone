@@ -55,6 +55,9 @@ class User {
     _karma = jsonMap["karma"];
     _joinDate = jsonMap["joined"];
     _userAgeString = ClassHelper.getTimeDifference(unixTime: _joinDate);
+
+    //TODO Testing to see if this means not using async await for elsewhere
+    _loadSubreddits();
   }
 
   /// Fetches the owned posts of this user from the backend.
@@ -215,7 +218,10 @@ class User {
     RequestHandler.updateUser(requestBody: requestBody, id: id, token: token);
   }
 
-  Future<List<Subreddit>> getSubreddits() async {
+  List<Subreddit> getSubreddits() =>
+      UnmodifiableListView(_subscribedSubreddits);
+
+  Future<List<Subreddit>> _loadSubreddits() async {
     // Fetch the subreddits if they haven't previously been fetched
     if (_subscribedSubreddits.isEmpty) {
       await _fetchSubscribedSubreddits(id).then((value) {
@@ -295,9 +301,15 @@ class User {
     return _downvotedComments;
   }
 
-  // bool isSubscribed({required int subredditId }) {
-  //   getSubreddits().then((value) => value.any((sub) => sub.id == subredditId));
-  // }
+  void subscribeToSubreddit({required int sid, required String token}) async {
+    await RequestHandler.subscribeToSubreddit(uid: id, sid: sid, token: token);
+  }
+
+  void unsubscribeFromSubreddit(
+      {required int sid, required String token}) async {
+    await RequestHandler.unsubscribeToSubreddit(
+        uid: id, sid: sid, token: token);
+  }
 
   String getUserAgeString() => _userAgeString.substring(0);
 

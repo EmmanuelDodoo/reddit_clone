@@ -66,6 +66,8 @@ class _LeftDrawerState extends State<LeftDrawer> {
     UserProvider provider = Provider.of<UserProvider>(context, listen: false);
     _currUser = provider.currentUser;
 
+    var subreddits = _currUser == null ? [] : _currUser!.getSubreddits();
+
     return Drawer(
       child: ListView(
         children: [
@@ -82,7 +84,7 @@ class _LeftDrawerState extends State<LeftDrawer> {
               ),
             ),
           ),
-          ..._currUserSubreddits.map((sub) => _leftDrawerListInator(
+          ...subreddits.map((sub) => _leftDrawerListInator(
               name: sub.getSubName(),
               id: sub.id,
               imageURL: sub.getSubImageURL()))

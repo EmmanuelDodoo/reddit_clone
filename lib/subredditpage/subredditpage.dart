@@ -43,7 +43,7 @@ class _SubredditPageState extends State<SubredditPage> {
 
   Widget _subscribeButton() {
     bool hasSubscribed = _currUser != null &&
-        _currUserSubreddits.any((sub) => sub.id == _subreddit.id);
+        _currUser!.getSubreddits().any((sub) => sub.id == _subreddit.id);
     return IconButton(
       onPressed: handleSubscribe,
       icon: Icon(
