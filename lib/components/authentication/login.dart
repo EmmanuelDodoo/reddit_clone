@@ -2,9 +2,13 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:crypto/crypto.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:reddit_clone/components/authentication/signup.dart';
 import 'package:provider/provider.dart';
+import 'package:reddit_clone/models/api/http_model.dart';
 import 'package:reddit_clone/models/userprovider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../models/user.dart';
 
@@ -26,36 +30,74 @@ class _LoginModalState extends State<LoginModal> {
 
   bool _obscurePassword = true;
 
-  void loadUser() async {
-    String file = "json/user.json";
-    User usr = await rootBundle
-        .loadString(file)
-        .then((value) => User(jsonMap: jsonDecode(value)));
-    setState(() {
-      _user = usr;
-    });
+  String _processPassword() {
+    var password = _passwordController.value.text;
+    var preSalt = dotenv.env["PRESALT"];
+    var postSalt = dotenv.env["POSTSALT"];
+
+    var saltedPasswordBytes = utf8.encode(postSalt! + password + preSalt!);
+    var hash = sha256.convert(saltedPasswordBytes);
+
+    return hash.toString();
+  }
+
+  Future<Map<String, dynamic>> _sendLoginRequest() async {
+    RegExp emailPattern =
+        RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
+
+    var isEmail = emailPattern.hasMatch("input");
+    var requestBody = {
+      isEmail ? "email" : "username": _emailController.value.text,
+      "password": _processPassword(),
+    };
+
+    return await RequestHandler.login(requestBody: requestBody);
+  }
+
+  void _setUser(User user) async {
+    UserProvider userProvider =
+        Provider.of<UserProvider>(context, listen: false);
+    userProvider.setCurrentUser(user: user);
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setInt("uid", user.id);
+  }
+
+  void _saveToken(
+      {required String tokenValue, required int tokenExpiration}) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString("tokenValue", tokenValue);
+    prefs.setInt("tokenExpiration", tokenExpiration);
+  }
+
+  void _handleSubmit(BuildContext context) async {
+    if (!_formKey.currentState!.validate()) return;
+
+    var response = await _sendLoginRequest();
+
+    _setUser(User(jsonMap: response));
+
+    _saveToken(
+        tokenValue: response["tokenValue"],
+        tokenExpiration: response["tokenExpiration"]);
+
+    // ignore: use_build_context_synchronously
+    Navigator.of(context).pop();
+
+    // ignore: use_build_context_synchronously
+    _showSnackBar(context, "Login In successful. Welcome back");
+
+    /// Call the on close successfully function from widget
+    /// if any
+    if (widget.onCloseSuccessfully != null) {
+      widget.onCloseSuccessfully!();
+    }
   }
 
   void _handlePasswordVisibility() {
     setState(() {
       _obscurePassword = !_obscurePassword;
     });
-  }
-
-  void _handleSubmit(BuildContext context) {
-    if (_formKey.currentState!.validate()) {
-      // TODO form submission
-      UserProvider userProvider =
-          Provider.of<UserProvider>(context, listen: false);
-      userProvider.setCurrentUser(user: _user!);
-      Navigator.of(context).pop();
-
-      /// Call the on close successfully function from widget
-      /// if any
-      if (widget.onCloseSuccessfully != null) {
-        widget.onCloseSuccessfully!();
-      }
-    }
   }
 
   void _handleSignUp(BuildContext context) {
@@ -65,6 +107,21 @@ class _LoginModalState extends State<LoginModal> {
         builder: (context) => SignUpModal(
               onCloseSuccessfully: widget.onCloseSuccessfully,
             ));
+  }
+
+  ScaffoldFeatureController<SnackBar, SnackBarClosedReason> _showSnackBar(
+      BuildContext context, String message) {
+    return ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          message,
+          style: Theme.of(context)
+              .textTheme
+              .titleSmall
+              ?.copyWith(color: Colors.green[400]),
+        ),
+      ),
+    );
   }
 
   Widget _header(BuildContext context) {
@@ -173,12 +230,6 @@ class _LoginModalState extends State<LoginModal> {
             ),
           ],
         ));
-  }
-
-  @override
-  void initState() {
-    loadUser();
-    super.initState();
   }
 
   @override

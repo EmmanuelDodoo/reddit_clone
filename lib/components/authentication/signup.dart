@@ -2,6 +2,12 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
+import 'package:reddit_clone/models/api/http_model.dart';
+import 'package:reddit_clone/models/user.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../models/userprovider.dart';
 
 class SignUpModal extends StatefulWidget {
   ///Optional function to call after a successfull signup
@@ -21,6 +27,57 @@ class _SignUpModalState extends State<SignUpModal> {
   File? _selectedImage;
   bool _obscurePassword = true;
 
+  Future<Map<String, dynamic>> _sendSignUpRequest() async {
+    var requestBody = {
+      "email": _emailController.value.text,
+      "username": _usernameController.value.text,
+      "password": _passwordController.value.text,
+    };
+
+    return await RequestHandler.signUp(requestBody: requestBody);
+  }
+
+  void _setUser(User user) async {
+    UserProvider userProvider =
+        Provider.of<UserProvider>(context, listen: false);
+    userProvider.setCurrentUser(user: user);
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setInt("uid", user.id);
+  }
+
+  void _saveToken(
+      {required String tokenValue, required int tokenExpiration}) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString("tokenValue", tokenValue);
+    prefs.setInt("tokenExpiration", tokenExpiration);
+  }
+
+  void _handleSubmit(BuildContext context) async {
+    if (!_formKey.currentState!.validate()) return;
+
+    var response = await _sendSignUpRequest();
+
+    _setUser(User(jsonMap: response));
+
+    _saveToken(
+        tokenValue: response["tokenValue"],
+        tokenExpiration: response["tokenExpiration"]);
+
+    // ignore: use_build_context_synchronously
+    Navigator.of(context).pop();
+
+    // ignore: use_build_context_synchronously
+    _showSnackBar(context,
+        "Sign in Successful. Welcome ${_usernameController.value.text}");
+
+    /// Call the on close successfully function from widget
+    /// if any
+    if (widget.onCloseSuccessfully != null) {
+      widget.onCloseSuccessfully!();
+    }
+  }
+
   Future<void> _getImageFromGallery() async {
     final image = await ImagePicker().pickImage(source: ImageSource.gallery);
 
@@ -37,18 +94,19 @@ class _SignUpModalState extends State<SignUpModal> {
     });
   }
 
-  void _handleSubmit(BuildContext context) {
-    if (_formKey.currentState!.validate()) {
-      // TODO form submission
-
-      Navigator.of(context).pop();
-
-      /// Call the on close successfully function from widget
-      /// if any
-      if (widget.onCloseSuccessfully != null) {
-        widget.onCloseSuccessfully!();
-      }
-    }
+  ScaffoldFeatureController<SnackBar, SnackBarClosedReason> _showSnackBar(
+      BuildContext context, String message) {
+    return ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          message,
+          style: Theme.of(context)
+              .textTheme
+              .titleSmall
+              ?.copyWith(color: Colors.green[400]),
+        ),
+      ),
+    );
   }
 
   Widget _header(BuildContext context) {

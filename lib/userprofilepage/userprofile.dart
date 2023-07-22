@@ -12,7 +12,8 @@ import './posts.dart';
 import './comments.dart';
 
 class UserProfile extends StatefulWidget {
-  UserProfile({Key? key, required int userId}) : super(key: key);
+  final int userId;
+  const UserProfile({Key? key, required this.userId}) : super(key: key);
 
   @override
   State<UserProfile> createState() => _UserProfileState();
@@ -171,9 +172,11 @@ class _UserProfileState extends State<UserProfile> {
             },
             body: Container(
               margin: const EdgeInsets.only(top: 105),
-              child: const TabBarView(
+              child: TabBarView(
                 children: [
-                  UserPagePosts(),
+                  UserPagePosts(
+                    userId: widget.userId,
+                  ),
                   UserPageComments(),
                 ],
               ),

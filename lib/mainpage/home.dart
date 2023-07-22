@@ -37,7 +37,6 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
 
   @override
   Widget build(BuildContext context) {
-    _postcards = createAllPosts(context);
     return InheritedData<List<Widget>>(
       data: _postcards,
       child: Scaffold(

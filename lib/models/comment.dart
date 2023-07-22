@@ -63,6 +63,8 @@ class Comment with VotingMixin implements IReplyable {
     // vote stuff
     // TODO take a close look
     voteRoute = "comments/$id/";
+    //TODO temporary measure
+    voteCode = 0;
   }
 
   /// Construct a Comment from a valid json map. The `replies` field is replaced

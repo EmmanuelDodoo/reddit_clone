@@ -2,16 +2,21 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
+import 'package:reddit_clone/models/api/http_model.dart';
 import 'package:reddit_clone/models/userprovider.dart';
 import 'package:reddit_clone/theme/themeprovider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'mainpage/mainpage.dart';
 import 'models/user.dart';
 import 'models/inherited-data.dart';
 import 'skeleton.dart';
 import 'temp.dart';
 
-void main() {
+void main() async {
+  await dotenv.load(fileName: ".env");
+
   runApp(
     MultiProvider(
       providers: [
@@ -37,14 +42,42 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   User? _user;
 
-  void loadUser() async {
-    String file = "json/user.json";
-    User usr = await rootBundle
-        .loadString(file)
-        .then((value) => User(jsonMap: jsonDecode(value)));
-    setState(() {
-      _user = usr;
-    });
+  Future<User> _fetchUser() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int id = prefs.getInt("uid")!;
+    var response = await RequestHandler.getUser(id);
+    return User(jsonMap: response);
+  }
+
+  void _propagateUser(User user) async {
+    UserProvider userProvider =
+        Provider.of<UserProvider>(context, listen: false);
+    userProvider.setCurrentUser(user: user);
+  }
+
+  Future<bool> _savedTokenIsExpired() async {
+    // Check if the saved saved token, if any, is expired
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var tokenValue = prefs.getString("tokenValue");
+    var tokenExpiration = prefs.getInt("tokenExpiration");
+
+    if (tokenValue == null || tokenExpiration == null) return true;
+
+    DateTime tokenTime =
+        DateTime.fromMillisecondsSinceEpoch(tokenExpiration * 1000);
+    return !tokenTime.isBefore(DateTime.now());
+  }
+
+  void _loadUser() async {
+    if (await _savedTokenIsExpired()) {
+      _user = null;
+    } else {
+      var usr = await _fetchUser();
+      _propagateUser(usr);
+      setState(() {
+        _user = usr;
+      });
+    }
   }
 
   ThemeData _theme(BuildContext context) {
@@ -123,38 +156,38 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void initState() {
-    // loadUser();
+    _loadUser();
     super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<ThemeProvider>(
+      builder: (context, provider, child) {
+        return MaterialApp(
+          title: "Reddit Clone",
+          theme: _theme(context),
+          home: SafeArea(
+            child: Consumer<UserProvider>(
+              child: MainPage(),
+              builder: (context, provider, child) {
+                if (child != null) {
+                  return Skeleton(
+                    currPage: child,
+                    selectedIndex: 0,
+                  );
+                }
+                return Container();
+              },
+            ),
+          ),
+        );
+      },
+    );
   }
 
   // @override
   // Widget build(BuildContext context) {
-  //   return Consumer<ThemeProvider>(
-  //     builder: (context, provider, child) {
-  //       return MaterialApp(
-  //         title: "Reddit Clone",
-  //         theme: _theme(context),
-  //         home: SafeArea(
-  //           child: Consumer<UserProvider>(
-  //             child: MainPage(),
-  //             builder: (context, provider, child) {
-  //               if (child != null) {
-  //                 return Skeleton(
-  //                   currPage: child,
-  //                   selectedIndex: 0,
-  //                 );
-  //               }
-  //               return Container();
-  //             },
-  //           ),
-  //         ),
-  //       );
-  //     },
-  //   );
+  //   return Temp();
   // }
-
-  @override
-  Widget build(BuildContext context) {
-    return Temp();
-  }
 }

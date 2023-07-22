@@ -74,6 +74,9 @@ class Post with VotingMixin implements IReplyable {
     _user = User(jsonMap: source["user"]);
 
     _sub = Subreddit.simplified(jsonMap: source["subreddit"]);
+
+    //TODO temporary measure
+    voteCode = 0;
   }
 
   /// Construct a post from a valid json map.
