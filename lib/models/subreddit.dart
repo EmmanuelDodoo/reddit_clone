@@ -28,18 +28,22 @@ class Subreddit {
 
   List<Post> _post = [];
 
-  /// Create s simplified Subreddit object.
-  /// The thumbnailURL, about, rules and subscriberCount field
-  /// are left empty
-  Subreddit.simplified({required dynamic jsonMap}) {
+  void _generator(dynamic jsonMap) {
     id = jsonMap["id"];
     _name = jsonMap["name"];
     _subImageURL = jsonMap["imageURL"];
   }
 
+  /// Create s simplified Subreddit object.
+  /// The thumbnailURL, about, rules and subscriberCount field
+  /// are left empty
+  Subreddit.simplified({required dynamic jsonMap}) {
+    _generator(jsonMap);
+  }
+
   ///Creates a complete subreddit object.
   Subreddit.full({required dynamic jsonMap}) {
-    Subreddit.simplified(jsonMap: jsonMap);
+    _generator(jsonMap);
     _thumbnailURL = jsonMap["thumbnailURL"];
     _subscriberCount = jsonMap["subscriberNumber"];
     _about = jsonMap["about"];
@@ -55,10 +59,10 @@ class Subreddit {
       try {
         return await RequestHandler.getAllPostComments(sid);
       } catch (e) {
-        throw Exception("Failed to fetch user for comment: ${toString()} ");
+        throw Exception("Failed to fetch posts for subreddit: ${toString()} ");
       }
     } catch (e) {
-      throw Exception("Failed to fetch user for comment: ${toString()} ");
+      throw Exception("Failed to fetch posts for subreddit: ${toString()} ");
     }
   }
 

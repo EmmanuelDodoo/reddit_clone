@@ -71,7 +71,7 @@ class Post with VotingMixin implements IReplyable {
       _postImageURL = "";
     }
 
-    _user = User.simplified(jsonMap: source["user"]);
+    _user = User(jsonMap: source["user"]);
 
     _sub = Subreddit.simplified(jsonMap: source["subreddit"]);
   }
@@ -91,10 +91,10 @@ class Post with VotingMixin implements IReplyable {
       try {
         return await RequestHandler.getUser(uid);
       } catch (e) {
-        throw Exception("Failed to fetch user for comment: ${toString()} ");
+        throw Exception("Failed to fetch user for post: ${toString()} ");
       }
     } catch (e) {
-      throw Exception("Failed to fetch user for comment: ${toString()} ");
+      throw Exception("Failed to fetch user for post: ${toString()} ");
     }
   }
 
@@ -108,10 +108,10 @@ class Post with VotingMixin implements IReplyable {
       try {
         return await RequestHandler.getSubreddit(sid);
       } catch (e) {
-        throw Exception("Failed to fetch user for comment: ${toString()} ");
+        throw Exception("Failed to fetch subreddit for post: ${toString()} ");
       }
     } catch (e) {
-      throw Exception("Failed to fetch user for comment: ${toString()} ");
+      throw Exception("Failed to fetch subreddit for post: ${toString()} ");
     }
   }
 
@@ -125,10 +125,10 @@ class Post with VotingMixin implements IReplyable {
       try {
         return await RequestHandler.getAllPostComments(pid);
       } catch (e) {
-        throw Exception("Failed to fetch user for comment: ${toString()} ");
+        throw Exception("Failed to fetch comments for post: ${toString()} ");
       }
     } catch (e) {
-      throw Exception("Failed to fetch user for comment: ${toString()} ");
+      throw Exception("Failed to fetch comments for post: ${toString()} ");
     }
   }
 

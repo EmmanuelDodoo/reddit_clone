@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:reddit_clone/components/leftDrawer.dart';
 import 'package:reddit_clone/components/rightdrawer.dart';
 import 'package:reddit_clone/createpostpage/createpostpage.dart';
 import 'package:reddit_clone/components/authentication/login.dart';
@@ -16,7 +17,7 @@ class Skeleton extends StatelessWidget {
   late final Widget currPage;
   int selectedIndex;
   User? _currUser;
-  late List<Subreddit> _userSubreddits;
+  List<Subreddit> _userSubreddits = [];
 
   void _visitSubreddit({required int id}) {
     print("Visiting subreddit with id $id");
@@ -141,9 +142,10 @@ class Skeleton extends StatelessWidget {
   Widget build(BuildContext context) {
     UserProvider provider = Provider.of<UserProvider>(context, listen: false);
     _currUser = provider.currentUser;
-    _userSubreddits = _currUser == null ? [] : _currUser!.getSubreddits();
+    // _userSubreddits = _currUser == null ? [] : _currUser!.getSubreddits();
     return Scaffold(
-      drawer: _leftDrawer(),
+      // drawer: _leftDrawer(),
+      drawer: LeftDrawer(),
       endDrawer: RightDrawer(),
       appBar: AppBar(
         backgroundColor: AppBarTheme.of(context).backgroundColor,

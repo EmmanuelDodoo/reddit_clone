@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -34,7 +36,7 @@ class _UserProfileState extends State<UserProfile> {
     String file = "json/user.json";
     User usr = await rootBundle
         .loadString(file)
-        .then((value) => User.fromJSON(json: value));
+        .then((value) => User(jsonMap: jsonDecode(value)));
     setState(() {
       _viewedUser = usr;
     });

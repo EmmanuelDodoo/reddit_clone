@@ -51,10 +51,8 @@ class _TempState extends State<Temp> {
     // });
 
     RequestHandler.getSubreddit(1).then((value) async {
-      Subreddit subreddit = Subreddit.simplified(jsonMap: value);
-      print(await subreddit.getPosts());
-
-      await subreddit.getPosts();
+      Subreddit subreddit = Subreddit.full(jsonMap: value);
+      print(subreddit);
       print(await subreddit.getPosts());
     });
   }

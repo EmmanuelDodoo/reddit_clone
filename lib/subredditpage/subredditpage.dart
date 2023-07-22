@@ -22,6 +22,15 @@ class _SubredditPageState extends State<SubredditPage> {
   User? _currUser;
 
   late Subreddit _subreddit;
+  List<Subreddit> _currUserSubreddits = [];
+
+  void _loadCurrUserSubreddits() async {
+    var temp = await _currUser!.getSubreddits();
+
+    setState(() {
+      _currUserSubreddits = temp;
+    });
+  }
 
   void handleSubscribe() {
     if (_currUser == null) {
@@ -34,7 +43,7 @@ class _SubredditPageState extends State<SubredditPage> {
 
   Widget _subscribeButton() {
     bool hasSubscribed = _currUser != null &&
-        _currUser!.getSubreddits().any((sub) => sub.id == _subreddit.id);
+        _currUserSubreddits.any((sub) => sub.id == _subreddit.id);
     return IconButton(
       onPressed: handleSubscribe,
       icon: Icon(
@@ -140,6 +149,8 @@ class _SubredditPageState extends State<SubredditPage> {
         : Theme.of(context).colorScheme.primaryContainer;
     UserProvider provider = Provider.of<UserProvider>(context, listen: false);
     _currUser = provider.currentUser;
+    _loadCurrUserSubreddits();
+
     return InheritedData<Subreddit>(
       data: _subreddit,
       child: SafeArea(

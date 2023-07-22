@@ -58,7 +58,7 @@ class Comment with VotingMixin implements IReplyable {
     timeDifference = ClassHelper.getTimeDifference(unixTime: timestamp);
     votes = source["votes"];
 
-    _user = User.simplified(jsonMap: source["user"]);
+    _user = User(jsonMap: source["user"]);
 
     // vote stuff
     // TODO take a close look

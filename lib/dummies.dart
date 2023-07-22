@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:reddit_clone/models/user.dart';
 
@@ -13,13 +15,13 @@ Future<String> readUserJSON(
 }
 
 User makeDummyUser(String json) {
-  return User.fromJSON(json: json);
+  return User(jsonMap: jsonDecode(json));
 }
 
 Future<User> loadDummyUser(
     {required BuildContext context, required String file}) {
   Future<String> jsonContents = readUserJSON(context: context, file: file);
-  return jsonContents.then((value) => User.fromJSON(json: value));
+  return jsonContents.then((value) => User(jsonMap: jsonDecode(value)));
 }
 
 Future<String> readPostJSON(

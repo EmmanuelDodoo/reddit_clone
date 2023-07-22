@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:reddit_clone/components/authentication/signup.dart';
@@ -28,7 +30,7 @@ class _LoginModalState extends State<LoginModal> {
     String file = "json/user.json";
     User usr = await rootBundle
         .loadString(file)
-        .then((value) => User.fromJSON(json: value));
+        .then((value) => User(jsonMap: jsonDecode(value)));
     setState(() {
       _user = usr;
     });

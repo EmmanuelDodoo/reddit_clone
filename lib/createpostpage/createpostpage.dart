@@ -22,6 +22,15 @@ class _CreatePostPageState extends State<CreatePostPage> {
   User? _currUser;
   File? _selectedImage;
   Subreddit? _selectedSubreddit;
+  List<Subreddit> _currUserSubreddits = [];
+
+  void _loadCurrUserSubreddits() async {
+    var temp = await _currUser!.getSubreddits();
+
+    setState(() {
+      _currUserSubreddits = temp;
+    });
+  }
 
   ScaffoldFeatureController<SnackBar, SnackBarClosedReason> _showSnackBar(
       BuildContext context, String message) {
@@ -84,7 +93,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
   }
 
   Widget _subredditDropdown(BuildContext context) {
-    List<Subreddit> options = _currUser!.getSubreddits();
+    List<Subreddit> options = _currUserSubreddits;
     return DropdownButton<Subreddit>(
       hint: Text(
         "Select Subreddit",
@@ -180,7 +189,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
 
   Widget _subreddit(BuildContext context) {
     return Container(
-      child: _currUser!.getSubreddits().isEmpty
+      child: _currUserSubreddits.isEmpty
           ? const Text("You need to subscribe to a subreddit first")
           : Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -276,6 +285,8 @@ class _CreatePostPageState extends State<CreatePostPage> {
   Widget build(BuildContext context) {
     UserProvider provider = Provider.of<UserProvider>(context, listen: false);
     _currUser = provider.currentUser;
+    _loadCurrUserSubreddits();
+
     return SafeArea(
       child: Scaffold(
         floatingActionButton: _floatingButton(context),
