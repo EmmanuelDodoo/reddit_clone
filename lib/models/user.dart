@@ -44,10 +44,10 @@ class User {
     _userAgeString = ClassHelper.getTimeDifference(unixTime: _joindate);
     _karma = jsonMap["karma"];
     List<dynamic> subredditsMap = jsonMap["subreddits"];
-    _subreddits = List.from(
-        subredditsMap.map((e) => Subreddit.fromSimplified(source: e)));
+    _subreddits =
+        List.from(subredditsMap.map((e) => Subreddit.simplified(jsonMap: e)));
     List<dynamic> postsMap = jsonMap["posts"];
-    _posts = List.from(postsMap.map((e) => Post.fromMap(map: e)));
+    _posts = List.from(postsMap.map((e) => Post(jsonMap: e)));
     List<dynamic> commentsMap = jsonMap["comments"];
     _comments =
         List.from(commentsMap.map((e) => Comment.simplified(jsonMap: e)));

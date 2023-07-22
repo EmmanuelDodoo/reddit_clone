@@ -1,4 +1,10 @@
 import 'dart:convert';
+import 'dart:collection';
+
+import 'package:reddit_clone/models/post.dart';
+
+import 'api/api_errors.dart';
+import 'api/http_model.dart';
 
 /// Representation of a subreddit
 class Subreddit {
@@ -20,22 +26,7 @@ class Subreddit {
 
   List<String> _rules = [];
 
-  Subreddit.fromSimplified({required dynamic source}) {
-    id = source["id"];
-    _name = source["name"];
-    _subImageURL = source["imageURL"];
-  }
-
-  Subreddit.fromJSON({required String json}) {
-    Map<String, dynamic> jsonMap = jsonDecode(json);
-    id = jsonMap["id"];
-    _name = jsonMap["name"];
-    _subImageURL = jsonMap["imageURL"];
-    _about = jsonMap["about"];
-    _thumbnailURL = jsonMap["thumbnail"];
-    List<dynamic> rulesMap = jsonMap["rules"];
-    _rules = List.from(rulesMap.map((rs) => rs.toString()));
-  }
+  List<Post> _post = [];
 
   /// Create s simplified Subreddit object.
   /// The thumbnailURL, about, rules and subscriberCount field
@@ -44,6 +35,31 @@ class Subreddit {
     id = jsonMap["id"];
     _name = jsonMap["name"];
     _subImageURL = jsonMap["imageURL"];
+  }
+
+  ///Creates a complete subreddit object.
+  Subreddit.full({required dynamic jsonMap}) {
+    Subreddit.simplified(jsonMap: jsonMap);
+    _thumbnailURL = jsonMap["thumbnailURL"];
+    _subscriberCount = jsonMap["subscriberNumber"];
+    _about = jsonMap["about"];
+
+    List<dynamic> rulesMap = jsonMap["rules"];
+    _rules = List.of(rulesMap.map((e) => e as String));
+  }
+
+  Future<List<dynamic>> _fetchPosts(int sid) async {
+    try {
+      return await RequestHandler.getSubredditPosts(sid);
+    } on ServerError catch (e) {
+      try {
+        return await RequestHandler.getAllPostComments(sid);
+      } catch (e) {
+        throw Exception("Failed to fetch user for comment: ${toString()} ");
+      }
+    } catch (e) {
+      throw Exception("Failed to fetch user for comment: ${toString()} ");
+    }
   }
 
   String getSubName() => "r/$_name";
@@ -58,5 +74,20 @@ class Subreddit {
   int get subscriberCount => _subscriberCount;
 
   /// Returns a copy of the rules of this sub
-  List<String> getSubRules() => _rules.map((e) => e).toList();
+  List<String> getSubRules() => UnmodifiableListView(_rules);
+
+  Future<List<Post>> getPosts() async {
+    // Fetch the posts if they haven't been previously fetched.
+    if (_post.isEmpty) {
+      await _fetchPosts(id)
+          .then((value) => _post = List.of(value.map((e) => Post(jsonMap: e))));
+    }
+
+    return UnmodifiableListView(_post);
+  }
+
+  @override
+  String toString() {
+    return "<Subreddit ~id: $id, name: $_name}, about: ${_about.substring(0, _about.length ~/ 2)}...~ >";
+  }
 }

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:reddit_clone/models/api/http_model.dart';
 import 'package:reddit_clone/models/comment.dart';
+import 'package:reddit_clone/models/subreddit.dart';
 
 import 'models/post.dart';
 
@@ -49,21 +50,13 @@ class _TempState extends State<Temp> {
     //   print(comment.getReplies());
     // });
 
-    RequestHandler.getPost(1).then((value) async {
-      Post post = Post(jsonMap: value);
-      print(post.getComments());
-      Timer(
-        const Duration(milliseconds: 300),
-        () {
-          print(post.getComments());
-        },
-      );
-    });
+    RequestHandler.getSubreddit(1).then((value) async {
+      Subreddit subreddit = Subreddit.simplified(jsonMap: value);
+      print(await subreddit.getPosts());
 
-    // RequestHandler.getAllPostComments(1).then((value) {
-    //   var comments = List.of(value.map((e) => Comment.full(jsonMap: e)));
-    //   print(comments);
-    // });
+      await subreddit.getPosts();
+      print(await subreddit.getPosts());
+    });
   }
 
   @override

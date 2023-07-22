@@ -35,7 +35,7 @@ class Post with VotingMixin implements IReplyable {
 
   /// The URL of the image in the post if there is one. If no image, then
   /// an empty string, ""
-  late String _postImageURL;
+  late final String _postImageURL;
 
   /// The text contents of this post if any. If none, then an empty string ""
   late String _contents;
@@ -52,60 +52,7 @@ class Post with VotingMixin implements IReplyable {
   // A generator for Post constructors.
   ///
   /// Sets the instance fields of a Post. Does not include comments
-  void _generator({required dynamic source}) {
-    id = source["id"];
-    _user = User.fromSimplified(source: source["user"]);
-    _sub = Subreddit.fromSimplified(source: source["subreddit"]);
-    timestamp = source["timestamp"];
-    timeDifference = ClassHelper.getTimeDifference(unixTime: timestamp);
-    _title = source["title"];
-    _contents = source["contents"];
-    _imageInPost = source["imagePresent"];
-    votes = source["votes"];
-    voteCode = source["voteCode"];
-    commentCount = source["commentNumber"];
-    // No need to construct all those comments just to get the length of the list
-    if (_imageInPost) {
-      _postImageURL = source["imageURL"];
-    } else {
-      _postImageURL = "";
-    }
-    context = _contents == "" ? _title : _contents;
-    voteRoute = "posts/$id/vote";
-  }
-
-  /// Create a Post object with the given valid json.
-  /// If withComments is true, All comments are parsed into Comment objects.
-  Post.fromJSON({required String json, bool withComments = false}) {
-    dynamic map = jsonDecode(json);
-    _generator(source: map);
-
-    if (withComments) {
-      List<dynamic> commentsMap = map["comments"];
-      // _comments = List.from(commentsMap.map((e) => Comment.fromMap(map: e)));
-    } else {
-      _comments = [];
-    }
-  }
-
-  /// Construct a Post object from a valid map representing json structure.
-  /// If withComments is true, All comments are parsed into Comment objects.
-  ///
-  /// Requires: map is valid, ie, under the hood it should still be a
-  /// Map<String, dynamic>
-  Post.fromMap({required dynamic map, withComments = false}) {
-    _generator(source: map);
-
-    if (withComments) {
-      List<Map<String, dynamic>> commentsMap = map["comments"];
-      _comments =
-          List.from(commentsMap.map((e) => Comment.simplified(jsonMap: map)));
-    } else {
-      _comments = [];
-    }
-  }
-
-  void _altGenerator(dynamic source) {
+  void _generator(dynamic source) {
     id = source["id"];
     timestamp = source["createdAt"];
     timeDifference = ClassHelper.getTimeDifference(unixTime: timestamp);
@@ -131,7 +78,7 @@ class Post with VotingMixin implements IReplyable {
 
   /// Construct a post from a valid json map.
   Post({required dynamic jsonMap}) {
-    _altGenerator(jsonMap);
+    _generator(jsonMap);
   }
 
   /// Fetches the user of this post from the backend.
@@ -225,6 +172,6 @@ class Post with VotingMixin implements IReplyable {
 
   @override
   String toString() {
-    return "<Post ~id:$id, title: $_title, creator: ${_user.getUsername()}~ >";
+    return "<Post ~id: $id, title: $_title, creator: ${_user.getUsername()}~ >";
   }
 }

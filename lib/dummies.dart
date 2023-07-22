@@ -29,7 +29,7 @@ Future<String> readPostJSON(
 }
 
 Post makeDummyPost(String json) {
-  return Post.fromJSON(json: json, withComments: true);
+  return Post(jsonMap: json);
 }
 
 List<Widget> createAllPosts(BuildContext context) {

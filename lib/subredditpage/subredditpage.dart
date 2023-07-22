@@ -23,16 +23,6 @@ class _SubredditPageState extends State<SubredditPage> {
 
   late Subreddit _subreddit;
 
-  void loadSubreddit() async {
-    String file = "json/subreddit.json";
-    Subreddit sub = await rootBundle.loadString(file).then(
-          (value) => Subreddit.fromJSON(json: value),
-        );
-    setState(() {
-      _subreddit = sub;
-    });
-  }
-
   void handleSubscribe() {
     if (_currUser == null) {
       showDialog(
@@ -139,7 +129,6 @@ class _SubredditPageState extends State<SubredditPage> {
 
   @override
   void initState() {
-    loadSubreddit();
     super.initState();
   }
 
