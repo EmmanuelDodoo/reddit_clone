@@ -10,6 +10,11 @@ abstract class APIError implements Exception {
 
 class ServerError extends APIError {
   ServerError() : super("");
+
+  @override
+  String toString() {
+    return "${runtimeType.toString()} error";
+  }
 }
 
 class BadRequest extends APIError {

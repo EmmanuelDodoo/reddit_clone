@@ -5,6 +5,9 @@ import 'package:reddit_clone/models/subreddit.dart';
 import 'package:reddit_clone/models/user.dart';
 import 'package:reddit_clone/models/comment.dart';
 import 'package:reddit_clone/models/votes.dart';
+import 'api/api_errors.dart';
+import 'api/http_model.dart';
+import 'dart:collection';
 
 /// Representation of a post
 class Post with VotingMixin implements IReplyable {
@@ -12,7 +15,7 @@ class Post with VotingMixin implements IReplyable {
   @override
   late final int id;
 
-  /// The simplified Subreddit this post was made on
+  /// The simplified Subreddit this post was made on.
   late Subreddit _sub;
 
   /// The Simplified User who made this post
@@ -38,13 +41,13 @@ class Post with VotingMixin implements IReplyable {
   late String _contents;
 
   /// The total number of comments on this post, including replies.
-  late final int commentNumber;
+  late final int commentCount;
 
   @override
   late final String context;
 
   /// All comments under this post
-  late List<Comment> _comments;
+  List<Comment> _comments = [];
 
   // A generator for Post constructors.
   ///
@@ -60,7 +63,7 @@ class Post with VotingMixin implements IReplyable {
     _imageInPost = source["imagePresent"];
     votes = source["votes"];
     voteCode = source["voteCode"];
-    commentNumber = source["commentNumber"];
+    commentCount = source["commentNumber"];
     // No need to construct all those comments just to get the length of the list
     if (_imageInPost) {
       _postImageURL = source["imageURL"];
@@ -102,11 +105,85 @@ class Post with VotingMixin implements IReplyable {
     }
   }
 
-  @override
-  Future<void> reply(
-      {required int uid,
-      required String contents,
-      required String token}) async {}
+  void _altGenerator(dynamic source) {
+    id = source["id"];
+    timestamp = source["createdAt"];
+    timeDifference = ClassHelper.getTimeDifference(unixTime: timestamp);
+    _title = source["title"];
+    _contents = source["contents"];
+    commentCount = source["commentNumber"];
+    votes = source["votes"];
+    context = _contents.isEmpty || _contents.length < 25
+        ? _title
+        : "${_contents.substring(0, 25)}...";
+
+    _imageInPost = source["imagePresent"];
+    if (_imageInPost) {
+      _postImageURL = source["imageURL"];
+    } else {
+      _postImageURL = "";
+    }
+
+    _user = User.simplified(jsonMap: source["user"]);
+
+    _sub = Subreddit.simplified(jsonMap: source["subreddit"]);
+  }
+
+  /// Construct a post from a valid json map.
+  Post({required dynamic jsonMap}) {
+    _altGenerator(jsonMap);
+  }
+
+  /// Fetches the user of this post from the backend.
+  ///
+  /// Returns a Map<String, dynamic>
+  Future<Map<String, dynamic>> _fetchUser(int uid) async {
+    try {
+      return await RequestHandler.getUser(uid);
+    } on ServerError catch (e) {
+      try {
+        return await RequestHandler.getUser(uid);
+      } catch (e) {
+        throw Exception("Failed to fetch user for comment: ${toString()} ");
+      }
+    } catch (e) {
+      throw Exception("Failed to fetch user for comment: ${toString()} ");
+    }
+  }
+
+  /// Fetches the subreddit of this post from the backend.
+  ///
+  /// Returns a Map<String, dynamic>
+  Future<Map<String, dynamic>> _fetchSubreddit(int sid) async {
+    try {
+      return await RequestHandler.getSubreddit(sid);
+    } on ServerError catch (e) {
+      try {
+        return await RequestHandler.getSubreddit(sid);
+      } catch (e) {
+        throw Exception("Failed to fetch user for comment: ${toString()} ");
+      }
+    } catch (e) {
+      throw Exception("Failed to fetch user for comment: ${toString()} ");
+    }
+  }
+
+  /// Fetches the comments under this post from the backend.
+  ///
+  /// Returns a Map<String, dynamic>
+  Future<List<dynamic>> _fetchComments(int pid) async {
+    try {
+      return await RequestHandler.getAllPostComments(pid);
+    } on ServerError catch (e) {
+      try {
+        return await RequestHandler.getAllPostComments(pid);
+      } catch (e) {
+        throw Exception("Failed to fetch user for comment: ${toString()} ");
+      }
+    } catch (e) {
+      throw Exception("Failed to fetch user for comment: ${toString()} ");
+    }
+  }
 
   String getUserName() => _user.getUsername();
 
@@ -122,5 +199,32 @@ class Post with VotingMixin implements IReplyable {
 
   String getContents() => _contents;
 
-  List<Comment> getComments() => List.of(_comments);
+  /// Returns a list of comments under this post.
+  Future<List<Comment>> getComments() async {
+    // Fetch the comments if they haven't been previously fetched
+    if (_comments.isEmpty) {
+      await _fetchComments(id).then((value) {
+        _comments = List.of(value.map((e) => Comment.full(jsonMap: e)));
+      });
+    }
+    return UnmodifiableListView(_comments);
+  }
+
+  @override
+  Future<void> reply(
+      {required int uid,
+      required String contents,
+      required String token}) async {
+    var requestBody = {"userId": uid, "contents": contents, "ancestorId": -1};
+    var commentMap = await RequestHandler.createComment(
+        requestBody: requestBody, pid: id, token: token);
+
+    var comment = Comment.simplified(jsonMap: commentMap);
+    _comments.add(comment);
+  }
+
+  @override
+  String toString() {
+    return "<Post ~id:$id, title: $_title, creator: ${_user.getUsername()}~ >";
+  }
 }

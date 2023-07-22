@@ -14,20 +14,34 @@ import '../components/authentication/login.dart';
 import '../models/comment.dart';
 import '../models/userprovider.dart';
 
-class PostPage extends StatelessWidget {
+class PostPage extends StatefulWidget {
   PostPage({Key? key, required Post post})
       : _post = post,
-        _comments = post.getComments(),
+        // _comments = post.getComments(),
         super(key: key);
 
+  late final Post _post;
+
+  @override
+  State<PostPage> createState() => _PostPageState();
+}
+
+class _PostPageState extends State<PostPage> {
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
       GlobalKey<RefreshIndicatorState>();
-  late final Post _post;
+
   User? _currUser;
-  late final List<Comment> _comments;
+  List<Comment> _comments = [];
 
   Future<void> _refresh() async {
     return Future<void>.delayed(const Duration(seconds: 3));
+  }
+
+  void _loadPostComments() async {
+    var temp = await widget._post.getComments();
+    setState(() {
+      _comments = temp;
+    });
   }
 
   void _commentOnPost(BuildContext context) {
@@ -37,7 +51,7 @@ class PostPage extends StatelessWidget {
       return;
     }
     Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => AddCommentPage(replyable: _post)));
+        builder: (context) => AddCommentPage(replyable: widget._post)));
   }
 
   Widget _emptyComments(BuildContext context) {
@@ -147,11 +161,11 @@ class PostPage extends StatelessWidget {
         slivers: [
           SliverToBoxAdapter(
             child: PostPagePostCard(
-              post: _post,
+              post: widget._post,
             ),
           ),
           PostPageFooter(
-            post: _post,
+            post: widget._post,
           ),
           SliverToBoxAdapter(child: Divider()),
           SliverList(
@@ -160,6 +174,12 @@ class PostPage extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  @override
+  void initState() {
+    _loadPostComments();
+    super.initState();
   }
 
   @override

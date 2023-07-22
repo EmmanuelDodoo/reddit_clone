@@ -16,6 +16,8 @@ class Subreddit {
 
   String _about = "";
 
+  int _subscriberCount = 0;
+
   List<String> _rules = [];
 
   Subreddit.fromSimplified({required dynamic source}) {
@@ -35,6 +37,15 @@ class Subreddit {
     _rules = List.from(rulesMap.map((rs) => rs.toString()));
   }
 
+  /// Create s simplified Subreddit object.
+  /// The thumbnailURL, about, rules and subscriberCount field
+  /// are left empty
+  Subreddit.simplified({required dynamic jsonMap}) {
+    id = jsonMap["id"];
+    _name = jsonMap["name"];
+    _subImageURL = jsonMap["imageURL"];
+  }
+
   String getSubName() => "r/$_name";
 
   String getSubImageURL() => _subImageURL;
@@ -43,6 +54,8 @@ class Subreddit {
   String getSubDescription() => _about.substring(0);
 
   String getSubThumbnail() => _thumbnailURL.substring(0);
+
+  int get subscriberCount => _subscriberCount;
 
   /// Returns a copy of the rules of this sub
   List<String> getSubRules() => _rules.map((e) => e).toList();

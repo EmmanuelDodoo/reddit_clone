@@ -240,7 +240,7 @@ class RequestHandler {
   }
 
   static Future<Map<String, dynamic>> getPost(int id) async {
-    var url = Uri.http(baseURL, "$firstPath/posts/");
+    var url = Uri.http(baseURL, "$firstPath/posts/$id/");
 
     var response = await http.get(url);
 

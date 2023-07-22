@@ -70,12 +70,12 @@ class User {
   /// Simplified users have no posts, comments, or subreddits
   ///
   /// Requires: source is a valid json of a simplified user
-  User.simplified({required dynamic source}) {
-    id = source["id"];
-    _username = source["username"];
-    _userImageURL = source["imageURL"];
-    _karma = source["karma"];
-    _joindate = source["joined"];
+  User.simplified({required dynamic jsonMap}) {
+    id = jsonMap["id"];
+    _username = jsonMap["username"];
+    _userImageURL = jsonMap["imageURL"];
+    _karma = jsonMap["karma"];
+    _joindate = jsonMap["joined"];
   }
 
   String getUsername() => "u/$_username";

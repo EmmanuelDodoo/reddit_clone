@@ -25,7 +25,7 @@ class DefaultFooterState extends State<DefaultFooter> {
     // Can't pass it down otherwise
     _post = widget.post;
     _voteCode = widget.post.getVoteCode();
-    _commentNumber = widget.post.commentNumber;
+    _commentNumber = widget.post.commentCount;
     _votesNumber = widget.post.getVotes();
 
     super.initState();

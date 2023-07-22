@@ -6,6 +6,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:reddit_clone/models/api/http_model.dart';
 import 'package:reddit_clone/models/comment.dart';
 
+import 'models/post.dart';
+
 class Temp extends StatefulWidget {
   const Temp({super.key});
 
@@ -34,7 +36,10 @@ class _TempState extends State<Temp> {
       "ancestorId": -1
     };
     var token =
-        "7b0438908599f45a0e56ba1ee93b0efb0cb741095a3a1ce0fea02664d71dbf21";
+        "3e4d32ce79f05d4003e53efba8f61c9eebe41b85106289e7ef457038d70d2b3d";
+
+    var token2 =
+        "23e35afd2b136124b08df34b1bb3cd6181e2053cda4442276f49eb6516697dd0";
 
     // RequestHandler.getComment(pid: 1, cid: 1).then((value) async {
     //   Comment comment = Comment.simplified(jsonMap: value);
@@ -44,10 +49,21 @@ class _TempState extends State<Temp> {
     //   print(comment.getReplies());
     // });
 
-    RequestHandler.getAllPostComments(1).then((value) {
-      var comments = List.of(value.map((e) => Comment.full(jsonMap: e)));
-      print(comments);
+    RequestHandler.getPost(1).then((value) async {
+      Post post = Post(jsonMap: value);
+      print(post.getComments());
+      Timer(
+        const Duration(milliseconds: 300),
+        () {
+          print(post.getComments());
+        },
+      );
     });
+
+    // RequestHandler.getAllPostComments(1).then((value) {
+    //   var comments = List.of(value.map((e) => Comment.full(jsonMap: e)));
+    //   print(comments);
+    // });
   }
 
   @override

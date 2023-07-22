@@ -52,18 +52,13 @@ class Comment with VotingMixin implements IReplyable {
 
     _contents = source["contents"];
     context =
-        _contents.length < 25 ? _contents : "${_contents.substring(0, 15)}...";
+        _contents.length < 25 ? _contents : "${_contents.substring(0, 25)}...";
 
     timestamp = source["createdAt"];
     timeDifference = ClassHelper.getTimeDifference(unixTime: timestamp);
     votes = source["votes"];
 
-    // fetch and convert user json to a User.
-    int userId = source["userId"];
-    // _user = User.simplified(source: _fetchUser(userId));
-    _fetchUser(userId).then((value) {
-      _user = User.simplified(source: value);
-    });
+    _user = User.simplified(jsonMap: source["user"]);
 
     // vote stuff
     // TODO take a close look
@@ -90,12 +85,12 @@ class Comment with VotingMixin implements IReplyable {
   /// Fetches the user of this comment from the backend.
   ///
   /// Returns a Map<String, dynamic>
-  Future<Map<String, dynamic>> _fetchUser(int id) async {
+  Future<Map<String, dynamic>> _fetchUser(int uid) async {
     try {
-      return await RequestHandler.getUser(id);
+      return await RequestHandler.getUser(uid);
     } on ServerError catch (e) {
       try {
-        return await RequestHandler.getUser(id);
+        return await RequestHandler.getUser(uid);
       } catch (e) {
         throw Exception("Failed to fetch user for comment: ${toString()} ");
       }
@@ -139,6 +134,6 @@ class Comment with VotingMixin implements IReplyable {
 
   @override
   String toString() {
-    return "<Comment~ id:$id, postId: $postId, contents: ${_contents.substring(0, 5)}... >, ${_replies.length}} replies";
+    return "<Comment ~id:$id, postId: $postId, contents: ${_contents.substring(0, _contents.length ~/ 2)}... >, ${_replies.length} replies~ >";
   }
 }
