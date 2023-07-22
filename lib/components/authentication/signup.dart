@@ -7,6 +7,7 @@ import 'package:reddit_clone/models/api/http_model.dart';
 import 'package:reddit_clone/models/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../models/api/api_errors.dart';
 import '../../models/userprovider.dart';
 
 class SignUpModal extends StatefulWidget {
@@ -27,11 +28,20 @@ class _SignUpModalState extends State<SignUpModal> {
   File? _selectedImage;
   bool _obscurePassword = true;
 
+  Future<String?> _uploadImage() async {
+    if (_selectedImage == null) return null;
+
+    var imageURL = await RequestHandler.uploadImage(_selectedImage!);
+    return imageURL["url"];
+  }
+
   Future<Map<String, dynamic>> _sendSignUpRequest() async {
+    var imageURl = await _uploadImage();
     var requestBody = {
-      "email": _emailController.value.text,
-      "username": _usernameController.value.text,
+      "email": _emailController.value.text.trim(),
+      "username": _usernameController.value.text.trim(),
       "password": _passwordController.value.text,
+      "imageURL": imageURl ?? ""
     };
 
     return await RequestHandler.signUp(requestBody: requestBody);
@@ -56,25 +66,31 @@ class _SignUpModalState extends State<SignUpModal> {
   void _handleSubmit(BuildContext context) async {
     if (!_formKey.currentState!.validate()) return;
 
-    var response = await _sendSignUpRequest();
+    try {
+      var response = await _sendSignUpRequest();
 
-    _setUser(User(jsonMap: response));
+      _setUser(User.fromAuth(jsonMap: response));
 
-    _saveToken(
-        tokenValue: response["tokenValue"],
-        tokenExpiration: response["tokenExpiration"]);
+      _saveToken(
+          tokenValue: response["tokenValue"],
+          tokenExpiration: response["tokenExpiration"]);
 
-    // ignore: use_build_context_synchronously
-    Navigator.of(context).pop();
+      // ignore: use_build_context_synchronously
+      Navigator.of(context).pop();
 
-    // ignore: use_build_context_synchronously
-    _showSnackBar(context,
-        "Sign in Successful. Welcome ${_usernameController.value.text}");
+      // ignore: use_build_context_synchronously
+      _showSnackBar(
+          context,
+          "Sign in Successful. Welcome ${_usernameController.value.text}",
+          false);
 
-    /// Call the on close successfully function from widget
-    /// if any
-    if (widget.onCloseSuccessfully != null) {
-      widget.onCloseSuccessfully!();
+      /// Call the on close successfully function from widget
+      /// if any
+      if (widget.onCloseSuccessfully != null) {
+        widget.onCloseSuccessfully!();
+      }
+    } on BadRequest {
+      _showSnackBar(context, "Username and or email already taken", true);
     }
   }
 
@@ -95,15 +111,15 @@ class _SignUpModalState extends State<SignUpModal> {
   }
 
   ScaffoldFeatureController<SnackBar, SnackBarClosedReason> _showSnackBar(
-      BuildContext context, String message) {
+      BuildContext context, String message, bool isError) {
     return ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
           message,
-          style: Theme.of(context)
-              .textTheme
-              .titleSmall
-              ?.copyWith(color: Colors.green[400]),
+          style: Theme.of(context).textTheme.titleSmall?.copyWith(
+              color: isError
+                  ? Theme.of(context).colorScheme.errorContainer
+                  : Theme.of(context).colorScheme.primary),
         ),
       ),
     );
@@ -133,8 +149,12 @@ class _SignUpModalState extends State<SignUpModal> {
               hintText: 'Email',
             ),
             validator: (String? value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter an email';
+              RegExp emailPattern =
+                  RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
+              if (value == null ||
+                  value.isEmpty ||
+                  !emailPattern.hasMatch(value)) {
+                return 'Please enter a valid email';
               }
               return null;
             },

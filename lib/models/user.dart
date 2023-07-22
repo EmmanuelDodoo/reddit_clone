@@ -43,15 +43,28 @@ class User {
 
   List<Comment> _downvotedComments = [];
 
-  /// Create a simplified view of a user
+  /// Create a User object
   ///
-  /// Simplified users have no posts, comments, or subreddits
-  ///
-  /// Requires: source is a valid json of a simplified user
+  /// Requires: jsonMap is a valid json of a user
   User({required dynamic jsonMap}) {
     id = jsonMap["id"];
     _username = jsonMap["username"];
     _userImageURL = jsonMap["imageURL"];
+    _karma = jsonMap["karma"];
+    _joinDate = jsonMap["joined"];
+    _userAgeString = ClassHelper.getTimeDifference(unixTime: _joinDate);
+
+    //TODO Testing to see if this means not using async await for elsewhere
+    _loadSubreddits();
+  }
+
+  /// Create a User object from an authentication response
+  ///
+  /// Requires: jsonMap is a valid json of user authentication response
+  User.fromAuth({required dynamic jsonMap}) {
+    id = jsonMap["userId"];
+    _username = jsonMap["username"];
+    _userImageURL = jsonMap["userImageURL"];
     _karma = jsonMap["karma"];
     _joinDate = jsonMap["joined"];
     _userAgeString = ClassHelper.getTimeDifference(unixTime: _joinDate);

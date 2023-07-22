@@ -4,6 +4,7 @@ import 'package:reddit_clone/components/authentication/login.dart';
 import 'package:reddit_clone/createsubredditpage/page.dart';
 import 'package:reddit_clone/models/user.dart';
 import 'package:reddit_clone/usersettingspage/usersettings.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/userprovider.dart';
 import '../userprofilepage/userprofile.dart';
 
@@ -21,11 +22,17 @@ class RightDrawer extends StatelessWidget {
     print("Going to user profile");
   }
 
-  void _handleSignOut(BuildContext context) {
+  void _handleSignOut(BuildContext context) async {
     UserProvider userProvider =
         Provider.of<UserProvider>(context, listen: false);
     _currUser = null;
     userProvider.setCurrentUser(user: null);
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.remove("tokenValue");
+    prefs.remove("tokenExpiration");
+    prefs.remove("uid");
+
     Navigator.of(context).pop();
   }
 

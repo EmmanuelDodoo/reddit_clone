@@ -74,7 +74,7 @@ class RequestHandler {
     var responseBody = await response.stream.bytesToString();
 
     if (response.statusCode == 201) {
-      return jsonDecode(responseBody)["url"];
+      return jsonDecode(responseBody);
     } else if (response.statusCode >= 400) {
       var msg = jsonDecode(responseBody)["error"];
       throw BadRequest(msg);

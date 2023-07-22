@@ -10,6 +10,7 @@ import 'package:reddit_clone/models/api/http_model.dart';
 import 'package:reddit_clone/models/userprovider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../models/api/api_errors.dart';
 import '../../models/user.dart';
 
 class LoginModal extends StatefulWidget {
@@ -26,7 +27,6 @@ class _LoginModalState extends State<LoginModal> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  User? _user;
 
   bool _obscurePassword = true;
 
@@ -45,11 +45,15 @@ class _LoginModalState extends State<LoginModal> {
     RegExp emailPattern =
         RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
 
-    var isEmail = emailPattern.hasMatch("input");
+    var emailOrUsername = _emailController.value.text.trim();
+    var isEmail = emailPattern.hasMatch(emailOrUsername);
+
     var requestBody = {
-      isEmail ? "email" : "username": _emailController.value.text,
+      isEmail ? "email" : "username": emailOrUsername,
       "password": _processPassword(),
     };
+
+    print(requestBody);
 
     return await RequestHandler.login(requestBody: requestBody);
   }
@@ -73,24 +77,28 @@ class _LoginModalState extends State<LoginModal> {
   void _handleSubmit(BuildContext context) async {
     if (!_formKey.currentState!.validate()) return;
 
-    var response = await _sendLoginRequest();
+    try {
+      var response = await _sendLoginRequest();
 
-    _setUser(User(jsonMap: response));
+      _setUser(User.fromAuth(jsonMap: response));
 
-    _saveToken(
-        tokenValue: response["tokenValue"],
-        tokenExpiration: response["tokenExpiration"]);
+      _saveToken(
+          tokenValue: response["tokenValue"],
+          tokenExpiration: response["tokenExpiration"]);
 
-    // ignore: use_build_context_synchronously
-    Navigator.of(context).pop();
+      // ignore: use_build_context_synchronously
+      Navigator.of(context).pop();
 
-    // ignore: use_build_context_synchronously
-    _showSnackBar(context, "Login In successful. Welcome back");
+      // ignore: use_build_context_synchronously
+      _showSnackBar(context, "Login In successful. Welcome back", false);
 
-    /// Call the on close successfully function from widget
-    /// if any
-    if (widget.onCloseSuccessfully != null) {
-      widget.onCloseSuccessfully!();
+      /// Call the on close successfully function from widget
+      /// if any
+      if (widget.onCloseSuccessfully != null) {
+        widget.onCloseSuccessfully!();
+      }
+    } on AuthorizationError {
+      _showSnackBar(context, "Login failed. Invalid credentials", true);
     }
   }
 
@@ -110,16 +118,18 @@ class _LoginModalState extends State<LoginModal> {
   }
 
   ScaffoldFeatureController<SnackBar, SnackBarClosedReason> _showSnackBar(
-      BuildContext context, String message) {
+      BuildContext context, String message, bool isError) {
     return ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(
-          message,
-          style: Theme.of(context)
-              .textTheme
-              .titleSmall
-              ?.copyWith(color: Colors.green[400]),
-        ),
+        content: Text(message,
+            style: Theme.of(context)
+                .textTheme
+                .titleSmall
+                // ?.copyWith(color: isError ? Colors.red : Colors.green[400]),
+                ?.copyWith(
+                    color: isError
+                        ? Theme.of(context).colorScheme.errorContainer
+                        : Theme.of(context).colorScheme.primary)),
       ),
     );
   }

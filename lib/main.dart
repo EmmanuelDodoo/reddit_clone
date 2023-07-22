@@ -65,7 +65,7 @@ class _MyAppState extends State<MyApp> {
 
     DateTime tokenTime =
         DateTime.fromMillisecondsSinceEpoch(tokenExpiration * 1000);
-    return !tokenTime.isBefore(DateTime.now());
+    return tokenTime.isBefore(DateTime.now());
   }
 
   void _loadUser() async {
