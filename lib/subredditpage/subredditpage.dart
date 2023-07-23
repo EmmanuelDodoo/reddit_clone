@@ -2,35 +2,32 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit_clone/components/authentication/login.dart';
+import 'package:reddit_clone/components/default-post-card.dart';
 import 'package:reddit_clone/mainpage/home.dart';
 import 'package:reddit_clone/models/user.dart';
 import 'package:reddit_clone/models/subreddit.dart';
 import 'package:reddit_clone/subredditpage/about.dart';
+import 'package:reddit_clone/subredditpage/posts.dart';
 
 import '../components/default-popup-menu.dart';
+import '../models/api/http_model.dart';
 import '../models/inherited-data.dart';
+import '../models/post.dart';
 import '../models/userprovider.dart';
 
 class SubredditPage extends StatefulWidget {
-  SubredditPage({Key? key}) : super(key: key);
+  SubredditPage({Key? key, required this.subreddit}) : super(key: key);
+  Subreddit subreddit;
 
   @override
   State<SubredditPage> createState() => _SubredditPageState();
 }
 
 class _SubredditPageState extends State<SubredditPage> {
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
+      GlobalKey<RefreshIndicatorState>();
   User? _currUser;
-
   late Subreddit _subreddit;
-  List<Subreddit> _currUserSubreddits = [];
-
-  void _loadCurrUserSubreddits() async {
-    var temp = await _currUser!.getSubreddits();
-
-    setState(() {
-      _currUserSubreddits = temp;
-    });
-  }
 
   void handleSubscribe() {
     if (_currUser == null) {
@@ -139,6 +136,7 @@ class _SubredditPageState extends State<SubredditPage> {
   @override
   void initState() {
     super.initState();
+    _subreddit = widget.subreddit;
   }
 
   @override
@@ -149,7 +147,6 @@ class _SubredditPageState extends State<SubredditPage> {
         : Theme.of(context).colorScheme.primaryContainer;
     UserProvider provider = Provider.of<UserProvider>(context, listen: false);
     _currUser = provider.currentUser;
-    _loadCurrUserSubreddits();
 
     return InheritedData<Subreddit>(
       data: _subreddit,
@@ -201,7 +198,8 @@ class _SubredditPageState extends State<SubredditPage> {
                 margin: const EdgeInsets.only(top: 105),
                 child: TabBarView(
                   children: [
-                    Home(),
+                    // _subPosts(context),
+                    SubredditPosts(subreddit: _subreddit),
                     SubredditAboutSection(),
                   ],
                 ),

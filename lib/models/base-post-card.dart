@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:reddit_clone/models/api/http_model.dart';
 import 'package:reddit_clone/models/post.dart';
+import 'package:reddit_clone/models/subreddit.dart';
 import 'package:reddit_clone/models/userprovider.dart';
 import 'package:reddit_clone/postpage/postpage.dart';
 import '../components/default-popup-menu.dart';
@@ -17,9 +19,17 @@ abstract class BasePostCard extends StatelessWidget {
     print("View Image");
   }
 
-  void goToSubreddit(BuildContext context) {
-    Navigator.of(context)
-        .push(MaterialPageRoute(builder: (context) => SubredditPage()));
+  Future<Subreddit> _fetchSubreddit() async {
+    return await RequestHandler.getSubreddit(post.getSubreddit().id)
+        .then((value) => Subreddit.full(jsonMap: value));
+  }
+
+  void goToSubreddit(BuildContext context) async {
+    var sub = await _fetchSubreddit();
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => SubredditPage(
+              subreddit: sub,
+            )));
   }
 
   void goToUserProfile() {
