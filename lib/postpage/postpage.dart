@@ -41,7 +41,9 @@ class _PostPageState extends State<PostPage> {
   }
 
   Future<void> _loadPostComments() async {
-    var temp = await widget._post.getComments();
+    var temp = await (_comments.isEmpty
+        ? widget._post.getComments()
+        : _post.getComments());
     setState(() {
       _comments = temp;
     });
@@ -63,7 +65,7 @@ class _PostPageState extends State<PostPage> {
       return;
     }
     Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => AddCommentPage(replyable: widget._post)));
+        builder: (context) => AddCommentPage(replyable: _post)));
   }
 
   Widget _emptyComments(BuildContext context) {
@@ -173,13 +175,13 @@ class _PostPageState extends State<PostPage> {
         slivers: [
           SliverToBoxAdapter(
             child: PostPagePostCard(
-              post: widget._post,
+              post: _post,
             ),
           ),
           PostPageFooter(
-            post: widget._post,
+            post: _post,
           ),
-          SliverToBoxAdapter(child: Divider()),
+          const SliverToBoxAdapter(child: Divider()),
           SliverList(
             delegate: _commentSection(context),
           )

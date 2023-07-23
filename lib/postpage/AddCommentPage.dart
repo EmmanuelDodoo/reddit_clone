@@ -2,29 +2,69 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit_clone/models/replyable.dart';
 import 'package:reddit_clone/models/user.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/inherited-data.dart';
 import '../models/userprovider.dart';
 
-class AddCommentPage extends StatelessWidget {
+class AddCommentPage extends StatefulWidget {
   AddCommentPage({Key? key, required IReplyable replyable})
       : _replyable = replyable,
         super(key: key);
   late final IReplyable _replyable;
+
+  @override
+  State<AddCommentPage> createState() => _AddCommentPageState();
+}
+
+class _AddCommentPageState extends State<AddCommentPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
   User? _currUser;
 
   final TextEditingController _controller = TextEditingController();
 
-  void _handlePosting() {
-    if (_formKey.currentState!.validate()) {
-      print("Successful validation");
+  void _handlePosting(BuildContext context) async {
+    if (!_formKey.currentState!.validate()) return;
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var token = prefs.getString("tokenValue");
+
+    var contents = _controller.value.text;
+
+    try {
+      await widget._replyable
+          .reply(uid: _currUser!.id, contents: contents, token: token!);
+
+      // ignore: use_build_context_synchronously
+      _showSnackBar(context, "Comment successful", false);
+
+      // ignore: use_build_context_synchronously
+      Navigator.of(context).pop();
+    } catch (e) {
+      // ignore: use_build_context_synchronously
+      _showSnackBar(context, "Something went wrong. Please try again", true);
     }
   }
 
-  Widget _floater() {
+  ScaffoldFeatureController<SnackBar, SnackBarClosedReason> _showSnackBar(
+      BuildContext context, String message, bool isError) {
+    return ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          message,
+          style: Theme.of(context).textTheme.titleSmall?.copyWith(
+              color: isError
+                  ? Theme.of(context).colorScheme.errorContainer
+                  : Theme.of(context).colorScheme.primary),
+        ),
+      ),
+    );
+  }
+
+  Widget _floater(BuildContext context) {
     return FloatingActionButton(
-      onPressed: _handlePosting,
+      onPressed: () => _handlePosting(context),
       child: const Icon(Icons.send),
     );
   }
@@ -51,7 +91,7 @@ class AddCommentPage extends StatelessWidget {
             style: Theme.of(context).textTheme.titleMedium,
           ),
           TextButton(
-            onPressed: _handlePosting,
+            onPressed: () => _handlePosting(context),
             child: Text(
               "Post",
               style: Theme.of(context)
@@ -68,7 +108,7 @@ class AddCommentPage extends StatelessWidget {
   Widget _context(BuildContext context) {
     return Container(
       width: double.maxFinite,
-      margin: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+      margin: const EdgeInsets.symmetric(vertical: 15),
       padding: const EdgeInsets.only(bottom: 5),
       decoration: BoxDecoration(
         border: Border(
@@ -78,33 +118,39 @@ class AddCommentPage extends StatelessWidget {
         ),
       ),
       child: Text(
-        _replyable.context,
+        widget._replyable.context,
         style: Theme.of(context).textTheme.titleSmall,
       ),
     );
   }
 
   Widget _textField(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 10),
-      height: MediaQuery.of(context).size.height * 0.7,
+    return Flexible(
       child: Form(
         key: _formKey,
-        child: TextFormField(
-          style: Theme.of(context).textTheme.bodyMedium,
-          expands: true,
-          maxLines: null,
-          showCursor: true,
-          controller: _controller,
-          validator: (String? value) {
-            if (value == null || value.isEmpty) {
-              return "Please enter some text";
-            }
-            return null;
-          },
-          decoration: const InputDecoration(
-            hintText: "Leave a comment",
-          ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _context(context),
+            Expanded(
+              child: TextFormField(
+                controller: _controller,
+                style: Theme.of(context).textTheme.bodyMedium,
+                expands: true,
+                maxLines: null,
+                showCursor: true,
+                decoration: const InputDecoration(
+                  hintText: "Leave a comment",
+                ),
+                validator: (String? value) {
+                  if (value == null || value.isEmpty) {
+                    return "Please enter some text";
+                  }
+                  return null;
+                },
+              ),
+            )
+          ],
         ),
       ),
     );
@@ -117,7 +163,7 @@ class AddCommentPage extends StatelessWidget {
     return SafeArea(
       child: Scaffold(
         resizeToAvoidBottomInset: true,
-        floatingActionButton: _floater(),
+        floatingActionButton: _floater(context),
         body: NestedScrollView(
           headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
             return [
@@ -132,13 +178,13 @@ class AddCommentPage extends StatelessWidget {
               )
             ];
           },
-          body: Column(
-            children: [
-              _context(context),
-              Expanded(
-                child: _textField(context),
-              ),
-            ],
+          body: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 10),
+            child: Column(
+              children: [
+                _textField(context),
+              ],
+            ),
           ),
         ),
       ),
