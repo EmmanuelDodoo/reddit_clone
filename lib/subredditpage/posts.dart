@@ -17,7 +17,8 @@ class _SubredditPostsState extends State<SubredditPosts>
     with AutomaticKeepAliveClientMixin {
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
       GlobalKey<RefreshIndicatorState>();
-  List<Post> _posts = [];
+
+  List<Widget> _postCards = [];
   late final Subreddit _subreddit;
 
   Future<List<Post>> _fetchPostsData() async {
@@ -27,7 +28,9 @@ class _SubredditPostsState extends State<SubredditPosts>
   }
 
   List<Widget> _buildPostCards(List<Post> posts) {
-    return posts.map((e) => DefaultPostCard(post: e)).toList();
+    var temp = posts.map((e) => DefaultPostCard(post: e)).toList();
+    _postCards = temp;
+    return temp;
   }
 
   @override
@@ -41,10 +44,7 @@ class _SubredditPostsState extends State<SubredditPosts>
     return RefreshIndicator(
       key: _refreshIndicatorKey,
       onRefresh: () async {
-        var temp = await _fetchPostsData();
-        setState(() {
-          _posts = temp;
-        });
+        setState(() {});
       },
       child: FutureBuilder(
         future: _fetchPostsData(),
@@ -52,14 +52,16 @@ class _SubredditPostsState extends State<SubredditPosts>
           if (snapshot.connectionState == ConnectionState.done &&
               snapshot.hasData) {
             return ListView(
-              children: _posts.isEmpty
-                  ? _buildPostCards(snapshot.data!)
-                  : _buildPostCards(_posts),
+              children: _buildPostCards(snapshot.data!),
             );
           } else {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            return _postCards.isEmpty
+                ? const Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : ListView(
+                    children: _postCards,
+                  );
           }
         },
       ),

@@ -22,7 +22,7 @@ class _UserPageCommentsState extends State<UserPageComments>
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
       GlobalKey<RefreshIndicatorState>();
 
-  List<Comment> _comments = [];
+  List<Widget> _commentCards = [];
 
   Future<List<Comment>> _fetchCommentsData() async {
     return await RequestHandler.getUserComments(widget.viewedUser.id).then(
@@ -30,7 +30,9 @@ class _UserPageCommentsState extends State<UserPageComments>
   }
 
   List<Widget> _buildCommentCards(List<Comment> comments) {
-    return comments.map((e) => ProfileCommentCard(comment: e)).toList();
+    var temp = comments.map((e) => ProfileCommentCard(comment: e)).toList();
+    _commentCards = temp;
+    return temp;
   }
 
   @override
@@ -39,10 +41,7 @@ class _UserPageCommentsState extends State<UserPageComments>
       body: RefreshIndicator(
         key: _refreshIndicatorKey,
         onRefresh: () async {
-          var temp = await _fetchCommentsData();
-          setState(() {
-            _comments = temp;
-          });
+          setState(() {});
         },
         child: FutureBuilder(
           future: _fetchCommentsData(),
@@ -50,13 +49,16 @@ class _UserPageCommentsState extends State<UserPageComments>
             if (snapshot.connectionState == ConnectionState.done &&
                 snapshot.hasData) {
               return ListView(
-                  children: _comments.isEmpty
-                      ? _buildCommentCards(snapshot.data!)
-                      : _buildCommentCards(_comments));
-            } else {
-              return const Center(
-                child: CircularProgressIndicator(),
+                children: _buildCommentCards(snapshot.data!),
               );
+            } else {
+              return _commentCards.isEmpty
+                  ? const Center(
+                      child: CircularProgressIndicator(),
+                    )
+                  : ListView(
+                      children: _commentCards,
+                    );
             }
           },
         ),
