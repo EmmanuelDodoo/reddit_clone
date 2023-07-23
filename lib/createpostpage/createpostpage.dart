@@ -2,9 +2,12 @@ import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:reddit_clone/models/post.dart';
 import 'package:reddit_clone/models/subreddit.dart';
 import 'package:reddit_clone/models/user.dart';
 import 'package:collection/collection.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../models/api/http_model.dart';
 import '../models/userprovider.dart';
 
 class CreatePostPage extends StatefulWidget {
@@ -22,38 +25,44 @@ class _CreatePostPageState extends State<CreatePostPage> {
   User? _currUser;
   File? _selectedImage;
   Subreddit? _selectedSubreddit;
-  List<Subreddit> _currUserSubreddits = [];
 
-  void _loadCurrUserSubreddits() async {
-    var temp = await _currUser!.getSubreddits();
-
-    setState(() {
-      _currUserSubreddits = temp;
-    });
+  Future<String> _uploadImage(File image) async {
+    var imageURL = await RequestHandler.uploadImage(image);
+    return imageURL["url"];
   }
 
-  ScaffoldFeatureController<SnackBar, SnackBarClosedReason> _showSnackBar(
-      BuildContext context, String message) {
-    return ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          message,
-          style: Theme.of(context)
-              .textTheme
-              .titleSmall
-              ?.copyWith(color: Colors.red),
-        ),
-      ),
-    );
-  }
+  void _handlePosting(BuildContext context) async {
+    if (!_formKey.currentState!.validate()) return;
 
-  void _handlePosting(BuildContext context) {
-    if (_formKey.currentState!.validate()) {
-      if (_selectedSubreddit != null) {
-        print("Successful validation");
-      } else {
-        _showSnackBar(context, "Please choose a subreddit");
-      }
+    if (_selectedSubreddit == null) {
+      _showSnackBar(context, "Please choose a subreddit", true);
+    }
+    var token = await SharedPreferences.getInstance()
+        .then((value) => value.getString("tokenValue"));
+    var imageURL =
+        _selectedImage == null ? "" : await _uploadImage(_selectedImage!);
+
+    var requestBody = {
+      "userId": _currUser!.id,
+      "title": _titleController.value.text.trim(),
+      "contents": _contentController.value.text.trim(),
+      "subredditId": _selectedSubreddit!.id,
+      "imagePresent": imageURL.isNotEmpty,
+      "imageURL": imageURL
+    };
+
+    try {
+      await RequestHandler.createPost(requestBody: requestBody, token: token!);
+
+      // ignore: use_build_context_synchronously
+      _showSnackBar(context, "Successfully created post", false);
+
+      // ignore: use_build_context_synchronously
+      Navigator.of(context).pop();
+    } catch (e) {
+      // ignore: use_build_context_synchronously
+      _showSnackBar(
+          context, "Something went wrong. Please try again later", true);
     }
   }
 
@@ -65,6 +74,23 @@ class _CreatePostPageState extends State<CreatePostPage> {
     setState(() {
       _selectedImage = File(image.path);
     });
+  }
+
+  ScaffoldFeatureController<SnackBar, SnackBarClosedReason> _showSnackBar(
+      BuildContext context, String message, bool isError) {
+    return ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message,
+            style: Theme.of(context)
+                .textTheme
+                .titleSmall
+                // ?.copyWith(color: isError ? Colors.red : Colors.green[400]),
+                ?.copyWith(
+                    color: isError
+                        ? Theme.of(context).colorScheme.errorContainer
+                        : Theme.of(context).colorScheme.primary)),
+      ),
+    );
   }
 
   Widget _header(BuildContext context) {
@@ -285,7 +311,6 @@ class _CreatePostPageState extends State<CreatePostPage> {
   Widget build(BuildContext context) {
     UserProvider provider = Provider.of<UserProvider>(context, listen: false);
     _currUser = provider.currentUser;
-    _loadCurrUserSubreddits();
 
     return SafeArea(
       child: Scaffold(
