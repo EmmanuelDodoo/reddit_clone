@@ -8,6 +8,7 @@ import 'package:reddit_clone/models/user.dart';
 import 'package:reddit_clone/models/subreddit.dart';
 import 'package:reddit_clone/subredditpage/about.dart';
 import 'package:reddit_clone/subredditpage/posts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../components/default-popup-menu.dart';
 import '../models/api/http_model.dart';
@@ -28,21 +29,89 @@ class _SubredditPageState extends State<SubredditPage> {
       GlobalKey<RefreshIndicatorState>();
   User? _currUser;
   late Subreddit _subreddit;
+  late bool hasSubscribed = _currUser != null &&
+      _currUser!.getSubreddits().any((sub) => sub.id == _subreddit.id);
 
-  void handleSubscribe() {
+  void handleSubscribe() async {
     if (_currUser == null) {
       showDialog(
         context: context,
         builder: (BuildContext context) => LoginModal(),
       );
     }
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var token = prefs.getString("tokenValue");
+    try {
+      await RequestHandler.subscribeToSubreddit(
+          uid: _currUser!.id, sid: _subreddit.id, token: token!);
+
+      setState(() {
+        hasSubscribed = true;
+      });
+      // ignore: use_build_context_synchronously
+      UserProvider provider = Provider.of<UserProvider>(context, listen: false);
+      await provider.refreshUser();
+
+      // ignore: use_build_context_synchronously
+      _showSnackBar(context, "Successfully Subscribed!", false);
+    } catch (e) {
+      // ignore: use_build_context_synchronously
+      _showSnackBar(
+          context, "Sorry something went wrong. Please try again", true);
+    }
+  }
+
+  void handleUnSubscribe() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var token = prefs.getString("tokenValue");
+    try {
+      await RequestHandler.unsubscribeToSubreddit(
+          uid: _currUser!.id, sid: _subreddit.id, token: token!);
+
+      setState(() {
+        hasSubscribed = false;
+      });
+
+      // ignore: use_build_context_synchronously
+      UserProvider provider = Provider.of<UserProvider>(context, listen: false);
+      await provider.refreshUser();
+
+      // ignore: use_build_context_synchronously
+      _showSnackBar(context, "Successfully Unsubscribed!", false);
+    } catch (e) {
+      // ignore: use_build_context_synchronously
+      _showSnackBar(
+          context, "Sorry something went wrong. Please try again", true);
+    }
+  }
+
+  ScaffoldFeatureController<SnackBar, SnackBarClosedReason> _showSnackBar(
+      BuildContext context, String message, bool isError) {
+    return ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message,
+            style: Theme.of(context)
+                .textTheme
+                .titleSmall
+                // ?.copyWith(color: isError ? Colors.red : Colors.green[400]),
+                ?.copyWith(
+                    color: isError
+                        ? Theme.of(context).colorScheme.errorContainer
+                        : Theme.of(context).colorScheme.primary)),
+      ),
+    );
   }
 
   Widget _subscribeButton() {
-    bool hasSubscribed = _currUser != null &&
-        _currUser!.getSubreddits().any((sub) => sub.id == _subreddit.id);
     return IconButton(
-      onPressed: handleSubscribe,
+      onPressed: () {
+        if (hasSubscribed) {
+          handleUnSubscribe();
+          return;
+        }
+        handleSubscribe();
+      },
       icon: Icon(
         (hasSubscribed ? Icons.check_circle_outline_rounded : Icons.add),
         size: 30,
