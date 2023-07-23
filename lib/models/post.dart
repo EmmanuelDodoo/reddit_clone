@@ -137,6 +137,8 @@ class Post with VotingMixin implements IReplyable {
 
   Subreddit getSubreddit() => _sub;
 
+  User getUser() => _user;
+
   String getUserName() => _user.getUsername();
 
   String getSubName() => _sub.getSubName();

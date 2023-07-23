@@ -1,8 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:reddit_clone/models/api/http_model.dart';
 import 'package:reddit_clone/models/inherited-data.dart';
+import 'package:reddit_clone/models/subreddit.dart';
+import 'package:reddit_clone/userprofilepage/comment_card.dart';
+
+import '../models/comment.dart';
+import '../models/user.dart';
 
 class UserPageComments extends StatefulWidget {
-  const UserPageComments({Key? key}) : super(key: key);
+  final User viewedUser;
+
+  const UserPageComments({Key? key, required this.viewedUser})
+      : super(key: key);
 
   @override
   State<UserPageComments> createState() => _UserPageCommentsState();
@@ -13,21 +22,42 @@ class _UserPageCommentsState extends State<UserPageComments>
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
       GlobalKey<RefreshIndicatorState>();
 
+  List<Comment> _comments = [];
+
+  Future<List<Comment>> _fetchCommentsData() async {
+    return await RequestHandler.getUserComments(widget.viewedUser.id).then(
+        (value) => value.map((e) => Comment.simplified(jsonMap: e)).toList());
+  }
+
+  List<Widget> _buildCommentCards(List<Comment> comments) {
+    return comments.map((e) => ProfileCommentCard(comment: e)).toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: RefreshIndicator(
         key: _refreshIndicatorKey,
         onRefresh: () async {
-          //Todo Make refresh actually mean something
-          return Future<void>.delayed(const Duration(seconds: 3));
+          var temp = await _fetchCommentsData();
+          setState(() {
+            _comments = temp;
+          });
         },
-        child: ListView.builder(
-          itemCount: 40,
-          itemBuilder: (context, index) {
-            return ListTile(
-              title: Text("Comment $index"),
-            );
+        child: FutureBuilder(
+          future: _fetchCommentsData(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done &&
+                snapshot.hasData) {
+              return ListView(
+                  children: _comments.isEmpty
+                      ? _buildCommentCards(snapshot.data!)
+                      : _buildCommentCards(_comments));
+            } else {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
           },
         ),
       ),

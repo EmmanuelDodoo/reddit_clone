@@ -4,6 +4,8 @@ import 'package:reddit_clone/models/comment.dart';
 import 'package:reddit_clone/postpage/AddCommentPage.dart';
 import 'package:reddit_clone/postpage/comment-vote-section.dart';
 
+import '../userprofilepage/userprofile.dart';
+
 class CommentCard extends StatefulWidget {
   CommentCard({Key? key, required this.comment, this.isChild = false})
       : super(key: key);
@@ -29,7 +31,13 @@ class _CommentCardState extends State<CommentCard> {
   }
 
   void _viewUser() {
-    print("View use tapped");
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => UserProfile(
+          viewedUser: _comment.getUser(),
+        ),
+      ),
+    );
   }
 
   void _reply() {

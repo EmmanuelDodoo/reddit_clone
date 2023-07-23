@@ -12,15 +12,15 @@ import './posts.dart';
 import './comments.dart';
 
 class UserProfile extends StatefulWidget {
-  final int userId;
-  const UserProfile({Key? key, required this.userId}) : super(key: key);
+  final User viewedUser;
+  const UserProfile({Key? key, required this.viewedUser}) : super(key: key);
 
   @override
   State<UserProfile> createState() => _UserProfileState();
 }
 
 class _UserProfileState extends State<UserProfile> {
-  late User _viewedUser;
+  late User _viewedUser = widget.viewedUser;
 
   User? _currUser;
 
@@ -175,9 +175,11 @@ class _UserProfileState extends State<UserProfile> {
               child: TabBarView(
                 children: [
                   UserPagePosts(
-                    userId: widget.userId,
+                    viewedUser: widget.viewedUser,
                   ),
-                  UserPageComments(),
+                  UserPageComments(
+                    viewedUser: widget.viewedUser,
+                  ),
                 ],
               ),
             ),
@@ -185,11 +187,5 @@ class _UserProfileState extends State<UserProfile> {
         ),
       ),
     );
-  }
-
-  @override
-  void initState() {
-    getViewedUser();
-    super.initState();
   }
 }

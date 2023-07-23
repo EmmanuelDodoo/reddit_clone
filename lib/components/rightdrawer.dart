@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit_clone/components/authentication/login.dart';
 import 'package:reddit_clone/createsubredditpage/page.dart';
+import 'package:reddit_clone/models/api/http_model.dart';
 import 'package:reddit_clone/models/user.dart';
 import 'package:reddit_clone/usersettingspage/usersettings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -12,14 +13,23 @@ class RightDrawer extends StatelessWidget {
   RightDrawer({Key? key}) : super(key: key);
   User? _currUser;
 
-  void _handleVisitProfile(BuildContext context) {
-    Navigator.of(context).pop();
-    Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => UserProfile(
-              userId: _currUser!.id,
-            )));
+  Future<User> _fetchUser() async {
+    return await RequestHandler.getUser(_currUser!.id)
+        .then((value) => User(jsonMap: value));
+  }
 
-    print("Going to user profile");
+  void _handleVisitProfile(BuildContext context) async {
+    var usr = await _fetchUser();
+    // ignore: use_build_context_synchronously
+    Navigator.of(context).pop();
+    // ignore: use_build_context_synchronously
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => UserProfile(
+          viewedUser: usr,
+        ),
+      ),
+    );
   }
 
   void _handleSignOut(BuildContext context) async {

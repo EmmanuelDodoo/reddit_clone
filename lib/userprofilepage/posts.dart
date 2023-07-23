@@ -5,10 +5,11 @@ import 'package:reddit_clone/models/inherited-data.dart';
 import '../components/default-post-card.dart';
 import '../models/api/http_model.dart';
 import '../models/post.dart';
+import '../models/user.dart';
 
 class UserPagePosts extends StatefulWidget {
-  final int userId;
-  const UserPagePosts({Key? key, required this.userId}) : super(key: key);
+  final User viewedUser;
+  const UserPagePosts({Key? key, required this.viewedUser}) : super(key: key);
 
   @override
   State<UserPagePosts> createState() => _UserPagePostsState();
@@ -18,32 +19,44 @@ class _UserPagePostsState extends State<UserPagePosts>
     with AutomaticKeepAliveClientMixin {
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
       GlobalKey<RefreshIndicatorState>();
-  late List<Widget> _postcards;
+  List<Post> _posts = [];
 
-  Future<void> _loadHomePosts() async {
-    var tempPosts = await RequestHandler.getUserPosts(widget.userId)
-        .then((value) => value.map((map) => Post(jsonMap: map)));
+  Future<List<Post>> _fetchPostsData() async {
+    return await RequestHandler.getUserPosts(widget.viewedUser.id)
+        .then((value) => value.map((e) => Post(jsonMap: e)).toList());
+  }
 
-    var cards = tempPosts.map((post) => DefaultPostCard(post: post)).toList();
-
-    setState(() {
-      _postcards = cards;
-    });
+  List<Widget> _buildPostCards(List<Post> posts) {
+    return posts.map((e) => DefaultPostCard(post: e)).toList();
   }
 
   @override
   Widget build(BuildContext context) {
-    // _postcards = createAllPosts(context);
-
     return Scaffold(
       body: RefreshIndicator(
         key: _refreshIndicatorKey,
         onRefresh: () async {
-          //Todo Make refresh actually mean something
-          return Future<void>.delayed(const Duration(seconds: 3));
+          var temp = await _fetchPostsData();
+          setState(() {
+            _posts = temp;
+          });
         },
-        child: ListView(
-          children: _postcards,
+        child: FutureBuilder(
+          future: _fetchPostsData(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done &&
+                snapshot.hasData) {
+              return ListView(
+                children: _posts.isEmpty
+                    ? _buildPostCards(snapshot.data!)
+                    : _buildPostCards(_posts),
+              );
+            } else {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+          },
         ),
       ),
     );

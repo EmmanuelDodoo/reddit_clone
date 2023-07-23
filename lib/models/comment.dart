@@ -114,6 +114,8 @@ class Comment with VotingMixin implements IReplyable {
   /// Returns an immutable view of replies under this comment
   List<Comment> getReplies() => UnmodifiableListView(_replies);
 
+  User getUser() => _user;
+
   String getUserName() => _user.getUsername();
 
   String getUserImageURL() => _user.getUserImageURL();

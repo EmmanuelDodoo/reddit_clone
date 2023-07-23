@@ -3,10 +3,12 @@ import 'package:provider/provider.dart';
 import 'package:reddit_clone/models/api/http_model.dart';
 import 'package:reddit_clone/models/post.dart';
 import 'package:reddit_clone/models/subreddit.dart';
+import 'package:reddit_clone/models/user.dart';
 import 'package:reddit_clone/models/userprovider.dart';
 import 'package:reddit_clone/postpage/postpage.dart';
 import '../components/default-popup-menu.dart';
 import '../subredditpage/subredditpage.dart';
+import '../userprofilepage/userprofile.dart';
 
 abstract class BasePostCard extends StatelessWidget {
   late final Post post;
@@ -24,16 +26,30 @@ abstract class BasePostCard extends StatelessWidget {
         .then((value) => Subreddit.full(jsonMap: value));
   }
 
+  Future<User> _fetchUser() async {
+    return await RequestHandler.getUser(post.getUser().id)
+        .then((value) => User(jsonMap: value));
+  }
+
   void goToSubreddit(BuildContext context) async {
     var sub = await _fetchSubreddit();
+    // ignore: use_build_context_synchronously
     Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => SubredditPage(
               subreddit: sub,
             )));
   }
 
-  void goToUserProfile() {
-    print('Go to user profile');
+  void goToUserProfile(BuildContext context) async {
+    var usr = await _fetchUser();
+    // ignore: use_build_context_synchronously
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => UserProfile(
+          viewedUser: usr,
+        ),
+      ),
+    );
   }
 
   void openPost(BuildContext context) {
@@ -85,7 +101,7 @@ abstract class BasePostCard extends StatelessWidget {
         Row(
           children: [
             GestureDetector(
-              onTap: goToUserProfile,
+              onTap: () => goToUserProfile(context),
               child: Text(
                 post.getUserName(),
                 style: Theme.of(context).textTheme.bodySmall,
