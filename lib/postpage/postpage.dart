@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit_clone/components/default-popup-menu.dart';
+import 'package:reddit_clone/models/api/http_model.dart';
 import 'package:reddit_clone/models/post.dart';
 import 'package:reddit_clone/components/rightdrawer.dart';
 import 'package:reddit_clone/models/user.dart';
@@ -31,17 +32,28 @@ class _PostPageState extends State<PostPage> {
       GlobalKey<RefreshIndicatorState>();
 
   User? _currUser;
+  late Post _post;
   List<Comment> _comments = [];
 
-  Future<void> _refresh() async {
-    return Future<void>.delayed(const Duration(seconds: 3));
+  Future<Post> _fetchPost() async {
+    return await RequestHandler.getPost(_post.id)
+        .then((value) => Post(jsonMap: value));
   }
 
-  void _loadPostComments() async {
+  Future<void> _loadPostComments() async {
     var temp = await widget._post.getComments();
     setState(() {
       _comments = temp;
     });
+  }
+
+  Future<void> _refresh() async {
+    var post = await _fetchPost();
+    setState(() {
+      _post = post;
+    });
+
+    await _loadPostComments();
   }
 
   void _commentOnPost(BuildContext context) {
@@ -186,6 +198,7 @@ class _PostPageState extends State<PostPage> {
   Widget build(BuildContext context) {
     UserProvider provider = Provider.of<UserProvider>(context, listen: false);
     _currUser = provider.currentUser;
+    _post = widget._post;
     return SafeArea(
       child: Scaffold(
         endDrawer: RightDrawer(),
