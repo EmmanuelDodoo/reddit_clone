@@ -67,13 +67,6 @@ class _SignUpModalState extends State<SignUpModal> {
     if (!_formKey.currentState!.validate()) return;
 
     try {
-      Navigator.of(context).pop();
-
-      _showSnackBar(
-          context,
-          "Sign in Successful. Welcome ${_usernameController.value.text}",
-          false);
-
       var response = await _sendSignUpRequest();
 
       _setUser(User.fromAuth(jsonMap: response));
@@ -81,6 +74,15 @@ class _SignUpModalState extends State<SignUpModal> {
       _saveToken(
           tokenValue: response["tokenValue"],
           tokenExpiration: response["tokenExpiration"]);
+
+      // ignore: use_build_context_synchronously
+      Navigator.of(context).pop();
+
+      // ignore: use_build_context_synchronously
+      _showSnackBar(
+          context,
+          "Sign in Successful. Welcome ${_usernameController.value.text}",
+          false);
 
       /// Call the on close successfully function from widget
       /// if any

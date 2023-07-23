@@ -76,10 +76,6 @@ class _LoginModalState extends State<LoginModal> {
     if (!_formKey.currentState!.validate()) return;
 
     try {
-      Navigator.of(context).pop();
-
-      _showSnackBar(context, "Login In successful. Welcome back", false);
-
       var response = await _sendLoginRequest();
 
       _setUser(User.fromAuth(jsonMap: response));
@@ -87,6 +83,12 @@ class _LoginModalState extends State<LoginModal> {
       _saveToken(
           tokenValue: response["tokenValue"],
           tokenExpiration: response["tokenExpiration"]);
+
+      // ignore: use_build_context_synchronously
+      _showSnackBar(context, "Login In successful. Welcome back", false);
+
+      // ignore: use_build_context_synchronously
+      Navigator.of(context).pop();
 
       /// Call the on close successfully function from widget
       /// if any
