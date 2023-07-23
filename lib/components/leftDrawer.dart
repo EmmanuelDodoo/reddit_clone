@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit_clone/models/user.dart';
 
+import '../models/api/http_model.dart';
 import '../models/subreddit.dart';
 import '../models/userprovider.dart';
+import '../subredditpage/subredditpage.dart';
 
 class LeftDrawer extends StatefulWidget {
   const LeftDrawer({super.key});
@@ -14,18 +16,23 @@ class LeftDrawer extends StatefulWidget {
 
 class _LeftDrawerState extends State<LeftDrawer> {
   User? _currUser;
-  List<Subreddit> _currUserSubreddits = [];
 
-  void _loadCurrUserSubreddits() async {
-    var temp = await _currUser!.getSubreddits();
-
-    setState(() {
-      _currUserSubreddits = temp;
-    });
+  Future<Subreddit> _fetchSubreddit(int id) async {
+    return await RequestHandler.getSubreddit(id)
+        .then((value) => Subreddit.full(jsonMap: value));
   }
 
-  void _visitSubreddit({required int id}) {
-    print("Visiting subreddit with id $id");
+  void _visitSubreddit({required int id}) async {
+    var sub = await _fetchSubreddit(id);
+
+    // ignore: use_build_context_synchronously
+    Navigator.of(context).pop();
+
+    // ignore: use_build_context_synchronously
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => SubredditPage(
+              subreddit: sub,
+            )));
   }
 
   Widget _leftDrawerListInator(
