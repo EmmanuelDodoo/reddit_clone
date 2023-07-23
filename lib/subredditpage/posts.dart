@@ -57,7 +57,6 @@ class _SubredditPostsState extends State<SubredditPosts>
                   : _buildPostCards(_posts),
             );
           } else {
-            print(snapshot.hasData);
             return const Center(
               child: CircularProgressIndicator(),
             );
