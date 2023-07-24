@@ -34,6 +34,8 @@ class _PostPageState extends State<PostPage> {
   User? _currUser;
   late Post _post;
   List<Comment> _comments = [];
+  late List<Post> _currUserUpvotedPosts = [];
+  late List<Post> _currUserDownvotedPosts = [];
 
   Future<Post> _fetchPost() async {
     return await RequestHandler.getPost(_post.id)
@@ -66,6 +68,17 @@ class _PostPageState extends State<PostPage> {
     }
     Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => AddCommentPage(replyable: _post)));
+  }
+
+  int _getVoteCode(Post post) {
+    if (_currUser == null) return 0;
+
+    if (_currUserUpvotedPosts.any((element) => post.id == element.id)) return 1;
+
+    if (_currUserDownvotedPosts.any((element) => post.id == element.id))
+      return -1;
+
+    return 0;
   }
 
   Widget _emptyComments(BuildContext context) {
@@ -180,6 +193,7 @@ class _PostPageState extends State<PostPage> {
           ),
           PostPageFooter(
             post: _post,
+            voteCode: _getVoteCode(_post),
           ),
           const SliverToBoxAdapter(child: Divider()),
           SliverList(
@@ -200,6 +214,8 @@ class _PostPageState extends State<PostPage> {
   Widget build(BuildContext context) {
     UserProvider provider = Provider.of<UserProvider>(context, listen: false);
     _currUser = provider.currentUser;
+    _currUserUpvotedPosts = provider.currUserUpvotedPosts;
+    _currUserDownvotedPosts = provider.currUserDownvotedPosts;
     _post = widget._post;
     return SafeArea(
       child: Scaffold(

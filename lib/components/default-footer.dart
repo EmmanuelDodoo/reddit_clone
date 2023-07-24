@@ -6,7 +6,9 @@ import '../models/classhelpers.dart';
 ///Stateful widget for the footer of a post since that's the
 /// only section which will change with user interaction
 class DefaultFooter extends StatefulWidget {
-  DefaultFooter({Key? key, required this.post}) : super(key: key);
+  DefaultFooter({Key? key, required this.post, required this.voteCode})
+      : super(key: key);
+  final int voteCode;
   late final Post post;
 
   @override
@@ -24,7 +26,7 @@ class DefaultFooterState extends State<DefaultFooter> {
     //Set the initial values to what was passed to Footer
     // Can't pass it down otherwise
     _post = widget.post;
-    _voteCode = widget.post.getVoteCode();
+    _voteCode = widget.voteCode;
     _commentNumber = widget.post.commentCount;
     _votesNumber = widget.post.getVotes();
 

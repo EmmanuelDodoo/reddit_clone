@@ -1,74 +1,26 @@
-import 'package:flutter/material.dart';
+import 'package:reddit_clone/models/post_list.dart';
+
 import '../models/api/http_model.dart';
 import '../models/post.dart';
 import '../models/subreddit.dart';
-import '../components/default-post-card.dart';
 
-class SubredditPosts extends StatefulWidget {
+class SubredditPosts extends PostList {
+  final Subreddit subreddit;
   const SubredditPosts({super.key, required this.subreddit});
 
-  final Subreddit subreddit;
-
   @override
-  State<SubredditPosts> createState() => _SubredditPostsState();
+  PostListState<SubredditPosts> createState() =>
+      _SubredditPostsState(subreddit: subreddit);
 }
 
-class _SubredditPostsState extends State<SubredditPosts>
-    with AutomaticKeepAliveClientMixin {
-  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
-      GlobalKey<RefreshIndicatorState>();
+class _SubredditPostsState extends PostListState<SubredditPosts> {
+  final Subreddit subreddit;
 
-  List<Widget> _postCards = [];
-  late final Subreddit _subreddit;
-
-  Future<List<Post>> _fetchPostsData() async {
-    var temp = await RequestHandler.getSubredditPosts(_subreddit.id)
+  _SubredditPostsState({required this.subreddit});
+  @override
+  Future<List<Post>> fetchPostsData() async {
+    var temp = await RequestHandler.getSubredditPosts(subreddit.id)
         .then((value) => value.map((e) => Post(jsonMap: e)).toList());
     return temp;
   }
-
-  List<Widget> _buildPostCards(List<Post> posts) {
-    var temp = posts.map((e) => DefaultPostCard(post: e)).toList();
-    _postCards = temp;
-    return temp;
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _subreddit = widget.subreddit;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return RefreshIndicator(
-      key: _refreshIndicatorKey,
-      onRefresh: () async {
-        setState(() {});
-      },
-      child: FutureBuilder(
-        future: _fetchPostsData(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done &&
-              snapshot.hasData) {
-            return ListView(
-              children: _buildPostCards(snapshot.data!),
-            );
-          } else {
-            return _postCards.isEmpty
-                ? const Center(
-                    child: CircularProgressIndicator(),
-                  )
-                : ListView(
-                    children: _postCards,
-                  );
-          }
-        },
-      ),
-    );
-  }
-
-  //Prevents the view from defaulting to the beginning
-  @override
-  bool get wantKeepAlive => true;
 }

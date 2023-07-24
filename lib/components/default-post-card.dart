@@ -7,6 +7,7 @@ class DefaultPostCard extends BasePostCard {
   final GlobalKey<DefaultFooterState> _footerKey =
       GlobalKey<DefaultFooterState>();
   DefaultFooter? _footer;
+  int voteCode;
 
   ///The footer is the only stateful section of a post's card which is why
   ///I factored it out
@@ -15,10 +16,12 @@ class DefaultPostCard extends BasePostCard {
     _footer = DefaultFooter(
       key: _footerKey,
       post: post,
+      voteCode: voteCode,
     );
   }
 
-  DefaultPostCard({Key? key, required Post post}) : super(key: key, post: post);
+  DefaultPostCard({Key? key, required Post post, required this.voteCode})
+      : super(key: key, post: post);
 
   @override
   void onDoubleTap() {
