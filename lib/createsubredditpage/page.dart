@@ -250,7 +250,7 @@ class _CreateSubredditPageState extends State<CreateSubredditPage> {
             ),
             style: Theme.of(context).textTheme.bodyMedium,
             validator: (String? value) {
-              if (value == null || value.isEmpty) {
+              if (value == null || value.trim().isEmpty) {
                 return 'Please enter a name';
               }
               return null;
@@ -263,7 +263,7 @@ class _CreateSubredditPageState extends State<CreateSubredditPage> {
             ),
             style: Theme.of(context).textTheme.bodyMedium,
             validator: (String? value) {
-              if (value == null || value.isEmpty) {
+              if (value == null || value.trim().isEmpty) {
                 return "Please enter a description";
               }
               return null;
