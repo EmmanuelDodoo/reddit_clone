@@ -152,7 +152,7 @@ class _SignUpModalState extends State<SignUpModal> {
               RegExp emailPattern =
                   RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
               if (value == null ||
-                  value.isEmpty ||
+                  value.trim().isEmpty ||
                   !emailPattern.hasMatch(value)) {
                 return 'Please enter a valid email';
               }
@@ -167,7 +167,7 @@ class _SignUpModalState extends State<SignUpModal> {
               hintText: 'Username',
             ),
             validator: (String? value) {
-              if (value == null || value.isEmpty) {
+              if (value == null || value.trim().isEmpty) {
                 return 'Please enter an username';
               }
               return null;
@@ -193,7 +193,7 @@ class _SignUpModalState extends State<SignUpModal> {
               hintText: 'Password',
             ),
             validator: (String? value) {
-              if (value == null || value.isEmpty) {
+              if (value == null || value.trim().isEmpty) {
                 return 'Please enter a password';
               }
               return null;

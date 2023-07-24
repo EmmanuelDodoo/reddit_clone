@@ -270,7 +270,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
                 hintText: 'Title',
               ),
               validator: (String? value) {
-                if (value == null || value.isEmpty) {
+                if (value == null || value.trim().isEmpty) {
                   return 'Please enter a title';
                 }
                 return null;
@@ -287,7 +287,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
                   hintText: 'Content',
                 ),
                 validator: (String? value) {
-                  if ((value == null || value.isEmpty) &&
+                  if ((value == null || value.trim().isEmpty) &&
                       _selectedImage == null) {
                     return 'Please enter some text';
                   }

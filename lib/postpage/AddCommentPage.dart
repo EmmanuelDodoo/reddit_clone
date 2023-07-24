@@ -143,7 +143,7 @@ class _AddCommentPageState extends State<AddCommentPage> {
                   hintText: "Leave a comment",
                 ),
                 validator: (String? value) {
-                  if (value == null || value.isEmpty) {
+                  if (value == null || value.trim().isEmpty) {
                     return "Please enter some text";
                   }
                   return null;

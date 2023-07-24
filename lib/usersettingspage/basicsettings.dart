@@ -303,7 +303,7 @@ class _BasicSettingsState extends State<BasicSettings> {
                       labelText: 'New username',
                     ),
                     validator: (String? value) {
-                      if (value == null || value.isEmpty) {
+                      if (value == null || value.trim().isEmpty) {
                         return "Please enter some text";
                       }
                       return null;
@@ -379,7 +379,7 @@ class _BasicSettingsState extends State<BasicSettings> {
                       RegExp emailPattern = RegExp(
                           r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
                       if (value == null ||
-                          value.isEmpty ||
+                          value.trim().isEmpty ||
                           !emailPattern.hasMatch(value)) {
                         return "Please a valid email";
                       }
@@ -453,7 +453,7 @@ class _BasicSettingsState extends State<BasicSettings> {
                       labelText: 'New password',
                     ),
                     validator: (String? value) {
-                      if (value == null || value.isEmpty) {
+                      if (value == null || value.trim().isEmpty) {
                         return "Please a new password";
                       }
                       return null;

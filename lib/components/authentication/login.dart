@@ -153,7 +153,7 @@ class _LoginModalState extends State<LoginModal> {
               hintText: 'Email or username',
             ),
             validator: (String? value) {
-              if (value == null || value.isEmpty) {
+              if (value == null || value.trim().isEmpty) {
                 return 'Please enter an email or username';
               }
               return null;
@@ -179,7 +179,7 @@ class _LoginModalState extends State<LoginModal> {
               hintText: 'Password',
             ),
             validator: (String? value) {
-              if (value == null || value.isEmpty) {
+              if (value == null || value.trim().isEmpty) {
                 return 'Please enter a password';
               }
               return null;
