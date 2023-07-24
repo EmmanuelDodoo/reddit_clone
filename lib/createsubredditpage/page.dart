@@ -2,6 +2,8 @@ import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../models/api/http_model.dart';
 import '../models/user.dart';
 import '../models/userprovider.dart';
 
@@ -21,6 +23,11 @@ class _CreateSubredditPageState extends State<CreateSubredditPage> {
 
   File? _selectedSubImage;
   File? _selectedThumbnailImage;
+
+  Future<String> _uploadImage(File image) async {
+    var imageURL = await RequestHandler.uploadImage(image);
+    return imageURL["url"];
+  }
 
   Future<void> getSubImageFromGallery() async {
     final image = await ImagePicker().pickImage(source: ImageSource.gallery);
@@ -43,16 +50,18 @@ class _CreateSubredditPageState extends State<CreateSubredditPage> {
   }
 
   ScaffoldFeatureController<SnackBar, SnackBarClosedReason> _showSnackBar(
-      BuildContext context, String message) {
+      BuildContext context, String message, bool isError) {
     return ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(
-          message,
-          style: Theme.of(context)
-              .textTheme
-              .titleSmall
-              ?.copyWith(color: Colors.red[300]),
-        ),
+        content: Text(message,
+            style: Theme.of(context)
+                .textTheme
+                .titleSmall
+                // ?.copyWith(color: isError ? Colors.red : Colors.green[400]),
+                ?.copyWith(
+                    color: isError
+                        ? Theme.of(context).colorScheme.errorContainer
+                        : Theme.of(context).colorScheme.primary)),
       ),
     );
   }
@@ -61,19 +70,53 @@ class _CreateSubredditPageState extends State<CreateSubredditPage> {
     return _rulesFieldController.text.split("\n");
   }
 
-  void handleCreateSub(BuildContext context) {
-    if (_formKey.currentState!.validate()) {
-      if (_selectedSubImage == null) {
-        _showSnackBar(context, "Please choose an image for the subreddit");
-      } else if (_selectedThumbnailImage == null) {
-        _showSnackBar(context, "Please choose a thumbnail for the subreddit");
-      }
-    }
-  }
+  void handleCreateSub(BuildContext context) async {
+    if (!_formKey.currentState!.validate()) return;
 
-  /// Returns true if no other sub has the same name
-  bool noDuplicateSubnames({required String name}) {
-    return true;
+    if (_selectedSubImage == null) {
+      _showSnackBar(context, "Please choose an image for the subreddit", true);
+      return;
+    }
+
+    if (_selectedThumbnailImage == null) {
+      _showSnackBar(
+          context, "Please choose a thumbnail for the subreddit", true);
+      return;
+    }
+
+    var token = await SharedPreferences.getInstance()
+        .then((value) => value.getString("tokenValue"));
+
+    var imageURL = await _uploadImage(_selectedSubImage!);
+    var thumbnailURL = await _uploadImage(_selectedThumbnailImage!);
+
+    var requestBody = {
+      "userId": _currUser!.id,
+      "name": _nameFieldController.value.text.trim(),
+      "about": _aboutFieldController.value.text.trim(),
+      "rules": _processRules(),
+      "imageURL": imageURL,
+      "thumbnailURL": thumbnailURL,
+    };
+
+    try {
+      await RequestHandler.createSubreddit(
+          requestBody: requestBody, token: token!);
+
+      // ignore: use_build_context_synchronously
+      _showSnackBar(context, "Successfully created subreddit", false);
+
+      // ignore: use_build_context_synchronously
+      UserProvider provider = Provider.of<UserProvider>(context, listen: false);
+      provider.refreshUser();
+
+      // ignore: use_build_context_synchronously
+      Navigator.of(context).pop();
+    } catch (e) {
+      // ignore: use_build_context_synchronously
+      _showSnackBar(
+          context, "Something went wrong. Please try again later", true);
+    }
   }
 
   Widget _subImageSection(BuildContext context) {
@@ -109,7 +152,7 @@ class _CreateSubredditPageState extends State<CreateSubredditPage> {
         : Row(
             children: [
               Padding(
-                padding: const EdgeInsets.only(right: 15.0),
+                padding: const EdgeInsets.only(right: 43.0),
                 child: Text(
                   "Subreddit Image: ",
                   style: Theme.of(context)
@@ -170,7 +213,7 @@ class _CreateSubredditPageState extends State<CreateSubredditPage> {
               Padding(
                 padding: const EdgeInsets.only(right: 15.0),
                 child: Text(
-                  "Subreddit Image: ",
+                  "Subreddit Thumbnail: ",
                   style: Theme.of(context)
                       .textTheme
                       .bodyMedium
@@ -194,57 +237,53 @@ class _CreateSubredditPageState extends State<CreateSubredditPage> {
           );
   }
 
-  Widget _subNameSection(BuildContext context) {
-    return Container(
-      child: Form(
-        key: _formKey,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            TextFormField(
-              controller: _nameFieldController,
-              decoration: const InputDecoration(
-                hintText: 'Subreddit name',
-              ),
-              style: Theme.of(context).textTheme.bodyMedium,
-              validator: (String? value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter a name';
-                } else if (!noDuplicateSubnames(name: value)) {
-                  return "This name is already taken";
-                }
-                return null;
-              },
+  Widget _textField(BuildContext context) {
+    return Form(
+      key: _formKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          TextFormField(
+            controller: _nameFieldController,
+            decoration: const InputDecoration(
+              hintText: 'Subreddit name',
             ),
-            TextFormField(
-              controller: _aboutFieldController,
-              decoration: const InputDecoration(
-                hintText: 'Subreddit Description',
-              ),
-              style: Theme.of(context).textTheme.bodyMedium,
-              validator: (String? value) {
-                if (value == null || value.isEmpty) {
-                  return "Please enter a description";
-                }
-                return null;
-              },
+            style: Theme.of(context).textTheme.bodyMedium,
+            validator: (String? value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter a name';
+              }
+              return null;
+            },
+          ),
+          TextFormField(
+            controller: _aboutFieldController,
+            decoration: const InputDecoration(
+              hintText: 'Subreddit Description',
             ),
-            TextFormField(
-              controller: _rulesFieldController,
-              maxLines: null,
-              decoration: const InputDecoration(
-                hintText: 'Subreddit Rules',
-              ),
-              style: Theme.of(context).textTheme.bodyMedium,
-              validator: (String? value) {
-                if (value == null || value.isEmpty) {
-                  return "Please enter some rules";
-                }
-                return null;
-              },
+            style: Theme.of(context).textTheme.bodyMedium,
+            validator: (String? value) {
+              if (value == null || value.isEmpty) {
+                return "Please enter a description";
+              }
+              return null;
+            },
+          ),
+          TextFormField(
+            controller: _rulesFieldController,
+            maxLines: null,
+            decoration: const InputDecoration(
+              hintText: 'Subreddit Rules',
             ),
-          ],
-        ),
+            style: Theme.of(context).textTheme.bodyMedium,
+            validator: (String? value) {
+              if (value == null || value.trim().isEmpty) {
+                return "Please enter some rules";
+              }
+              return null;
+            },
+          ),
+        ],
       ),
     );
   }
@@ -275,7 +314,7 @@ class _CreateSubredditPageState extends State<CreateSubredditPage> {
               const SizedBox(
                 height: 10,
               ),
-              _subNameSection(context),
+              _textField(context),
               const SizedBox(
                 height: 10,
               ),

@@ -36,6 +36,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
 
     if (_selectedSubreddit == null) {
       _showSnackBar(context, "Please choose a subreddit", true);
+      return;
     }
     var token = await SharedPreferences.getInstance()
         .then((value) => value.getString("tokenValue"));
