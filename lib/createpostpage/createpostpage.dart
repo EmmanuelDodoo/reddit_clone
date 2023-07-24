@@ -136,8 +136,10 @@ class _CreatePostPageState extends State<CreatePostPage> {
       ),
       onChanged: (Subreddit? value) {
         // This is called when the user selects an item.
+        if (value == null) return;
+
         setState(() {
-          _selectedSubreddit = value!;
+          _selectedSubreddit = value;
         });
       },
       items: options.map<DropdownMenuItem<Subreddit>>((Subreddit value) {

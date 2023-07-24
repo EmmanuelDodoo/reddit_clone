@@ -92,6 +92,6 @@ class Subreddit {
 
   @override
   String toString() {
-    return "<Subreddit ~id: $id, name: $_name}, about: ${_about.substring(0, _about.length ~/ 2)}...~ >";
+    return "<Subreddit ~id: $id, name: $_name, about: ${_about.substring(0, _about.length ~/ 2)}...~ >";
   }
 }

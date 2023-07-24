@@ -239,7 +239,7 @@ class User {
     if (_subscribedSubreddits.isEmpty) {
       await _fetchSubscribedSubreddits(id).then((value) {
         _subscribedSubreddits =
-            List.of(value.map((e) => Subreddit.simplified(jsonMap: e)));
+            List.of(value.map((e) => Subreddit.full(jsonMap: e)));
       });
     }
     return _subscribedSubreddits;
