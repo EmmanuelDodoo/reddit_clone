@@ -7,7 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// The defaults are dark mode, teal theme and using material 3
 class ThemeProvider extends ChangeNotifier {
   Brightness? _brightness = Brightness.dark;
-  bool? useMaterial3;
+  bool useMaterial3 = true;
   AppColor? _color;
 
   ThemeProvider() {

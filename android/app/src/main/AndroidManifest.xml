@@ -2,7 +2,7 @@
     package="com.example.reddit_clone">
     <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />
    <application
-        android:label="reddit_clone"
+        android:label="Reddit Clone"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

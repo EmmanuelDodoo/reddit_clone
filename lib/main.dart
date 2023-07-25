@@ -167,6 +167,7 @@ class _MyAppState extends State<MyApp> {
         return MaterialApp(
           title: "Reddit Clone",
           theme: _theme(context),
+          debugShowCheckedModeBanner: false,
           home: SafeArea(
             child: Consumer<UserProvider>(
               child: MainPage(),
