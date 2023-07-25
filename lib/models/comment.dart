@@ -1,11 +1,9 @@
-import 'dart:convert';
 import 'package:reddit_clone/models/api/api_errors.dart';
-import 'package:reddit_clone/models/api/http_model.dart';
-import 'package:reddit_clone/models/classhelpers.dart';
+import 'package:reddit_clone/models/api/request_handler.dart';
+import 'package:reddit_clone/models/class_helpers.dart';
 import 'package:reddit_clone/models/replyable.dart';
 import 'package:reddit_clone/models/user.dart';
 import 'package:reddit_clone/models/votable.dart';
-import 'package:reddit_clone/models/votes.dart';
 import 'dart:collection';
 
 class Comment implements IReplyable, Votable {
@@ -90,7 +88,7 @@ class Comment implements IReplyable, Votable {
   Future<Map<String, dynamic>> _fetchUser(int uid) async {
     try {
       return await RequestHandler.getUser(uid);
-    } on ServerError catch (e) {
+    } on ServerError {
       try {
         return await RequestHandler.getUser(uid);
       } catch (e) {
@@ -105,7 +103,6 @@ class Comment implements IReplyable, Votable {
   /// and on the backend with {newContent}.
   void _editContents({required String newContent}) {
     _contents = newContent;
-    // todo Make api calls
   }
 
   /// Returns the number of replies under this comment

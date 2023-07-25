@@ -1,13 +1,11 @@
-import 'dart:convert';
-import 'package:reddit_clone/models/classhelpers.dart';
+import 'package:reddit_clone/models/class_helpers.dart';
 import 'package:reddit_clone/models/replyable.dart';
 import 'package:reddit_clone/models/subreddit.dart';
 import 'package:reddit_clone/models/user.dart';
 import 'package:reddit_clone/models/comment.dart';
 import 'package:reddit_clone/models/votable.dart';
-import 'package:reddit_clone/models/votes.dart';
 import 'api/api_errors.dart';
-import 'api/http_model.dart';
+import 'api/request_handler.dart';
 import 'dart:collection';
 
 /// Representation of a post
@@ -93,7 +91,7 @@ class Post implements IReplyable, Votable {
   Future<Map<String, dynamic>> _fetchUser(int uid) async {
     try {
       return await RequestHandler.getUser(uid);
-    } on ServerError catch (e) {
+    } on ServerError {
       try {
         return await RequestHandler.getUser(uid);
       } catch (e) {
@@ -110,7 +108,7 @@ class Post implements IReplyable, Votable {
   Future<Map<String, dynamic>> _fetchSubreddit(int sid) async {
     try {
       return await RequestHandler.getSubreddit(sid);
-    } on ServerError catch (e) {
+    } on ServerError {
       try {
         return await RequestHandler.getSubreddit(sid);
       } catch (e) {
@@ -127,7 +125,7 @@ class Post implements IReplyable, Votable {
   Future<List<dynamic>> _fetchComments(int pid) async {
     try {
       return await RequestHandler.getAllPostComments(pid);
-    } on ServerError catch (e) {
+    } on ServerError {
       try {
         return await RequestHandler.getAllPostComments(pid);
       } catch (e) {

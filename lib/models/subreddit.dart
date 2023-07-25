@@ -1,10 +1,7 @@
-import 'dart:convert';
 import 'dart:collection';
-
 import 'package:reddit_clone/models/post.dart';
-
 import 'api/api_errors.dart';
-import 'api/http_model.dart';
+import 'api/request_handler.dart';
 
 /// Representation of a subreddit
 class Subreddit {
@@ -55,7 +52,7 @@ class Subreddit {
   Future<List<dynamic>> _fetchPosts(int sid) async {
     try {
       return await RequestHandler.getSubredditPosts(sid);
-    } on ServerError catch (e) {
+    } on ServerError {
       try {
         return await RequestHandler.getAllPostComments(sid);
       } catch (e) {

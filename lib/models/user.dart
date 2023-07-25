@@ -1,7 +1,5 @@
-import 'dart:convert';
-
-import 'package:reddit_clone/models/api/http_model.dart';
-import 'package:reddit_clone/models/classhelpers.dart';
+import 'package:reddit_clone/models/api/request_handler.dart';
+import 'package:reddit_clone/models/class_helpers.dart';
 import 'package:reddit_clone/models/post.dart';
 import 'package:reddit_clone/models/subreddit.dart';
 import 'package:reddit_clone/models/comment.dart';
@@ -54,7 +52,6 @@ class User {
     _joinDate = jsonMap["joined"];
     _userAgeString = ClassHelper.getTimeDifference(unixTime: _joinDate);
 
-    //TODO Testing to see if this means not using async await for elsewhere
     _loadSubreddits();
   }
 
@@ -69,7 +66,6 @@ class User {
     _joinDate = jsonMap["joined"];
     _userAgeString = ClassHelper.getTimeDifference(unixTime: _joinDate);
 
-    //TODO Testing to see if this means not using async await for elsewhere
     _loadSubreddits();
   }
 

@@ -1,13 +1,12 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:crypto/crypto.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:reddit_clone/components/authentication/signup.dart';
 import 'package:provider/provider.dart';
-import 'package:reddit_clone/models/api/http_model.dart';
-import 'package:reddit_clone/models/userprovider.dart';
+import 'package:reddit_clone/models/api/request_handler.dart';
+import 'package:reddit_clone/models/user_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../models/api/api_errors.dart';

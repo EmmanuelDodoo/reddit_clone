@@ -1,18 +1,13 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
-import 'package:reddit_clone/models/api/http_model.dart';
-import 'package:reddit_clone/models/userprovider.dart';
-import 'package:reddit_clone/theme/themeprovider.dart';
+import 'package:reddit_clone/models/api/request_handler.dart';
+import 'package:reddit_clone/models/user_provider.dart';
+import 'package:reddit_clone/models/theme/theme_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'mainpage/mainpage.dart';
+import 'main_page/main_page.dart';
 import 'models/user.dart';
-import 'models/inherited-data.dart';
 import 'skeleton.dart';
-import 'temp.dart';
 
 void main() async {
   await dotenv.load(fileName: ".env");
@@ -27,21 +22,19 @@ void main() async {
           create: (context) => ThemeProvider(),
         ),
       ],
-      child: MyApp(),
+      child: const MyApp(),
     ),
   );
 }
 
 class MyApp extends StatefulWidget {
-  MyApp({super.key});
+  const MyApp({super.key});
 
   @override
   State<MyApp> createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
-  User? _user;
-
   Future<User> _fetchUser() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     int id = prefs.getInt("uid")!;
@@ -70,13 +63,10 @@ class _MyAppState extends State<MyApp> {
 
   void _loadUser() async {
     if (await _savedTokenIsExpired()) {
-      _user = null;
     } else {
       var usr = await _fetchUser();
       _propagateUser(usr);
-      setState(() {
-        _user = usr;
-      });
+      setState(() {});
     }
   }
 
@@ -170,7 +160,7 @@ class _MyAppState extends State<MyApp> {
           debugShowCheckedModeBanner: false,
           home: SafeArea(
             child: Consumer<UserProvider>(
-              child: MainPage(),
+              child: const MainPage(),
               builder: (context, provider, child) {
                 if (child != null) {
                   return Skeleton(

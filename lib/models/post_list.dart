@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit_clone/models/user.dart';
-import '../components/default-post-card.dart';
+import '../components/default_post_card.dart';
 import '../models/post.dart';
-import '../models/userprovider.dart';
+import '../models/user_provider.dart';
 
 abstract class PostList extends StatefulWidget {
   const PostList({super.key});
@@ -51,6 +51,7 @@ class PostListState<T extends PostList> extends State<PostList>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     _currUser = provider.currentUser;
     return Scaffold(
       body: RefreshIndicator(

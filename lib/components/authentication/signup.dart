@@ -3,15 +3,15 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:reddit_clone/models/api/http_model.dart';
+import 'package:reddit_clone/models/api/request_handler.dart';
 import 'package:reddit_clone/models/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../models/api/api_errors.dart';
-import '../../models/userprovider.dart';
+import '../../models/user_provider.dart';
 
 class SignUpModal extends StatefulWidget {
-  ///Optional function to call after a successfull signup
+  ///Optional function to call after a successful signup
   final void Function()? onCloseSuccessfully;
 
   const SignUpModal({Key? key, this.onCloseSuccessfully}) : super(key: key);
