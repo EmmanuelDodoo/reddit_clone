@@ -21,6 +21,7 @@ class PostListState<T extends PostList> extends State<PostList>
   late User? _currUser;
   late List<Post> _currUserUpvotedPosts = [];
   late List<Post> _currUserDownvotedPosts = [];
+  late UserProvider provider = Provider.of(context, listen: false);
 
   Future<List<Post>> fetchPostsData() async {
     throw Exception("Unimplemented method");
@@ -50,7 +51,6 @@ class PostListState<T extends PostList> extends State<PostList>
 
   @override
   Widget build(BuildContext context) {
-    UserProvider provider = Provider.of<UserProvider>(context, listen: false);
     _currUser = provider.currentUser;
     return Scaffold(
       body: RefreshIndicator(

@@ -1,15 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:reddit_clone/components/comment-popup-menu.dart';
 import 'package:reddit_clone/models/comment.dart';
 import 'package:reddit_clone/postpage/AddCommentPage.dart';
 import 'package:reddit_clone/postpage/comment-vote-section.dart';
 
+import '../models/user.dart';
+import '../models/userprovider.dart';
 import '../userprofilepage/userprofile.dart';
 
 class CommentCard extends StatefulWidget {
-  CommentCard({Key? key, required this.comment, this.isChild = false})
+  CommentCard(
+      {Key? key,
+      required this.comment,
+      this.isChild = false,
+      required this.voteCode})
       : super(key: key);
   late final Comment comment;
+  final int voteCode;
   late final bool isChild;
 
   @override
@@ -19,6 +27,10 @@ class CommentCard extends StatefulWidget {
 class _CommentCardState extends State<CommentCard> {
   late final Comment _comment;
   bool _isCollapsed = false;
+
+  User? _currUser;
+  List<Comment> _currUserUpvotedComments = [];
+  List<Comment> _currUserDownvotedComments = [];
 
   @override
   void initState() {
@@ -49,6 +61,18 @@ class _CommentCardState extends State<CommentCard> {
     setState(() {
       _isCollapsed = true;
     });
+  }
+
+  int _getVoteCode(Comment comment) {
+    if (_currUser == null) return 0;
+
+    if (_currUserUpvotedComments.any((element) => comment.id == element.id))
+      return 1;
+
+    if (_currUserDownvotedComments.any((element) => comment.id == element.id))
+      return -1;
+
+    return 0;
   }
 
   Widget _userAvatar() {
@@ -82,6 +106,7 @@ class _CommentCardState extends State<CommentCard> {
             margin: const EdgeInsets.only(right: 10),
             child: CommentVoteSection(
               comment: _comment,
+              voteCode: widget.voteCode,
             ),
           )
         ],
@@ -141,6 +166,7 @@ class _CommentCardState extends State<CommentCard> {
               child: CommentCard(
                 comment: rep,
                 isChild: true,
+                voteCode: _getVoteCode(rep),
               ),
             )))
       ],
@@ -205,6 +231,11 @@ class _CommentCardState extends State<CommentCard> {
 
   @override
   Widget build(BuildContext context) {
+    UserProvider provider = Provider.of<UserProvider>(context, listen: false);
+    _currUser = provider.currentUser;
+    _currUserUpvotedComments = provider.currUserUpvotedComments;
+    _currUserDownvotedComments = provider.currUserDownvotedComments;
+
     if (widget.isChild) {
       return AnimatedContainer(
         duration: const Duration(seconds: 3),

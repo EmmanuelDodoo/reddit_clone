@@ -4,13 +4,14 @@ import 'package:reddit_clone/models/replyable.dart';
 import 'package:reddit_clone/models/subreddit.dart';
 import 'package:reddit_clone/models/user.dart';
 import 'package:reddit_clone/models/comment.dart';
+import 'package:reddit_clone/models/votable.dart';
 import 'package:reddit_clone/models/votes.dart';
 import 'api/api_errors.dart';
 import 'api/http_model.dart';
 import 'dart:collection';
 
 /// Representation of a post
-class Post with VotingMixin implements IReplyable {
+class Post implements IReplyable, Votable {
   /// The id of this post instance
   @override
   late final int id;
@@ -43,6 +44,11 @@ class Post with VotingMixin implements IReplyable {
   /// The total number of comments on this post, including replies.
   late final int commentCount;
 
+  /// The net votes this object has. Should be positive if upvotes >
+  /// downvotes and negative if the reverse is true.
+  @override
+  late int votes;
+
   @override
   late final String context;
 
@@ -74,9 +80,6 @@ class Post with VotingMixin implements IReplyable {
     _user = User(jsonMap: source["user"]);
 
     _sub = Subreddit.simplified(jsonMap: source["subreddit"]);
-
-    //TODO temporary measure
-    voteCode = 0;
   }
 
   /// Construct a post from a valid json map.
@@ -153,6 +156,9 @@ class Post with VotingMixin implements IReplyable {
 
   String getContents() => _contents;
 
+  @override
+  int getVotes() => votes;
+
   /// Returns a list of comments under this post.
   Future<List<Comment>> getComments() async {
     // Fetch the comments if they haven't been previously fetched
@@ -175,6 +181,21 @@ class Post with VotingMixin implements IReplyable {
 
     var comment = Comment.simplified(jsonMap: commentMap);
     _comments.add(comment);
+  }
+
+  @override
+  Future<void> upvote({required int uid, required String token}) async {
+    await RequestHandler.upvotePost(uid: uid, pid: id, token: token);
+  }
+
+  @override
+  Future<void> downvote({required int uid, required String token}) async {
+    await RequestHandler.downvotePost(uid: uid, pid: id, token: token);
+  }
+
+  @override
+  Future<void> resetVote({required int uid, required String token}) async {
+    await RequestHandler.resetPostVote(uid: uid, pid: id, token: token);
   }
 
   @override

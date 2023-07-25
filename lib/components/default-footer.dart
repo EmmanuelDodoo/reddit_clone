@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:reddit_clone/components/authentication/login.dart';
 import 'package:reddit_clone/models/post.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:reddit_clone/models/userprovider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/classhelpers.dart';
+import '../models/user.dart';
 
 ///Stateful widget for the footer of a post since that's the
 /// only section which will change with user interaction
@@ -20,6 +25,8 @@ class DefaultFooterState extends State<DefaultFooter> {
   late int _votesNumber;
   late int _commentNumber;
   late int _voteCode;
+  User? _currUser;
+  String? token;
 
   @override
   void initState() {
@@ -33,17 +40,61 @@ class DefaultFooterState extends State<DefaultFooter> {
     super.initState();
   }
 
-  /// Updates the vote code on this post with {update} and calculates net votes
-  /// accordingly.
-  /// Causes re-rendering of Footer.
-  ///
-  /// Requires: {update} is a valid vote code.
-  void updateVote({required int update}) {
-    setState(() {
-      _post.setVoteCode(newCode: update);
-      _votesNumber = _post.votes;
-      _voteCode = _post.voteCode;
-    });
+  Future<void> handleUpvote(BuildContext context) async {
+    if (_currUser == null) {
+      showDialog(context: context, builder: (context) => LoginModal());
+      return;
+    }
+    UserProvider provider = Provider.of(context, listen: false);
+
+    // Already upvoted so reset vote
+    if (_voteCode == 1) {
+      setState(() {
+        _votesNumber -= 1;
+        _voteCode = 0;
+      });
+      await _post.resetVote(uid: _currUser!.id, token: token!);
+    } else {
+      setState(() {
+        if (_voteCode == 0) {
+          _votesNumber += 1;
+        } else {
+          _votesNumber += 2;
+        }
+        _voteCode = 1;
+      });
+      await _post.upvote(uid: _currUser!.id, token: token!);
+    }
+    await provider.refreshUser();
+  }
+
+  Future<void> handleDownvote(BuildContext context) async {
+    if (_currUser == null) {
+      showDialog(context: context, builder: (context) => LoginModal());
+      return;
+    }
+    UserProvider provider = Provider.of(context, listen: false);
+
+    //Already downvoted so reset
+    if (_voteCode == -1) {
+      setState(() {
+        _votesNumber += 1;
+        _voteCode = 0;
+      });
+      await _post.resetVote(uid: _currUser!.id, token: token!);
+    } else {
+      setState(() {
+        if (_voteCode == 0) {
+          _votesNumber -= 1;
+        } else {
+          _votesNumber += -2;
+        }
+        _voteCode = -1;
+      });
+      await _post.downvote(uid: _currUser!.id, token: token!);
+    }
+
+    await provider.refreshUser();
   }
 
   void shareButton() {
@@ -113,9 +164,7 @@ class DefaultFooterState extends State<DefaultFooter> {
           margin: const EdgeInsets.only(right: 8),
           child: InkWell(
             borderRadius: BorderRadius.circular(60),
-            onTap: () {
-              updateVote(update: 1);
-            },
+            onTap: () => handleUpvote(context),
             child: Padding(
               padding: const EdgeInsets.all(5.0),
               child: upvoteIcon(context),
@@ -134,9 +183,7 @@ class DefaultFooterState extends State<DefaultFooter> {
           margin: const EdgeInsets.only(left: 8),
           child: InkWell(
             borderRadius: BorderRadius.circular(60),
-            onTap: () {
-              updateVote(update: -1);
-            },
+            onTap: () => handleDownvote(context),
             child: Padding(
               padding: const EdgeInsets.all(5.0),
               child: downvoteIcon(context),
@@ -200,8 +247,21 @@ class DefaultFooterState extends State<DefaultFooter> {
     );
   }
 
+  Future<void> _setToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (mounted) {
+      setState(() {
+        token = prefs.getString("tokenValue");
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    UserProvider provider = Provider.of(context, listen: false);
+    _currUser = provider.currentUser;
+    _setToken();
+
     return Container(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,

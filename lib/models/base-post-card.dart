@@ -62,7 +62,7 @@ abstract class BasePostCard extends StatelessWidget {
     ));
   }
 
-  void onDoubleTap() {
+  void onDoubleTap(BuildContext context) {
     throw Exception("Unimplemented method");
   }
 
@@ -213,7 +213,7 @@ abstract class BasePostCard extends StatelessWidget {
     return InkWell(
       splashColor: Colors.blueGrey.withAlpha(75),
       onTap: () => openPost(context),
-      onDoubleTap: onDoubleTap,
+      onDoubleTap: () => onDoubleTap(context),
       child: SizedBox(
         width: MediaQuery.of(context).size.width * 0.95,
         child: cardContent(context),

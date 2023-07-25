@@ -12,7 +12,7 @@ class PostPagePostCard extends BasePostCard {
   void openPost(BuildContext context) {}
 
   @override
-  void onDoubleTap() {}
+  void onDoubleTap(BuildContext context) {}
 
   @override
   void setFooter() {}

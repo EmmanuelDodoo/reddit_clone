@@ -24,8 +24,8 @@ class DefaultPostCard extends BasePostCard {
       : super(key: key, post: post);
 
   @override
-  void onDoubleTap() {
-    _footerKey.currentState?.updateVote(update: 1);
+  void onDoubleTap(BuildContext context) {
+    _footerKey.currentState?.handleUpvote(context);
   }
 
   @override

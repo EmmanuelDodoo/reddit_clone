@@ -4,10 +4,11 @@ import 'package:reddit_clone/models/api/http_model.dart';
 import 'package:reddit_clone/models/classhelpers.dart';
 import 'package:reddit_clone/models/replyable.dart';
 import 'package:reddit_clone/models/user.dart';
+import 'package:reddit_clone/models/votable.dart';
 import 'package:reddit_clone/models/votes.dart';
 import 'dart:collection';
 
-class Comment with VotingMixin implements IReplyable {
+class Comment implements IReplyable, Votable {
   /// The id of this comment instance
   @override
   late final int id;
@@ -30,6 +31,11 @@ class Comment with VotingMixin implements IReplyable {
 
   /// The contents of this comment
   late String _contents;
+
+  /// The net votes this object has. Should be positive if upvotes >
+  /// downvotes and negative if the reverse is true.
+  @override
+  late int votes;
 
   @override
   late String context;
@@ -59,12 +65,6 @@ class Comment with VotingMixin implements IReplyable {
     votes = source["votes"];
 
     _user = User(jsonMap: source["user"]);
-
-    // vote stuff
-    // TODO take a close look
-    voteRoute = "comments/$id/";
-    //TODO temporary measure
-    voteCode = 0;
   }
 
   /// Construct a Comment from a valid json map. The `replies` field is replaced
@@ -124,6 +124,9 @@ class Comment with VotingMixin implements IReplyable {
   String getContents() => _contents;
 
   @override
+  int getVotes() => votes;
+
+  @override
   Future<void> reply(
       {required int uid,
       required String contents,
@@ -134,6 +137,21 @@ class Comment with VotingMixin implements IReplyable {
 
     var reply = Comment.simplified(jsonMap: replyMap);
     _replies.add(reply);
+  }
+
+  @override
+  Future<void> upvote({required int uid, required String token}) async {
+    await RequestHandler.upvoteComment(uid: uid, cid: id, token: token);
+  }
+
+  @override
+  Future<void> downvote({required int uid, required String token}) async {
+    await RequestHandler.downvoteComment(uid: uid, cid: id, token: token);
+  }
+
+  @override
+  Future<void> resetVote({required int uid, required String token}) async {
+    await RequestHandler.resetCommentVote(uid: uid, cid: id, token: token);
   }
 
   @override

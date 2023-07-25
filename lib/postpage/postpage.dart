@@ -36,6 +36,8 @@ class _PostPageState extends State<PostPage> {
   List<Comment> _comments = [];
   late List<Post> _currUserUpvotedPosts = [];
   late List<Post> _currUserDownvotedPosts = [];
+  List<Comment> _currUserUpvotedComments = [];
+  List<Comment> _currUserDownvotedComments = [];
 
   Future<Post> _fetchPost() async {
     return await RequestHandler.getPost(_post.id)
@@ -70,12 +72,24 @@ class _PostPageState extends State<PostPage> {
         builder: (context) => AddCommentPage(replyable: _post)));
   }
 
-  int _getVoteCode(Post post) {
+  int _getPostVoteCode(Post post) {
     if (_currUser == null) return 0;
 
     if (_currUserUpvotedPosts.any((element) => post.id == element.id)) return 1;
 
     if (_currUserDownvotedPosts.any((element) => post.id == element.id))
+      return -1;
+
+    return 0;
+  }
+
+  int _getCommentVoteCode(Comment comment) {
+    if (_currUser == null) return 0;
+
+    if (_currUserUpvotedComments.any((element) => comment.id == element.id))
+      return 1;
+
+    if (_currUserDownvotedComments.any((element) => comment.id == element.id))
       return -1;
 
     return 0;
@@ -119,6 +133,7 @@ class _PostPageState extends State<PostPage> {
           margin: const EdgeInsets.only(top: 10),
           child: CommentCard(
             comment: _comments[index],
+            voteCode: _getCommentVoteCode(_comments[index]),
           ),
         );
       }, childCount: _comments.length);
@@ -193,7 +208,7 @@ class _PostPageState extends State<PostPage> {
           ),
           PostPageFooter(
             post: _post,
-            voteCode: _getVoteCode(_post),
+            voteCode: _getPostVoteCode(_post),
           ),
           const SliverToBoxAdapter(child: Divider()),
           SliverList(
@@ -216,6 +231,8 @@ class _PostPageState extends State<PostPage> {
     _currUser = provider.currentUser;
     _currUserUpvotedPosts = provider.currUserUpvotedPosts;
     _currUserDownvotedPosts = provider.currUserDownvotedPosts;
+    _currUserUpvotedComments = provider.currUserUpvotedComments;
+    _currUserDownvotedComments = provider.currUserDownvotedComments;
     _post = widget._post;
     return SafeArea(
       child: Scaffold(
