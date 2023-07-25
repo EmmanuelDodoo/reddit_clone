@@ -70,7 +70,11 @@ class _UserProfileState extends State<UserProfile> {
                             color: Colors.white,
                           ),
                         )
-                      : Container())
+                      : Container(
+                          margin: const EdgeInsets.only(top: 30, right: 15),
+                          width: 20,
+                          height: 20,
+                        ))
                 ],
               ),
             ),
