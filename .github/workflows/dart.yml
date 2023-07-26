@@ -42,4 +42,7 @@ jobs:
         run: flutter pub get
 
       - name: Build APK
-        run: flutter build apk
+        run: 
+          export PRESALT=${{ secrets.PRESALT }}
+          export POSTSALT=${{ secrets.POSTSALT }}
+          flutter build apk
