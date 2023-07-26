@@ -49,7 +49,7 @@ jobs:
           
       - name: Move apk to output/
         run: 
-          mdkir -p ouput
+          mkdir -p ouput
           mv build/app/outputs/flutter-apk/app-relase.apk output/
         
           
