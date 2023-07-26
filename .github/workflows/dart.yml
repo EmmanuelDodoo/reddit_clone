@@ -46,3 +46,9 @@ jobs:
           export PRESALT=${{ secrets.PRESALT }}
           export POSTSALT=${{ secrets.POSTSALT }}
           flutter build apk
+          
+      - name: Upload apk
+        uses: actions/upload-artifact@v3
+        with:
+          name: apk
+          path: build/app/outputs/flutter-apk/app-release.apk
