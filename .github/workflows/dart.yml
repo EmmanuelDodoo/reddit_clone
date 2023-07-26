@@ -45,7 +45,7 @@ jobs:
         run: 
           export PRESALT=${{ secrets.PRESALT }}
           export POSTSALT=${{ secrets.POSTSALT }}
-          flutter build apk --release
+          flutter build apk
           
       - name: Move apk to output/
         run: 
