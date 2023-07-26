@@ -47,11 +47,11 @@ jobs:
           export POSTSALT=${{ secrets.POSTSALT }}
           flutter build apk
           
-      - name: Move apk to output/
-        run: 
-          mkdir -p ouput
-          mv build/app/outputs/flutter-apk/app-relase.apk output/
-        
+      - name: Make output folder
+        run: mkdir -p output
+          
+      - name: Move apk
+        run: mv build/outputs/flutter-apk/app-release.apk output
           
       - name: Upload apk
         uses: actions/upload-artifact@v3
