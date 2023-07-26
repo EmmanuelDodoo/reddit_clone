@@ -3,7 +3,7 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: Dart
+name: Test and Build
 
 on:
   push:
@@ -40,15 +40,21 @@ jobs:
 
       - name: Get flutter dependencies
         run: flutter pub get
-
+       
       - name: Build APK
         run: 
           export PRESALT=${{ secrets.PRESALT }}
           export POSTSALT=${{ secrets.POSTSALT }}
-          flutter build apk
+          flutter build apk --release
+          
+      - name: Move apk to output/
+        run: 
+          mdkir -p ouput
+          mv build/app/outputs/flutter-apk/app-relase.apk output/
+        
           
       - name: Upload apk
         uses: actions/upload-artifact@v3
         with:
           name: apk
-          path: build/app/outputs/flutter-apk/app-release.apk
+          path: output/
