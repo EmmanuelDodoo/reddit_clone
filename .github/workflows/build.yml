@@ -1,0 +1,40 @@
+name: Build
+
+on:
+  push:
+    branches: ["master"]
+
+jobs:
+  build:
+    name: Build app
+    runs-on: unbuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      # Set up Java environment
+      - uses: actions/setup-java@v1
+        with:
+          java-version: "17.x"
+
+      - name: Flutter setup
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.10.6"
+
+      - name: Flutter clean
+        run: flutter clean
+
+      - name: Get Flutter Dependencies
+        run: flutter pub get
+
+      - name: Build apk
+        run: export PRESALT=${{ secrets.PRESALT }}
+          export POSTSALT=${{ secrets.POSTSALT }}
+          flutter build apk
+
+      - name: Upload apk
+        uses: actions/upload-artifact@v3
+        with:
+          name: APK
+          path: build/outputs/flutter-apk/app.release.apk
