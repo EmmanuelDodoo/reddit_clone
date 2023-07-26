@@ -48,7 +48,7 @@ jobs:
           flutter build apk
           
       - name: Make output folder
-        run: mkdir -p ouput
+        run: mkdir -p output
           
       - name: Move apk
         run: mv build/outputs/flutter-apk/app-release.apk output
