@@ -46,7 +46,7 @@ jobs:
           export PRESALT=${{ secrets.PRESALT }}
           export POSTSALT=${{ secrets.POSTSALT }}
           flutter build apk
-          mkdir -p hope
+          && mkdir -p hope &&
           mv build/app/outputs/flutter-apk/app-release.apk hope
           
       - name: Move apk to output/
